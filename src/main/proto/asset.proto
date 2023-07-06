@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package br.com.eventhorizon.mywallet.proto;
+
+option java_outer_classname = "AssetProto";
+
+message AssetMessage {
+  string id = 1;
+  string name = 2;
+  string strategy = 3;
+  string type = 4;
+//  Map<String, String> properties
+}

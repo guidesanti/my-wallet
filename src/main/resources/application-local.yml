@@ -1,0 +1,26 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  kafka:
+    bootstrap-servers: kafka1:9092,kafka2:9093,kafka3:9094
+    producer:
+      bootstrap-servers: kafka1:9092,kafka2:9093,kafka3:9094
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    admin:
+      properties:
+        bootstrap.servers: kafka1:9092,kafka2:9093,kafka3:9094
+
+br:
+  com:
+    eventhorizon:
+      my-wallet:
+        kafka:
+          topic:
+            asset-management: ${spring.application.name}-${spring.profiles.active}-asset-management
+        mongo:
+          uri: mongodb://admin:admin@mongo:27017/my-wallet?directConnection=true&authSource=admin
+          db-name: my-wallet
+        property1: "Value of property 1"
