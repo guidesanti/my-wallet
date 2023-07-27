@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: my-wallet
+  profiles:
+    active: local
+  cloud:
+    config:
+      enabled: false
+
+logging:
+  config: classpath:log4j2.xml
+  level:
+    root: INFO
+    org.springframework.web: INFO
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web.exposure.include: info,health,refresh
+  endpoint:
+    info.enabled: true
+    health:
+      enabled: true
+      show-details: always
+      show-components: always
+    refresh.enabled: true
+
+log4j:
+  configurationFile: log4j2xml

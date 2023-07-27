@@ -1,7 +1,7 @@
 # Read Me First
 The following was discovered as part of building this project:
 
-* The original package name 'br.com.eventhorizon.my-investiments' is invalid and this project uses 'br.com.eventhorizon.myinvestiments' instead.
+* The original package name 'br.com.eventhorizon.my-wallet' is invalid and this project uses 'br.com.eventhorizon.myinvestiments' instead.
 
 # Getting Started
 

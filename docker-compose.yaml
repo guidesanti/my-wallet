@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  my-wallet:
+  ms-assets:
     image: openjdk:21-slim
     depends_on:
       - mongo
@@ -10,9 +10,8 @@ services:
       - kafka2
       - kafka3
     volumes:
-      - ./target/my-investments-0.0.1-SNAPSHOT.jar:/data/my-wallet.jar
-    #      - ./src/main/resources/test.mf:/data/test.mf
-    container_name: my-wallet
+      - ./microservices/ms-assets/target/ms-assets.jar:/data/ms-assets.jar
+    container_name: ms-assets
     command: >
       java -Dcom.sun.management.jmxremote=true
       -Dcom.sun.management.jmxremote.port=10483
@@ -20,7 +19,7 @@ services:
       -Dcom.sun.management.jmxremote.ssl=false
       -Dcom.sun.management.jmxremote.authenticate=false
       -Djava.rmi.server.hostname=0.0.0.0
-      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Xmx1g -Xms1g -jar /data/my-wallet.jar
+      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Xmx1g -Xms1g -jar /data/ms-assets.jar
     ports:
       - '8080:8080'
       - '10490:10484'
@@ -30,7 +29,7 @@ services:
 
   mongo:
     image: mongo
-    hostname: mongo1
+    hostname: mongo
     container_name: mongo
     privileged: true
     environment:
