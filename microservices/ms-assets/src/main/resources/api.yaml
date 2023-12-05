@@ -1,9 +1,9 @@
 openapi: 3.0.0
 
 info:
-  description: MyWallet API
+  title: MyWallet Assets API
+  description: MyWallet Assets API
   version: 1.0.0
-  title: MyWallet API
   contact:
     email: guidesanti@yahoo.com.br
   license:
@@ -11,30 +11,29 @@ info:
     url: https://opensource.org/license/mit/
 
 servers:
-  - url: 'https://localhost:8080/v1'
+  - url: 'https://localhost:8080/ms-assets/v1'
     description: Local environment
 
 tags:
   - name: assets
     description: Finantial assets
-  - name: transactions
-    description: Transactions over finatial assets
 
 paths:
   /assets:
-    parameters:
-      - $ref: '#/components/parameters/XTraceIdHeader'
     post:
       tags:
         - assets
       summary: Create asset
       operationId: createAsset
       description: Creates new asset
+      parameters:
+        - $ref: '#/components/parameters/XTraceIdHeader'
+        - $ref: '#/components/parameters/XIdempotenceIdHeader'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Asset'
+              $ref: '#/components/schemas/AssetDTO'
         description: Asset to create
       responses:
         '201':
@@ -43,18 +42,18 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/Response'
+                  - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
                       data:
                         type: array
                         items:
-                          $ref: '#/components/schemas/Asset'
+                          $ref: '#/components/schemas/AssetDTO'
         '400':
-          $ref: '#/components/responses/InvalidInput'
-        '409':
-          $ref: '#/components/responses/ResourceAlreadyExists'
-        '5XX':
+          $ref: '#/components/responses/ClientError'
+        '422':
+          $ref: '#/components/responses/BusinessError'
+        '500':
           $ref: '#/components/responses/ServerError'
     get:
       tags:
@@ -63,6 +62,8 @@ paths:
       operationId: getAllAssets
       description: |
         Get all assets
+      parameters:
+        - $ref: '#/components/parameters/XTraceIdHeader'
       responses:
         '200':
           description: All assets results
@@ -70,18 +71,20 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/Response'
+                  - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
                       data:
                         type: array
                         items:
-                          $ref: '#/components/schemas/Asset'
-        '5XX':
+                          $ref: '#/components/schemas/AssetDTO'
+        '400':
+          $ref: '#/components/responses/ClientError'
+        '422':
+          $ref: '#/components/responses/BusinessError'
+        '500':
           $ref: '#/components/responses/ServerError'
   /assets/{assetId}:
-    parameters:
-      - $ref: '#/components/parameters/XTraceIdHeader'
     put:
       tags:
         - assets
@@ -90,17 +93,14 @@ paths:
       description: |
         Update asset by its ID
       parameters:
-        - in: path
-          name: assetId
-          required: true
-          description: Asset ID
-          schema:
-            type: string
+        - $ref: '#/components/parameters/XTraceIdHeader'
+        - $ref: '#/components/parameters/XIdempotenceIdHeader'
+        - $ref: '#/components/parameters/AssetIdPathParam'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Asset'
+              $ref: '#/components/schemas/AssetDTO'
         description: Asset to update
       responses:
         '200':
@@ -109,18 +109,18 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/Response'
+                  - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
                       data:
                         type: array
                         items:
-                          $ref: '#/components/schemas/Asset'
-        '404':
-          $ref: '#/components/responses/ResourceNotFound'
-        '409':
-          $ref: '#/components/responses/ResourceConflict'
-        '5XX':
+                          $ref: '#/components/schemas/AssetDTO'
+        '400':
+          $ref: '#/components/responses/ClientError'
+        '422':
+          $ref: '#/components/responses/BusinessError'
+        '500':
           $ref: '#/components/responses/ServerError'
     delete:
       tags:
@@ -130,12 +130,8 @@ paths:
       description: |
         Delete asset by its ID
       parameters:
-        - in: path
-          name: assetId
-          required: true
-          description: Asset ID
-          schema:
-            type: string
+        - $ref: '#/components/parameters/XTraceIdHeader'
+        - $ref: '#/components/parameters/AssetIdPathParam'
       responses:
         '200':
           description: Asset deleted
@@ -143,12 +139,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/Response'
+                  - $ref: '#/components/schemas/SuccessResponse'
                 example:
                   status: SUCCESS
-        '404':
-          $ref: '#/components/responses/ResourceNotFound'
-        '5XX':
+        '400':
+          $ref: '#/components/responses/ClientError'
+        '422':
+          $ref: '#/components/responses/BusinessError'
+        '500':
           $ref: '#/components/responses/ServerError'
     get:
       tags:
@@ -158,12 +156,8 @@ paths:
       description: |
         Get one asset by ID
       parameters:
-        - in: path
-          name: assetId
-          required: true
-          description: Asset ID
-          schema:
-            type: string
+        - $ref: '#/components/parameters/XTraceIdHeader'
+        - $ref: '#/components/parameters/AssetIdPathParam'
       responses:
         '200':
           description: The asset matching the ID
@@ -171,61 +165,46 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/Response'
+                  - $ref: '#/components/schemas/SuccessResponse'
                   - type: object
                     properties:
                       data:
                         type: array
                         items:
-                          $ref: '#/components/schemas/Asset'
-        '404':
-          $ref: '#/components/responses/ResourceNotFound'
-        '5XX':
-          $ref: '#/components/responses/ServerError'
-  /transsactions:
-    post:
-      tags:
-        - transactions
-      summary: Create transaction
-      operationId: createTrsanction
-      description: Creates new transaction
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Transaction'
-        description: Transaction to create
-      responses:
-        '201':
-          description: Transaction created
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/Response'
-                  - type: object
-                    properties:
-                      data:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/Transaction'
+                          $ref: '#/components/schemas/AssetDTO'
         '400':
-          $ref: '#/components/responses/InvalidInput'
-        '409':
-          $ref: '#/components/responses/ResourceAlreadyExists'
-        '5XX':
+          $ref: '#/components/responses/ClientError'
+        '422':
+          $ref: '#/components/responses/BusinessError'
+        '500':
           $ref: '#/components/responses/ServerError'
 
 components:
   # -------------------------------------------------------- #
-  # Reusable headers                                         #
+  # Reusable parameters                                      #
   # -------------------------------------------------------- #
   parameters:
     XTraceIdHeader:
       in: header
       name: X-Trace-Id
-      required: false
+      required: true
       allowEmptyValue: false
+      schema:
+        type: string
+        pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+    XIdempotenceIdHeader:
+      in: header
+      name: X-Idempotence-Id
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+    AssetIdPathParam:
+      in: path
+      name: assetId
+      required: true
+      description: Asset ID
       schema:
         type: string
 
@@ -233,7 +212,7 @@ components:
   # Reusable schemas (data models)                           #
   # -------------------------------------------------------- #
   schemas:
-    Response:
+    SuccessResponse:
       type: object
       required:
         - status
@@ -244,6 +223,13 @@ components:
           type: array
           items:
             type: object
+    ErrorResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/ResponseStatus'
         error:
           $ref: '#/components/schemas/ResponseError'
     ResponseStatus:
@@ -254,26 +240,28 @@ components:
     ResponseError:
       type: object
       required:
+        - category
         - code
         - message
       properties:
+        category:
+          $ref: '#/components/schemas/ErrorCategory'
         code:
-          $ref: '#/components/schemas/ErrorCode'
+          type: string
         message:
           type: string
         details:
           type: string
-    ErrorCode:
+    ErrorCategory:
       type: string
       enum:
-        - INVALID_INPUT
-        - RESOURCE_NOT_FOUND
-        - RESOURCE_ALREADY_EXISTS
-        - RESOURCE_CONFLICT
+        - BUSINESS_ERROR
+        - CLIENT_ERROR
         - SERVER_ERROR
-    Asset:
+    AssetDTO:
       type: object
       required:
+        - id
         - shortName
         - longName
         - strategy
@@ -281,8 +269,7 @@ components:
       properties:
         id:
           type: string
-          format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+          format: string
         shortName:
           type: string
           example: PETROBRAS PN N2
@@ -301,131 +288,51 @@ components:
             type: string
           example:
             ticker: PETR4
-    TransactionValueByAmount:
-      type: object
-      required:
-        - amount
-      properties:
-        amount:
-          type: number
-          example: 102.34
-    TransactionValueByUnitsAndPrice:
-      type: object
-      required:
-        - units
-        - price
-      properties:
-        units:
-          type: integer
-          format: int32
-          example: 100
-        price:
-          type: number
-          example: 35.48
-    Transaction:
-      type: object
-      required:
-        - source
-        - destination
-        - value
-        - type
-        - dateTime
-      properties:
-        source:
-          type: string
-          nullable: true
-          format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851
-        destination:
-          type: string
-          nullable: true
-          format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851
-        value:
-          oneOf:
-            - $ref: '#/components/schemas/TransactionValueByAmount'
-            - $ref: '#/components/schemas/TransactionValueByUnitsAndPrice'
-        type:
-          type: string
-          example: BUY
-        dateTime:
-          type: string
-          format: date-time
-          example: 2017-07-21T17:32:28Z
-        description:
-          type: string
-          example:
 
   # -------------------------------------------------------- #
   # Reusable responses                                       #
   # -------------------------------------------------------- #
   responses:
-    NoContent:
-      description: No content
+    ClientError:
+      description: Client error
       content:
         application/json:
           schema:
             allOf:
-              - $ref: '#/components/schemas/Response'
-            example:
-              status: SUCCESS
-    InvalidInput:
-      description: Invalid input
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/Response'
+              - $ref: '#/components/schemas/ErrorResponse'
             example:
               status: ERROR
               error:
-                code: INVALID_INPUT
-                message: Invalid input
-    ResourceNotFound:
-      description: Resource not found
+                category: CLIENT_ERROR
+                code: ERROR_CODE
+                message: Error message
+                additionalCode: ADDITIONAL_ERROR_CODE
+                additionalMessage: Additional error message
+    BusinessError:
+      description: Business error
       content:
         application/json:
           schema:
             allOf:
-              - $ref: '#/components/schemas/Response'
+              - $ref: '#/components/schemas/ErrorResponse'
             example:
               status: ERROR
               error:
-                code: RESOURCE_NOT_FOUND
-                message: Resource not found
-    ResourceAlreadyExists:
-      description: Resource already exists
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/Response'
-            example:
-              status: ERROR
-              error:
-                code: RESOURCE_ALREADY_EXISTS
-                message: Resource already exists
-    ResourceConflict:
-      description: Resource conflict
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/Response'
-            example:
-              status: ERROR
-              error:
-                code: RESOURCE_CONFLICT
-                message: Request conflict with the current state of the target resource
+                category: BUSINESS_ERROR
+                code: ERROR_CODE
+                message: Error message
+                additionalCode: ADDITIONAL_ERROR_CODE
+                additionalMessage: Additional error message
     ServerError:
       description: Server error
       content:
         application/json:
           schema:
             allOf:
-              - $ref: '#/components/schemas/Response'
+              - $ref: '#/components/schemas/ErrorResponse'
             example:
               status: ERROR
               error:
+                category: SERVER_ERROR
                 code: SERVER_ERROR
                 message: Unexpected server error

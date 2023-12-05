@@ -13,12 +13,10 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>my-assets</name>
-    <description>Parent project to aggregate all microservices subprojects</description>
+    <description>Microservice assets</description>
 
     <properties>
-        <maven.compiler.source>20</maven.compiler.source>
-        <maven.compiler.target>20</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.basepackage>br.com.eventhorizon.mywallet.ms.assets</project.basepackage>
     </properties>
 
     <build>

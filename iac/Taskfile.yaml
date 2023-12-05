@@ -1,0 +1,89 @@
+version: '3'
+
+env:
+  TERRAFORM: '/opt/terraform/terraform'
+#  TF_LOG: 'DEBUG'
+  MYWALLET_PREFIX: mywallet
+
+tasks:
+  plan-local:
+    desc: Shows the deploy plan for LOCAL environment
+    cmds:
+      - task: plan
+        vars:
+          MYWALLET_ENV: local
+
+  plan-dev:
+    desc: Shows the deploy plan for DEV environment
+    cmds:
+      - task: plan
+        vars:
+          MYWALLET_ENV: dev
+
+  plan-prod:
+    desc: Shows the deploy plan for PROD environment
+    cmds:
+      - task: plan
+        vars:
+          MYWALLET_ENV: prod
+
+  plan:
+    internal: true
+    cmds:
+      # Initialize Terraform if not done yet
+      - ${TERRAFORM} -chdir=./{{.MYWALLET_ENV}} init -upgrade
+      # Apply the Terraform plan
+      - ${TERRAFORM} -chdir=./{{.MYWALLET_ENV}} plan
+
+  deploy-local:
+    desc: Deploy IaC to LOCAL environment
+    vars:
+      MYWALLET_ENV: local
+    cmds:
+      - task: deploy
+        vars:
+          MYWALLET_ENV: local
+
+  deploy-dev:
+    desc: Deploy IaC to DEV environment
+    cmds:
+      - task: deploy
+        vars:
+          MYWALLET_ENV: dev
+
+  deploy-prod:
+    desc: Deploy IaC to PROD environment
+    cmds:
+      - task: deploy
+        vars:
+          MYWALLET_ENV: prod
+
+  deploy:
+    internal: true
+    cmds:
+      # Initialize Terraform if not done yet
+      - ${TERRAFORM} -chdir=./{{.MYWALLET_ENV}} init -upgrade
+      # Apply the Terraform plan
+      - ${TERRAFORM} -chdir=./{{.MYWALLET_ENV}} apply
+
+  destroy-local:
+    desc: Destroy IaC on LOCAL environment
+    cmds:
+      - task: destroy
+        vars:
+          MYWALLET_ENV: local
+
+  destroy-dev:
+    desc: Destroy IaC on DEV environment
+    cmds:
+      - task: destroy
+        vars:
+          MYWALLET_ENV: dev
+
+  destroy:
+    internal: true
+    cmds:
+      # Initialize Terraform if not done yet
+      - ${TERRAFORM} -chdir=./{{.MYWALLET_ENV}} init
+      # Apply the Terraform plan
+      - ${TERRAFORM} -chdir=./{{.MYWALLET_ENV}} destroy

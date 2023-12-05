@@ -4,14 +4,15 @@ package br.com.eventhorizon.mywallet.proto;
 
 option java_outer_classname = "AssetProto";
 option java_multiple_files = false;
-option java_package = "br.com.eventhorizon.mywallet.proto";
+option java_package = "br.com.eventhorizon.mywallet.ms.assets.proto";
 
 option optimize_for = LITE_RUNTIME;
 
 message AssetMessage {
   string id = 1;
-  string name = 2;
-  string strategy = 3;
-  string type = 4;
-  map<string, string> properties = 5;
+  string shortName = 2;
+  string longName = 3;
+  string strategy = 4;
+  string type = 5;
+  map<string, string> properties = 6;
 }

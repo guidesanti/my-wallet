@@ -67,3 +67,10 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Build env
+build-env
+
+# Terraform files
+.terraform*
+*tfstate*

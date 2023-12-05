@@ -1,0 +1,27 @@
+net:
+  bindIp: 0.0.0.0
+#  tls:
+#    mode: "requireTLS"
+#    PEMKeyFile: "/data/mongo/certs/mongo.pem"
+#    CAFile: "/data/mongo/certs/ca.pem"
+#    allowConnectionsWithoutCertificates: true
+#    allowInvalidCertificates: true
+
+replication:
+  replSetName: rs0
+
+#security:
+#  keyFile: "/data/mongo/config/keyfile"
+#  authorization: "enabled"
+
+storage:
+  dbPath: "/data/mongo/data"
+
+#systemLog:
+#  destination: "file"
+#  path: "/data/mongo/logs/mongod.log"
+#  logAppend: true
+
+setParameter:
+  authenticationMechanisms: SCRAM-SHA-1
+#  authenticationMechanisms: SCRAM-SHA-1,SCRAM-SHA-256,MONGODB-X509

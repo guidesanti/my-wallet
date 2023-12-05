@@ -1,45 +1,55 @@
 version: '3'
 
 services:
-  ms-assets:
-    image: openjdk:21-slim
-    depends_on:
-      - mongo
-      - zookeeper
-      - kafka1
-      - kafka2
-      - kafka3
-    volumes:
-      - ./microservices/ms-assets/target/ms-assets.jar:/data/ms-assets.jar
-    container_name: ms-assets
-    command: >
-      java -Dcom.sun.management.jmxremote=true
-      -Dcom.sun.management.jmxremote.port=10483
-      -Dcom.sun.management.jmxremote.rmi.port=10484
-      -Dcom.sun.management.jmxremote.ssl=false
-      -Dcom.sun.management.jmxremote.authenticate=false
-      -Djava.rmi.server.hostname=0.0.0.0
-      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Xmx1g -Xms1g -jar /data/ms-assets.jar
+#  mongo:
+#    image: mongo
+#    hostname: mongo
+#    container_name: mongo
+#    privileged: true
+#    environment:
+#      MONGO_INITDB_DATABASE: admin
+#      MONGO_INITDB_ROOT_USERNAME: admin
+#      MONGO_INITDB_ROOT_PASSWORD: admin
+#    volumes:
+#      - ./volumes/mongo:/data/db
+#    ports:
+#      - '27017:27017'
+#    networks:
+#      - local-net
+
+  mongo1:
+    image: mongo:custom
+    container_name: mongo1
+    hostname: mongo1
+    privileged: true
     ports:
-      - '8080:8080'
-      - '10490:10484'
-      - '5005:5005'
+      - '27017:27017'
+    volumes:
+      - ./volumes/mongo1/data:/data/mongo/data
     networks:
       - local-net
 
-  mongo:
-    image: mongo
-    hostname: mongo
-    container_name: mongo
+  mongo2:
+    image: mongo:custom
+    container_name: mongo2
+    hostname: mongo2
     privileged: true
-    environment:
-      MONGO_INITDB_DATABASE: admin
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin
-    volumes:
-      - ./volumes/mongo:/data/db
     ports:
-      - '27017:27017'
+      - '27018:27017'
+    volumes:
+      - ./volumes/mongo2/data:/data/mongo/data
+    networks:
+      - local-net
+
+  mongo3:
+    image: mongo:custom
+    container_name: mongo3
+    hostname: mongo3
+    privileged: true
+    ports:
+      - '27019:27017'
+    volumes:
+      - ./volumes/mongo3/data:/data/mongo/data
     networks:
       - local-net
 
@@ -78,6 +88,8 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_SOCKET_REQUEST_MAX_BYTES: 369295616
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
     networks:
       - local-net
 
@@ -98,6 +110,8 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_SOCKET_REQUEST_MAX_BYTES: 369295616
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
     networks:
       - local-net
 
@@ -118,6 +132,8 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_SOCKET_REQUEST_MAX_BYTES: 369295616
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
     networks:
       - local-net
 
