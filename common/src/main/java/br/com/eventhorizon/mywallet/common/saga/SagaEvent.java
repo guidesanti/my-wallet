@@ -1,6 +1,7 @@
 package br.com.eventhorizon.mywallet.common.saga;
 
 import br.com.eventhorizon.mywallet.common.saga.content.SagaContent;
+import br.com.eventhorizon.mywallet.common.util.IdUtil;
 import lombok.*;
 
 import java.time.OffsetDateTime;
@@ -9,6 +10,13 @@ import java.time.ZoneOffset;
 @Builder
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class SagaEvent {
+
+    @NonNull
+    @Builder.Default
+    private final String id = IdUtil.generateId(IdUtil.IdType.UUID);
+
+    @NonNull
+    private final SagaIdempotenceId originalIdempotenceId;
 
     @NonNull
     private final SagaIdempotenceId idempotenceId;
@@ -35,6 +43,17 @@ public class SagaEvent {
 
     @NonNull
     private final SagaContent content;
+
+    @Builder.Default
+    private final int publishCount = 0;
+
+    public String id() {
+        return id;
+    }
+
+    public SagaIdempotenceId originalIdempotenceId() {
+        return originalIdempotenceId;
+    }
 
     public SagaIdempotenceId idempotenceId() {
         return idempotenceId;
@@ -70,5 +89,9 @@ public class SagaEvent {
 
     public SagaContent content() {
         return content;
+    }
+
+    public int publishCount() {
+        return publishCount;
     }
 }

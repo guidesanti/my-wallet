@@ -1,20 +1,19 @@
 package br.com.eventhorizon.mywallet.common.saga.repository;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @Builder
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SagaTransactionEntity {
 
-    private final String idempotenceId;
+    private String idempotenceId;
 
-    private final String checksum;
+    private String checksum;
 
-    private final String createdAt;
+    private String createdAt;
+
+    private Date expireAt;
 }

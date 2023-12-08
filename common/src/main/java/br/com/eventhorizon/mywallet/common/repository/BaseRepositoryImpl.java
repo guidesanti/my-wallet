@@ -42,11 +42,10 @@ public class BaseRepositoryImpl<T extends BaseModel, ID extends Serializable> ex
         if (obj.getId() == null) {
             obj.setId(IdUtil.generateId(IdUtil.IdType.UUID));
         }
-        var now = OffsetDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
         if (obj.getCreatedAt() == null) {
-            obj.setCreatedAt(now);
+            obj.setCreatedAt(OffsetDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
         }
-        obj.setUpdatedAt(now);
+        obj.setUpdatedAt(obj.getCreatedAt());
         return super.insert(obj);
     }
 

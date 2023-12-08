@@ -1,6 +1,7 @@
 package br.com.eventhorizon.mywallet.common.saga.chain.filter;
 
 import br.com.eventhorizon.mywallet.common.saga.SagaMessage;
+import br.com.eventhorizon.mywallet.common.saga.SagaOption;
 import br.com.eventhorizon.mywallet.common.saga.SagaOutput;
 import br.com.eventhorizon.mywallet.common.saga.chain.SagaChain;
 import br.com.eventhorizon.mywallet.common.saga.chain.SagaPhase;
@@ -20,11 +21,15 @@ public class SagaEventPublisherFilter implements SagaFilter {
     public SagaOutput filter(List<SagaMessage> messages, SagaChain chain) throws Exception {
         try {
             log.info("SAGA EVENT PUBLISHER FILTER START");
+            var repository = chain.repository();
             var publisher = chain.publisher();
             var serdes = chain.serializers();
             var output = chain.next(messages);
             for (var event : output.events()) {
-                publisher.publish(event, serdes);
+                if (event.publishCount() == 0 || Boolean.TRUE == chain.options().get(SagaOption.EVENT_REPUBLISH_ENABLED)) {
+                    publisher.publish(event, serdes);
+                    repository.incrementEventPublishCount(event.id());
+                }
             }
             return output;
         } finally {

@@ -32,7 +32,7 @@ public class DefaultSagaPublisher implements SagaPublisher {
                 .header(Conventions.HEADER_SOURCE, event.source())
                 .header(Conventions.HEADER_CREATED_AT, event.createdAt().format(DateTimeFormatter.ISO_DATE_TIME))
                 .header(Conventions.HEADER_PUBLISHED_AT, OffsetDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_ZONED_DATE_TIME))
-                .header(Conventions.HEADER_RETRY_COUNT, String.valueOf(0));
+                .header(Conventions.HEADER_PUBLISH_COUNT, String.valueOf(event.publishCount() + 1));
         if (event.replyOkTo() != null) {
             headersBuilder.header(Conventions.HEADER_REPLY_OK_TO, event.replyOkTo());
         }

@@ -1,5 +1,6 @@
 package br.com.eventhorizon.mywallet.common.saga.transaction;
 
+import br.com.eventhorizon.mywallet.common.saga.SagaOption;
 import br.com.eventhorizon.mywallet.common.saga.content.checker.SagaContentChecker;
 import br.com.eventhorizon.mywallet.common.saga.chain.filter.SagaFilter;
 import br.com.eventhorizon.mywallet.common.saga.content.serializer.SagaContentSerializer;
@@ -9,6 +10,7 @@ import br.com.eventhorizon.mywallet.common.saga.repository.SagaRepository;
 import lombok.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Builder
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -32,6 +34,9 @@ public class SagaTransaction {
 
     private final SagaContentChecker checker;
 
+    @Singular
+    private final Map<SagaOption, Object> options;
+
     public SagaHandler handler() {
         return handler;
     }
@@ -54,5 +59,9 @@ public class SagaTransaction {
 
     public SagaContentChecker checker() {
         return checker;
+    }
+
+    public Map<SagaOption, Object> options() {
+        return options;
     }
 }

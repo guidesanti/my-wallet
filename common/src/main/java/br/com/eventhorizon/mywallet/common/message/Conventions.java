@@ -12,7 +12,7 @@ public class Conventions {
 
     public static final String HEADER_SOURCE = "source";
 
-    public static final String HEADER_RETRY_COUNT = "retry-count";
+    public static final String HEADER_PUBLISH_COUNT = "publish-count";
 
     public static final String HEADER_REPLY_OK_TO = "reply-ok-to";
 

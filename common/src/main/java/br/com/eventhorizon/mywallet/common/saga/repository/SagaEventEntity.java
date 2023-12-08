@@ -1,33 +1,44 @@
 package br.com.eventhorizon.mywallet.common.saga.repository;
 
 import lombok.*;
+import org.springframework.data.annotation.Id;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 @Data
 @Builder
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SagaEventEntity {
 
-    private final String idempotenceId;
+    @Id
+    private String id;
 
-    private final String traceId;
+    private String originalIdempotenceId;
 
-    private final String source;
+    private String idempotenceId;
 
-    private final String destination;
+    private String traceId;
 
-    private final String createdAt;
+    private String source;
 
-    private final String replyOkTo;
+    private String destination;
 
-    private final String replyNotOkTo;
+    private String createdAt;
+
+    private Date expireAt;
+
+    private String replyOkTo;
+
+    private String replyNotOkTo;
 
     @Singular
-    private final Map<String, List<String>> headers;
+    private Map<String, List<String>> headers;
 
-    private final byte[] content;
+    private byte[] content;
 
-    private final String contentType;
+    private String contentType;
+
+    private int publishCount;
 }

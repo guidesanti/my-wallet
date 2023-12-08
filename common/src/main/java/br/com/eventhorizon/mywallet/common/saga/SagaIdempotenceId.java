@@ -35,15 +35,15 @@ public final class SagaIdempotenceId {
 
     private static final int IDEMPOTENCE_STEP_MAX = 999;
 
-    private static final String OPERATION_ID_PATTERN = "(\\d{4})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[01])([0-9A-Za-z]{10}?)([0-9]{18}?)([0-9]{3}?)";
+    private static final String IDEMPOTENCE_ID_PATTERN = "(\\d{4})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[01])([0-9A-Za-z]{10}?)([0-9]{18}?)([0-9]{3}?)";
 
-    String date;
+    private final String date;
 
-    String clientId;
+    private final String clientId;
 
-    String sequenceNumber;
+    private final String sequenceNumber;
 
-    Integer idempotenceStep;
+    private final Integer idempotenceStep;
 
     public static SagaIdempotenceId of(String date, String clientId, String sequenceNumber) {
         return SagaIdempotenceId.of(date, clientId, sequenceNumber, 0);
@@ -95,6 +95,10 @@ public final class SagaIdempotenceId {
         return SagaIdempotenceId.of(date, clientId, sequenceNumber, idempotenceStep + 1);
     }
 
+    public SagaIdempotenceId incrementIdempotenceStep(int inc) {
+        return SagaIdempotenceId.of(date, clientId, sequenceNumber, idempotenceStep + inc);
+    }
+
     private static void validateDate(String date) {
         Pattern pattern = Pattern.compile(DATE_PATTERN, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(date);
@@ -125,11 +129,11 @@ public final class SagaIdempotenceId {
         }
     }
 
-    private static void validateIdempotenceId(String operationId) {
-        Pattern pattern = Pattern.compile(OPERATION_ID_PATTERN);
-        Matcher matcher = pattern.matcher(operationId);
+    private static void validateIdempotenceId(String idempotenceId) {
+        Pattern pattern = Pattern.compile(IDEMPOTENCE_ID_PATTERN);
+        Matcher matcher = pattern.matcher(idempotenceId);
         if (!matcher.find()) {
-            throw new InvalidSagaIdempotenceIdException("Invalid idempotence ID: " + operationId);
+            throw new InvalidSagaIdempotenceIdException("Invalid idempotence ID: " + idempotenceId);
         }
     }
 }

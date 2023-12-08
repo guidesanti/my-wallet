@@ -1,3 +1,7 @@
+br.com.eventhorizon.mywallet:
+  kafka:
+    bootstrapServers: kafka1:9092,kafka2:9093,kafka3:9094
+
 spring:
   config:
     activate:

@@ -31,6 +31,8 @@ public class SagaChain {
 
     private final Map<Class<?>, SagaContentSerializer> serializers;
 
+    private final SagaOptions options;
+
     public SagaRepository repository() {
         return repository;
     }
@@ -41,6 +43,10 @@ public class SagaChain {
 
     public SagaContentChecker checker() {
         return checker;
+    }
+
+    public SagaOptions options() {
+        return options;
     }
 
     public Map<Class<?>, SagaContentSerializer> serializers() {

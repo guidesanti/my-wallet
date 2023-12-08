@@ -2,6 +2,7 @@ package br.com.eventhorizon.mywallet.common.saga.repository;
 
 import br.com.eventhorizon.mywallet.common.saga.SagaEvent;
 import br.com.eventhorizon.mywallet.common.saga.SagaResponse;
+import br.com.eventhorizon.mywallet.common.saga.chain.SagaOptions;
 import br.com.eventhorizon.mywallet.common.saga.content.serializer.SagaContentSerializer;
 import br.com.eventhorizon.mywallet.common.transaction.TransactionManager;
 
@@ -20,5 +21,9 @@ public interface SagaRepository extends TransactionManager {
 
     void createEvents(List<SagaEvent> events, Map<Class<?>, SagaContentSerializer> serializers);
 
-    List<SagaEvent> findEvents(String idempotenceId, Map<Class<?>, SagaContentSerializer> serializers);
+    List<SagaEvent> findEvents(String originalIdempotenceId, Map<Class<?>, SagaContentSerializer> serializers);
+
+    void incrementEventPublishCount(String eventId);
+
+    void configure(SagaOptions options);
 }

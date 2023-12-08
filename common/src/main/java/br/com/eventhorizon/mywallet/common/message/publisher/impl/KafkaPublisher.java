@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
@@ -24,18 +23,19 @@ import java.util.concurrent.Future;
 @Component
 public class KafkaPublisher implements TransactionablePublisher {
 
-    private final KafkaTemplate<byte[], Object> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Override
     public <T> Future<PublisherResponse> publishAsync(PublisherRequest<T> request) {
         List<Header> headers = buildHeaders(request);
-        var record = new ProducerRecord<byte[], Object>(request.getDestination(), null, null, null, request.getMessage().content(), headers);
+        var record = new ProducerRecord<String, Object>(request.getDestination(), null, null, null, request.getMessage().content(), headers);
         try (var executor = Executors.newSingleThreadExecutor()) {
             return executor.submit(() -> {
                 try {
                     kafkaTemplate.send(record).get();
                     return PublisherResponse.builder().isOk(true).build();
-                } catch (InterruptedException | ExecutionException e) {
+                } catch (Exception ex) {
+                    log.error("Failed to send message to Kafka", ex);
                     return PublisherResponse.builder().isOk(false).build();
                 }
             });
@@ -56,9 +56,9 @@ public class KafkaPublisher implements TransactionablePublisher {
     @Override
     @Transactional(rollbackFor = { Exception.class })
     public <T> T transact(Callable<T> task) throws Exception {
-        log.info("Saga repository transaction start");
+        log.info("Saga broker transaction start");
         var output = task.call();
-        log.info("Saga repository transaction commit");
+        log.info("Saga broker transaction commit");
         return output;
     }
 

@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import static br.com.eventhorizon.mywallet.common.saga.Conventions.DEFAULT_DATE_
 
 @Data
 @Builder
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SagaResponseEntity {
 
     @NonNull
@@ -20,6 +21,8 @@ public class SagaResponseEntity {
     @NonNull
     @Builder.Default
     private String createdAt = OffsetDateTime.now(ZoneOffset.UTC).format(DEFAULT_DATE_TIME_FORMATTER);
+
+    private Date expireAt;
 
     @Singular
     private final Map<String, List<String>> headers;

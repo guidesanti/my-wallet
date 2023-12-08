@@ -36,6 +36,8 @@ public final class ApplicationProperties {
     @Data
     public static final class Kafka {
 
+        private String bootstrapServers;
+
         private Map<String, String> topics;
     }
 }

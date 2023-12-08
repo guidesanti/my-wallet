@@ -2,13 +2,9 @@ package br.com.eventhorizon.mywallet.ms.assets;
 
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.*;
+import java.util.Date;
 
-//@SpringBootTest
 class ApplicationTests {
 
 	private boolean isInternal() {
@@ -25,6 +21,8 @@ class ApplicationTests {
 
 		System.out.println("OffsetDateTime: " + OffsetDateTime.now());
 		System.out.println("OffsetDateTime (UTC): " + OffsetDateTime.now(ZoneOffset.UTC));
-	}
 
+		System.out.println("Date: " + Date.from(Instant.now()));
+		System.out.println("Date (UTC): " + Date.from(Instant.now(Clock.systemUTC())));
+	}
 }

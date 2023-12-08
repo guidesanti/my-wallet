@@ -11,12 +11,15 @@ import java.util.*;
 public final class SagaChainFactory {
 
     public static SagaChain create(SagaTransaction sagaTransaction) {
+        var options = SagaOptions.of(sagaTransaction.options());
+        sagaTransaction.repository().configure(options);
         return new SagaChain(mergeFilters(sagaTransaction).iterator(),
                 sagaTransaction.handler(),
                 sagaTransaction.repository(),
                 sagaTransaction.publisher(),
                 getChecker(sagaTransaction),
-                getSerializersMap(sagaTransaction));
+                getSerializersMap(sagaTransaction),
+                options);
     }
 
     private static List<SagaFilter> mergeFilters(SagaTransaction sagaTransaction) {
