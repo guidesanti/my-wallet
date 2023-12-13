@@ -1,6 +1,6 @@
 package br.com.eventhorizon.mywallet.ms.assets.persistence.repository.impl;
 
-import br.com.eventhorizon.mywallet.common.repository.DuplicateKeyException;
+import br.com.eventhorizon.common.repository.DuplicateKeyException;
 import br.com.eventhorizon.mywallet.ms.assets.business.model.Asset;
 import br.com.eventhorizon.mywallet.ms.assets.persistence.model.mapper.AssetDocumentMapper;
 import br.com.eventhorizon.mywallet.ms.assets.persistence.repository.AssetRepository;
@@ -16,7 +16,7 @@ public class AssetRepositoryImpl implements AssetRepository {
     private final MongoDBAssetRepository assetDocumentRepository;
 
     @Autowired
-    public AssetRepositoryImpl(MongoDBAssetRepository assetDocumentRepository, AssetDocumentMapper assetDocumentMapper) {
+    public AssetRepositoryImpl(MongoDBAssetRepository assetDocumentRepository) {
         this.assetDocumentRepository = assetDocumentRepository;
     }
 

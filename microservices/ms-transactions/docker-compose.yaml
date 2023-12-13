@@ -6,6 +6,7 @@ services:
     volumes:
       - ./target/ms-transactions.jar:/app.jar
     container_name: ms-transactions
+    hostname: ms-transactions
     command: >
       java -Dcom.sun.management.jmxremote=true
       -Dcom.sun.management.jmxremote.port=10483
@@ -16,9 +17,8 @@ services:
       -Dbr.com.eventhorizon.mywallet.ms.transactions.service.start-delay=0
       -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Xmx1g -Xms1g -jar /app.jar
     ports:
-      - '8080:8080'
-      - '10484:10484'
-      - '5005:5005'
+      - '10485:10484'
+      - '5006:5005'
     networks:
       - my-wallet_local-net
 

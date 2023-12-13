@@ -11,7 +11,7 @@
 	<description>My wallet project</description>
 
 	<modules>
-		<module>common</module>
+		<module>libs</module>
 		<module>microservices</module>
 	</modules>
 

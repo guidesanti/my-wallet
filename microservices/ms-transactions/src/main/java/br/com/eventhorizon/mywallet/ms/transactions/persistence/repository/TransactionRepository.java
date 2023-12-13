@@ -1,6 +1,6 @@
 package br.com.eventhorizon.mywallet.ms.transactions.persistence.repository;
 
-import br.com.eventhorizon.mywallet.common.repository.DuplicateKeyException;
+import br.com.eventhorizon.common.repository.DuplicateKeyException;
 import br.com.eventhorizon.mywallet.ms.transactions.business.model.Transaction;
 
 import java.util.List;

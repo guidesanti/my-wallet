@@ -1,3 +1,5 @@
+my.custom.property: my-custom-property
+
 br.com.eventhorizon.mywallet:
   service:
     name: ms-assets
@@ -5,6 +7,7 @@ br.com.eventhorizon.mywallet:
   kafka:
     topics:
       asset-management: ${br.com.eventhorizon.mywallet.service.env}-asset-management
+      assets-get-asset: ${br.com.eventhorizon.mywallet.service.env}-assets-get-asset
 
 spring:
   application:

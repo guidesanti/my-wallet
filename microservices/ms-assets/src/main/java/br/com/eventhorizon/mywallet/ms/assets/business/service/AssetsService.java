@@ -1,19 +1,18 @@
 package br.com.eventhorizon.mywallet.ms.assets.business.service;
 
-import br.com.eventhorizon.mywallet.common.exception.BaseException;
-import br.com.eventhorizon.mywallet.common.exception.BusinessErrorException;
-import br.com.eventhorizon.mywallet.common.repository.DuplicateKeyException;
-import br.com.eventhorizon.mywallet.common.saga.*;
-import br.com.eventhorizon.mywallet.common.saga.content.checker.impl.DefaultSagaContentChecker;
-import br.com.eventhorizon.mywallet.common.saga.content.SagaContent;
-import br.com.eventhorizon.mywallet.common.saga.content.serializer.impl.DefaultSagaContentSerializer;
-import br.com.eventhorizon.mywallet.common.saga.handler.SagaSingleHandler;
-import br.com.eventhorizon.mywallet.common.saga.message.SagaPublisher;
-import br.com.eventhorizon.mywallet.common.saga.repository.SagaRepository;
-import br.com.eventhorizon.mywallet.common.saga.transaction.SagaTransaction;
-import br.com.eventhorizon.mywallet.common.saga.transaction.SagaTransactionManager;
+import br.com.eventhorizon.common.exception.BaseException;
+import br.com.eventhorizon.common.exception.BusinessErrorException;
+import br.com.eventhorizon.common.repository.DuplicateKeyException;
+import br.com.eventhorizon.saga.*;
+import br.com.eventhorizon.saga.content.SagaContent;
+import br.com.eventhorizon.saga.content.serializer.impl.DefaultSagaContentSerializer;
+import br.com.eventhorizon.saga.handler.SagaSingleHandler;
+import br.com.eventhorizon.saga.messaging.SagaPublisher;
+import br.com.eventhorizon.saga.repository.SagaRepository;
+import br.com.eventhorizon.saga.transaction.SagaTransaction;
+import br.com.eventhorizon.saga.transaction.SagaTransactionManager;
 import br.com.eventhorizon.mywallet.ms.assets.ApplicationProperties;
-import br.com.eventhorizon.mywallet.ms.assets.api.message.model.mapper.AssetMessageMapper;
+import br.com.eventhorizon.mywallet.ms.assets.api.messaging.model.mapper.AssetMessageMapper;
 import br.com.eventhorizon.mywallet.ms.assets.business.model.Asset;
 import br.com.eventhorizon.mywallet.ms.assets.persistence.repository.AssetRepository;
 import br.com.eventhorizon.mywallet.ms.assets.proto.AssetProto;
@@ -132,7 +131,6 @@ public class AssetsService {
                         .event(SagaEvent.builder()
                                 .idempotenceId(message.idempotenceId())
                                 .traceId(message.traceId())
-                                .source(source)
                                 .destination("local-asset-management")
                                 .headers(SagaHeaders.builder()
                                         .header("custom-header", "custom-header-value")
@@ -173,7 +171,6 @@ public class AssetsService {
                     .event(SagaEvent.builder()
                             .idempotenceId(message.idempotenceId())
                             .traceId(message.traceId())
-                            .source(source)
                             .destination("local-asset-management")
                             .headers(SagaHeaders.builder()
                                     .header("custom-header", "custom-header-value")

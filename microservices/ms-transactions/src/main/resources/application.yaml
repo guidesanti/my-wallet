@@ -5,6 +5,7 @@ br.com.eventhorizon.mywallet:
   kafka:
     topics:
       transactions-transaction-created: ${br.com.eventhorizon.mywallet.service.env}-transactions-transaction-created
+      assets-get-asset: ${br.com.eventhorizon.mywallet.service.env}-assets-get-asset
 
 spring:
   application:

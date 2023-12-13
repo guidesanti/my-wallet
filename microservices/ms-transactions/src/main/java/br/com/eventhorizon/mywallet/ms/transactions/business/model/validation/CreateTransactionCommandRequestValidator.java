@@ -1,9 +1,9 @@
 package br.com.eventhorizon.mywallet.ms.transactions.business.model.validation;
 
 import br.com.eventhorizon.mywallet.common.proto.TransactionsProto;
-import br.com.eventhorizon.mywallet.common.validation.ValidationError;
-import br.com.eventhorizon.mywallet.common.validation.ValidationErrorCode;
-import br.com.eventhorizon.mywallet.common.validation.Validator;
+import br.com.eventhorizon.common.validation.ValidationError;
+import br.com.eventhorizon.common.validation.ValidationErrorCode;
+import br.com.eventhorizon.common.validation.Validator;
 import lombok.NonNull;
 import org.springframework.stereotype.Component;
 

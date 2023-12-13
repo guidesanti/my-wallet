@@ -19,6 +19,19 @@
         <project.basepackage>br.com.eventhorizon.mywallet.ms.transactions</project.basepackage>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>br.com.eventhorizon</groupId>
+            <artifactId>saga</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>br.com.eventhorizon</groupId>
+            <artifactId>messaging-provider-kafka</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>

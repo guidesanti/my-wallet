@@ -1,7 +1,7 @@
 package br.com.eventhorizon.mywallet.ms.transactions.persistence.model;
 
-import br.com.eventhorizon.mywallet.common.common.Error;
-import br.com.eventhorizon.mywallet.common.repository.BaseModel;
+import br.com.eventhorizon.common.common.Error;
+import br.com.eventhorizon.common.repository.BaseModel;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;

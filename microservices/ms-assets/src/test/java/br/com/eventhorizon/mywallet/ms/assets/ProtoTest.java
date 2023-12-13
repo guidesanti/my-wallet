@@ -1,6 +1,6 @@
 package br.com.eventhorizon.mywallet.ms.assets;
 
-import br.com.eventhorizon.mywallet.common.util.HexUtils;
+import br.com.eventhorizon.common.util.HexUtils;
 import br.com.eventhorizon.mywallet.ms.assets.proto.AssetProto;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.junit.jupiter.api.Test;

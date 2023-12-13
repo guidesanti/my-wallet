@@ -1,6 +1,6 @@
 package br.com.eventhorizon.mywallet.ms.transactions.api.http.controller.delegate;
 
-import br.com.eventhorizon.mywallet.common.saga.SagaIdempotenceId;
+import br.com.eventhorizon.saga.SagaIdempotenceId;
 import br.com.eventhorizon.mywallet.ms.transactions.api.http.TransactionsApiDelegate;
 import br.com.eventhorizon.mywallet.ms.transactions.api.http.model.CreateTransactionRequestDTO;
 import br.com.eventhorizon.mywallet.ms.transactions.api.http.model.GetAllTransactions200Response;

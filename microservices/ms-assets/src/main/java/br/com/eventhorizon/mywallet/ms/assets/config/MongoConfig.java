@@ -1,7 +1,7 @@
 package br.com.eventhorizon.mywallet.ms.assets.config;
 
-import br.com.eventhorizon.mywallet.common.repository.BaseRepositoryImpl;
-import br.com.eventhorizon.mywallet.common.saga.repository.impl.MongoDBSagaRepository;
+import br.com.eventhorizon.common.repository.BaseRepositoryImpl;
+import br.com.eventhorizon.saga.repository.impl.MongoDBSagaRepository;
 import br.com.eventhorizon.mywallet.ms.assets.ApplicationProperties;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;

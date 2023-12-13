@@ -1,6 +1,6 @@
 package br.com.eventhorizon.mywallet.ms.transactions.business.model;
 
-import br.com.eventhorizon.mywallet.common.common.Error;
+import br.com.eventhorizon.common.common.Error;
 import lombok.*;
 
 import java.math.BigDecimal;

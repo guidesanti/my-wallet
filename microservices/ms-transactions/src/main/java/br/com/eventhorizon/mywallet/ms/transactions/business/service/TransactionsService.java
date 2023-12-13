@@ -1,17 +1,18 @@
 package br.com.eventhorizon.mywallet.ms.transactions.business.service;
 
-import br.com.eventhorizon.mywallet.common.exception.BusinessErrorException;
+import br.com.eventhorizon.common.exception.BusinessErrorException;
+import br.com.eventhorizon.mywallet.common.proto.AssetsProto;
 import br.com.eventhorizon.mywallet.common.proto.TransactionsProto;
-import br.com.eventhorizon.mywallet.common.repository.DuplicateKeyException;
-import br.com.eventhorizon.mywallet.common.saga.*;
-import br.com.eventhorizon.mywallet.common.saga.content.SagaContent;
-import br.com.eventhorizon.mywallet.common.saga.content.serializer.impl.DefaultSagaContentSerializer;
-import br.com.eventhorizon.mywallet.common.saga.handler.SagaSingleHandler;
-import br.com.eventhorizon.mywallet.common.saga.message.SagaPublisher;
-import br.com.eventhorizon.mywallet.common.saga.repository.SagaRepository;
-import br.com.eventhorizon.mywallet.common.saga.transaction.SagaTransaction;
-import br.com.eventhorizon.mywallet.common.saga.transaction.SagaTransactionManager;
-import br.com.eventhorizon.mywallet.common.validation.ValidationError;
+import br.com.eventhorizon.common.repository.DuplicateKeyException;
+import br.com.eventhorizon.saga.*;
+import br.com.eventhorizon.saga.content.SagaContent;
+import br.com.eventhorizon.saga.content.serializer.impl.DefaultSagaContentSerializer;
+import br.com.eventhorizon.saga.handler.SagaSingleHandler;
+import br.com.eventhorizon.saga.messaging.SagaPublisher;
+import br.com.eventhorizon.saga.repository.SagaRepository;
+import br.com.eventhorizon.saga.transaction.SagaTransaction;
+import br.com.eventhorizon.saga.transaction.SagaTransactionManager;
+import br.com.eventhorizon.common.validation.ValidationError;
 import br.com.eventhorizon.mywallet.ms.transactions.ApplicationProperties;
 import br.com.eventhorizon.mywallet.ms.transactions.business.Errors;
 import br.com.eventhorizon.mywallet.ms.transactions.business.model.validation.CreateTransactionCommandRequestValidator;
@@ -50,6 +51,7 @@ public class TransactionsService {
                 .serializer(new DefaultSagaContentSerializer(TransactionsProto.Transaction.class))
                 .serializer(new DefaultSagaContentSerializer(TransactionsProto.CreateTransactionCommandRequest.class))
                 .serializer(new DefaultSagaContentSerializer(TransactionsProto.TransactionCreatedEvent.class))
+                .serializer(new DefaultSagaContentSerializer(AssetsProto.GetAssetCommandRequest.class))
                 .build();
         this.createTransactionRequestValidator  = createTransactionRequestValidator;
     }
@@ -108,12 +110,23 @@ public class TransactionsService {
                                 .originalIdempotenceId(message.idempotenceId())
                                 .idempotenceId(message.idempotenceId().incrementIdempotenceStep(1))
                                 .traceId(message.traceId())
-                                .source(applicationProperties.getService().getName())
                                 .destination(applicationProperties.getKafka().getTopics().get("transactions-transaction-created"))
                                 .headers(SagaHeaders.builder()
                                         .header("transaction-id", createdTransaction.getId())
                                         .build())
                                 .content(SagaContent.of(getCreatedTransactionEvent(createdTransaction)))
+                                .build())
+                        .event(SagaEvent.builder()
+                                .originalIdempotenceId(message.idempotenceId())
+                                .idempotenceId(message.idempotenceId().incrementIdempotenceStep(1))
+                                .traceId(message.traceId())
+                                .destination(applicationProperties.getKafka().getTopics().get("assets-get-asset"))
+                                .headers(SagaHeaders.builder()
+                                        .header("transaction-id", createdTransaction.getId())
+                                        .build())
+                                .content(SagaContent.of(AssetsProto.GetAssetCommandRequest.newBuilder()
+                                                .setAssetId(transaction.getAssetId())
+                                        .build()))
                                 .build())
                         .build();
             } catch (DuplicateKeyException ex) {

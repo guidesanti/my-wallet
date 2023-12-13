@@ -1,7 +1,7 @@
 package br.com.eventhorizon.mywallet.ms.transactions.api.http.model.mapper;
 
 import br.com.eventhorizon.mywallet.common.proto.TransactionsProto;
-import br.com.eventhorizon.mywallet.common.util.DateTimeUtils;
+import br.com.eventhorizon.common.util.DateTimeUtils;
 import br.com.eventhorizon.mywallet.ms.transactions.api.http.model.CreateTransactionRequestDTO;
 import br.com.eventhorizon.mywallet.ms.transactions.api.http.model.TransactionDTO;
 import br.com.eventhorizon.mywallet.ms.transactions.business.model.Transaction;

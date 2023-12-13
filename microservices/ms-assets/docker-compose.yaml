@@ -6,6 +6,7 @@ services:
     volumes:
       - ./target/ms-assets.jar:/app.jar
     container_name: ms-assets
+    hostname: ms-assets
     command: >
       java -Dcom.sun.management.jmxremote=true
       -Dcom.sun.management.jmxremote.port=10483
@@ -15,8 +16,9 @@ services:
       -Djava.rmi.server.hostname=0.0.0.0
       -Dbr.com.eventhorizon.mywallet.ms.assets.service.start-delay=0
       -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Xmx1g -Xms1g -jar /app.jar
+    environment:
+      MY_CUSTOM_ENV: "my-custom-value"
     ports:
-      - '8080:8080'
       - '10484:10484'
       - '5005:5005'
     networks:
