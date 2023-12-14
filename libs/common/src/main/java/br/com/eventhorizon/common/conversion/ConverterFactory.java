@@ -13,6 +13,7 @@ public final class ConverterFactory {
     private static final Map<Pair<?, ?>, Converter<?, ?>> converters = new HashMap<>();
 
     static {
+        // Primitive to string converters
         converters.put(Pair.of(Boolean.class, String.class), BooleanToStringConverter.getInstance());
         converters.put(Pair.of(Character.class, String.class), CharToStringConverter.getInstance());
         converters.put(Pair.of(Byte.class, String.class), ByteToStringConverter.getInstance());
@@ -22,6 +23,7 @@ public final class ConverterFactory {
         converters.put(Pair.of(Float.class, String.class), FloatToStringConverter.getInstance());
         converters.put(Pair.of(Double.class, String.class), DoubleToStringConverter.getInstance());
 
+        // String to primitive converters
         converters.put(Pair.of(String.class, Boolean.class), StringToBooleanConverter.getInstance());
         converters.put(Pair.of(String.class, Character.class), StringToCharConverter.getInstance());
         converters.put(Pair.of(String.class, Byte.class), StringToByteConverter.getInstance());
@@ -31,11 +33,12 @@ public final class ConverterFactory {
         converters.put(Pair.of(String.class, Float.class), StringToFloatConverter.getInstance());
         converters.put(Pair.of(String.class, Double.class), StringToDoubleConverter.getInstance());
 
+        // Special converters
         converters.put(Pair.of(String.class, String.class), StringToStringConverter.getInstance());
-        converters.put(Pair.of(String.class, OffsetDateTime.class), StringToOffsetDateTimeConverter.getInstance());
         converters.put(Pair.of(OffsetDateTime.class, String.class), OffsetDateTimeToStringConverter.getInstance());
-        converters.put(Pair.of(String.class, Class.class), StringToClassConverter.getInstance());
+        converters.put(Pair.of(String.class, OffsetDateTime.class), StringToOffsetDateTimeConverter.getInstance());
         converters.put(Pair.of(Class.class, String.class), ClassToStringConverter.getInstance());
+        converters.put(Pair.of(String.class, Class.class), StringToClassConverter.getInstance());
     }
 
     public static <S, T> Converter<S, T> getConverter(Class<S> sourceType, Class<T> targetType) {

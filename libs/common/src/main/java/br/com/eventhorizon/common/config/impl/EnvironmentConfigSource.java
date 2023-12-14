@@ -1,11 +1,11 @@
 package br.com.eventhorizon.common.config.impl;
 
-import br.com.eventhorizon.common.config.ConfigProvider;
+import br.com.eventhorizon.common.config.ConfigSource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 
 @RequiredArgsConstructor
-public class EnvironmentConfigProvider implements ConfigProvider {
+public class EnvironmentConfigSource implements ConfigSource {
 
     private static final String NAME = "spring-environment-config-provider";
 

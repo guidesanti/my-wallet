@@ -1,7 +1,7 @@
 package br.com.eventhorizon.common.config.impl;
 
 import br.com.eventhorizon.common.config.Config;
-import br.com.eventhorizon.common.config.ConfigProvider;
+import br.com.eventhorizon.common.config.ConfigSource;
 import br.com.eventhorizon.common.config.exception.ConfigNotFoundException;
 import br.com.eventhorizon.common.conversion.ConverterFactory;
 import lombok.*;
@@ -14,7 +14,7 @@ import java.util.Optional;
 public class DefaultConfig implements Config {
 
     @Singular
-    private final List<ConfigProvider> providers;
+    private final List<ConfigSource> sources;
 
     @Override
     public <T> T getValue(@NonNull String name, @NonNull Class<T> type) {
@@ -37,7 +37,7 @@ public class DefaultConfig implements Config {
     }
 
     private Optional<String> doGetValue(String name) {
-        for (ConfigProvider provider : providers) {
+        for (ConfigSource provider : sources) {
             String value = provider.getValue(name);
             if (value != null) {
                 return Optional.of(value);

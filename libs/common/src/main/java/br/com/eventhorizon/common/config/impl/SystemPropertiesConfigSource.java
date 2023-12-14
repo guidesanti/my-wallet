@@ -1,8 +1,8 @@
 package br.com.eventhorizon.common.config.impl;
 
-import br.com.eventhorizon.common.config.ConfigProvider;
+import br.com.eventhorizon.common.config.ConfigSource;
 
-public class SystemPropertiesConfigProvider implements ConfigProvider {
+public class SystemPropertiesConfigSource implements ConfigSource {
 
     private static final String NAME = "default-system-properties-config-provider";
 

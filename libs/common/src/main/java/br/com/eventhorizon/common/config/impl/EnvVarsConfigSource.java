@@ -1,10 +1,10 @@
 package br.com.eventhorizon.common.config.impl;
 
-import br.com.eventhorizon.common.config.ConfigProvider;
+import br.com.eventhorizon.common.config.ConfigSource;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class EnvVarsConfigProvider implements ConfigProvider {
+public class EnvVarsConfigSource implements ConfigSource {
 
     private static final String NAME = "default-env-vars-config-provider";
 

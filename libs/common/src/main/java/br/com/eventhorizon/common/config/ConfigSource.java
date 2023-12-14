@@ -1,6 +1,6 @@
 package br.com.eventhorizon.common.config;
 
-public interface ConfigProvider {
+public interface ConfigSource {
 
     String getName();
 
