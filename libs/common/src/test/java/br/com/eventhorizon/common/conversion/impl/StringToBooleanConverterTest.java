@@ -25,10 +25,34 @@ public class StringToBooleanConverterTest {
         assertTrue(converter.convert("True"));
         assertTrue(converter.convert("TrUe"));
         assertTrue(converter.convert("TRUE"));
+        assertTrue(converter.convert("yes"));
+        assertTrue(converter.convert("Yes"));
+        assertTrue(converter.convert("YeS"));
+        assertTrue(converter.convert("YES"));
+        assertTrue(converter.convert("Y"));
+        assertTrue(converter.convert("y"));
+        assertTrue(converter.convert("on"));
+        assertTrue(converter.convert("On"));
+        assertTrue(converter.convert("oN"));
+        assertTrue(converter.convert("ON"));
+        assertTrue(converter.convert("1"));
+
         assertFalse(converter.convert("false"));
         assertFalse(converter.convert("False"));
         assertFalse(converter.convert("FaLse"));
         assertFalse(converter.convert("FALSE"));
+        assertFalse(converter.convert("no"));
+        assertFalse(converter.convert("No"));
+        assertFalse(converter.convert("nO"));
+        assertFalse(converter.convert("NO"));
+        assertFalse(converter.convert("n"));
+        assertFalse(converter.convert("N"));
+        assertFalse(converter.convert("off"));
+        assertFalse(converter.convert("Off"));
+        assertFalse(converter.convert("OfF"));
+        assertFalse(converter.convert("OFF"));
+        assertFalse(converter.convert("0"));
+
         assertNull(converter.convert(null));
         assertThrows(ConversionException.class, () -> converter.convert(""));
         assertThrows(ConversionException.class, () -> converter.convert("invalid-boolean-value"));

@@ -29,9 +29,17 @@ public class StringToBooleanConverter extends AbstractConverter<String, Boolean>
 
     @Override
     public Boolean doConvert(String value) {
-        if (value.equalsIgnoreCase("true")) {
+        if (value.equalsIgnoreCase("true")
+                || value.equalsIgnoreCase("yes")
+                || value.equalsIgnoreCase("y")
+                || value.equalsIgnoreCase("on")
+                || value.equalsIgnoreCase("1")) {
             return Boolean.TRUE;
-        } else if (value.equalsIgnoreCase("false")) {
+        } else if (value.equalsIgnoreCase("false")
+                || value.equalsIgnoreCase("no")
+                || value.equalsIgnoreCase("n")
+                || value.equalsIgnoreCase("off")
+                || value.equalsIgnoreCase("0")) {
             return Boolean.FALSE;
         } else {
             throw new ConversionException(value, String.class, Boolean.class);

@@ -6,13 +6,13 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class StringToDoubleConverter extends AbstractConverter<String, Double> {
+public class StringToFloatConverter extends AbstractConverter<String, Float> {
 
     private static final class InstanceHolder {
-        private static final StringToDoubleConverter instance = new StringToDoubleConverter();
+        private static final StringToFloatConverter instance = new StringToFloatConverter();
     }
 
-    public static StringToDoubleConverter getInstance() {
+    public static StringToFloatConverter getInstance() {
         return InstanceHolder.instance;
     }
 
@@ -22,17 +22,17 @@ public class StringToDoubleConverter extends AbstractConverter<String, Double> {
     }
 
     @Override
-    public Class<Double> getTargetType() {
-        return Double.class;
+    public Class<Float> getTargetType() {
+        return Float.class;
     }
 
     @Override
-    public Double doConvert(String value) {
-        return Double.valueOf(value);
+    public Float doConvert(String value) {
+        return Float.valueOf(value);
     }
 
     @Override
-    public Converter<Double, String> reverse() {
-        return DoubleToStringConverter.getInstance();
+    public Converter<Float, String> reverse() {
+        return FloatToStringConverter.getInstance();
     }
 }

@@ -28,7 +28,7 @@ public class StringToIntegerConverter extends AbstractConverter<String, Integer>
 
     @Override
     public Integer doConvert(String value) {
-        return Integer.parseInt(value);
+        return Integer.valueOf(value);
     }
 
     @Override

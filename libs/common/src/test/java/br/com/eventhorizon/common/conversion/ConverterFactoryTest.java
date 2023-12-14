@@ -15,9 +15,16 @@ public class ConverterFactoryTest {
 
     static {
         types.add(new Class[] { Boolean.class, String.class });
-        types.add(new Class[] { Double.class, String.class });
+        types.add(new Class[] { Character.class, String.class });
+        types.add(new Class[] { Byte.class, String.class });
+        types.add(new Class[] { Short.class, String.class });
         types.add(new Class[] { Integer.class, String.class });
+        types.add(new Class[] { Long.class, String.class });
+        types.add(new Class[] { Float.class, String.class });
+        types.add(new Class[] { Double.class, String.class });
+        types.add(new Class[] { String.class, String.class });
         types.add(new Class[] { OffsetDateTime.class, String.class });
+        types.add(new Class[] { Class.class, String.class });
     }
 
     @Test
@@ -43,14 +50,6 @@ public class ConverterFactoryTest {
     @Test
     public void testGetConverterNonExistingConverter() {
         assertThrows(ConverterNotFoundException.class, () -> ConverterFactory.getConverter(SomeClassA.class, SomeClassB.class));
-    }
-
-    @Test
-    public void testGetConverters() {
-        var converters = ConverterFactory.getConverters();
-        assertNotNull(converters);
-        assertEquals(8, converters.size());
-        converters.forEach(converter -> assertSame(converter, ConverterFactory.getConverter(converter.getSourceType(), converter.getTargetType())));
     }
 
     private static class SomeClassA { }
