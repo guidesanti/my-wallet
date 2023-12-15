@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface TransactionRepository {
 
-    Transaction create(Transaction asset) throws DuplicateKeyException;
+    Transaction create(Transaction asset);
 
     Transaction update(Transaction asset);
 

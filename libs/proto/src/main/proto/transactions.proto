@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package br.com.eventhorizon.mywallet.proto;
+
+import "common.proto";
+import "assets.proto";
+
+option java_outer_classname = "TransactionsProto";
+option java_multiple_files = false;
+option java_package = "br.com.eventhorizon.mywallet.common.proto";
+option optimize_for = LITE_RUNTIME;
+
+// =====================================================================================================================
+// DATA MODELS
+// =====================================================================================================================
+
+enum TransactionType {
+  ASSET_BUY = 0;
+  ASSET_SELL = 1;
+  TRANSFER = 2;
+  DEPOSIT = 3;
+  WITHDRAW = 4;
+  DIVIDEND = 5;
+  INTEREST = 6;
+  CASHBACK = 7;
+}
+
+enum TransactionState {
+  PENDING = 0;
+  SETTLED = 1;
+  REJECTED = 2;
+  FAILED = 3;
+}
+
+message Transaction {
+  string id = 1;
+  string createdAt = 2;
+  optional string settledAt = 3;
+  TransactionState state = 4;
+  TransactionType type = 5;
+  string units = 6;
+  string price = 7;
+  optional string sourceAccountId = 8;
+  optional string destinationAccountId = 9;
+  optional string assetId = 10;
+  optional string description = 11;
+}
+
+// TODO: create state enum
+
+// =====================================================================================================================
+// COMMANDS
+// =====================================================================================================================
+
+// ---------------------------------------------------------------------------------------------------------------------
+// CREATE TRANSACTION
+// ---------------------------------------------------------------------------------------------------------------------
+
+message CreateTransactionCommandRequest {
+  TransactionType type = 1;
+  string units = 2;
+  string price = 3;
+  optional string sourceAccountId = 4;
+  optional string destinationAccountId = 5;
+  optional string assetId = 6;
+  optional string description = 7;
+}
+
+message CreateTransactionCommandReply {
+  Status status = 1;
+  Transaction transaction = 2;
+  repeated Error errors = 3;
+}
+
+// =====================================================================================================================
+// QUERIES
+// =====================================================================================================================
+
+// =====================================================================================================================
+// EVENTS
+// =====================================================================================================================
+
+// ---------------------------------------------------------------------------------------------------------------------
+// TRANSACTION CREATED
+// ---------------------------------------------------------------------------------------------------------------------
+
+message TransactionCreatedEvent {
+  Transaction transaction = 1;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// TRANSACTION ASSETS VALIDATED
+// ---------------------------------------------------------------------------------------------------------------------
+
+message TransactionAssetsValidatedEvent {
+  Transaction transaction = 1;
+  repeated Asset assets = 2;
+  repeated Error errors = 3;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// TRANSACTION SETTLED
+// ---------------------------------------------------------------------------------------------------------------------
+
+message TransactionSettledEvent {
+  Transaction transaction = 1;
+}

@@ -23,11 +23,11 @@ public class SagaEventPublisherFilter implements SagaFilter {
             log.info("SAGA EVENT PUBLISHER FILTER START");
             var repository = chain.repository();
             var publisher = chain.publisher();
-            var serdes = chain.serializers();
+            var serializer = chain.serializer();
             var output = chain.next(messages);
             for (var event : output.events()) {
                 if (event.publishCount() == 0 || Boolean.TRUE == chain.options().get(SagaOption.EVENT_REPUBLISH_ENABLED)) {
-                    publisher.publish(event, serdes);
+                    publisher.publish(event, serializer);
                     repository.incrementEventPublishCount(event.id());
                 }
             }

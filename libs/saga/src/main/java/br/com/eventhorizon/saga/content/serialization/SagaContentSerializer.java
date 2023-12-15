@@ -1,12 +1,10 @@
-package br.com.eventhorizon.saga.content.serializer;
+package br.com.eventhorizon.saga.content.serialization;
 
 import br.com.eventhorizon.saga.content.SagaContent;
 
 public interface SagaContentSerializer {
 
-    Class<?> getTargetClass();
-
     byte[] serialize(SagaContent content);
 
-    SagaContent deserialize(byte[] content);
+    <T> SagaContent deserialize(byte[] content, Class<T> type);
 }

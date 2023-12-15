@@ -4,20 +4,22 @@ import lombok.*;
 
 import java.util.Map;
 
-@Data
+@Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Asset {
 
     private String id;
 
+    @NonNull
     private String shortName;
 
+    @NonNull
     private String longName;
 
+    @NonNull
     private String strategy;
 
+    @NonNull
     private String type;
 
     @Singular

@@ -4,7 +4,7 @@ import br.com.eventhorizon.saga.SagaMessage;
 import br.com.eventhorizon.saga.chain.filter.SagaFilter;
 import br.com.eventhorizon.saga.SagaOutput;
 import br.com.eventhorizon.saga.content.checker.SagaContentChecker;
-import br.com.eventhorizon.saga.content.serializer.SagaContentSerializer;
+import br.com.eventhorizon.saga.content.serialization.SagaContentSerializer;
 import br.com.eventhorizon.saga.handler.SagaBulkHandler;
 import br.com.eventhorizon.saga.handler.SagaHandler;
 import br.com.eventhorizon.saga.handler.SagaSingleHandler;
@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 public class SagaChain {
@@ -29,7 +28,7 @@ public class SagaChain {
 
     private final SagaContentChecker checker;
 
-    private final Map<Class<?>, SagaContentSerializer> serializers;
+    private final SagaContentSerializer serializer;
 
     private final SagaOptions options;
 
@@ -49,8 +48,8 @@ public class SagaChain {
         return options;
     }
 
-    public Map<Class<?>, SagaContentSerializer> serializers() {
-        return serializers;
+    public SagaContentSerializer serializer() {
+        return serializer;
     }
 
     public SagaOutput next(List<SagaMessage> messages) throws Exception {

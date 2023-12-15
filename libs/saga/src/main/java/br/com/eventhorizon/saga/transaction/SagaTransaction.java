@@ -3,7 +3,7 @@ package br.com.eventhorizon.saga.transaction;
 import br.com.eventhorizon.saga.chain.filter.SagaFilter;
 import br.com.eventhorizon.saga.SagaOption;
 import br.com.eventhorizon.saga.content.checker.SagaContentChecker;
-import br.com.eventhorizon.saga.content.serializer.SagaContentSerializer;
+import br.com.eventhorizon.saga.content.serialization.SagaContentSerializer;
 import br.com.eventhorizon.saga.handler.SagaHandler;
 import br.com.eventhorizon.saga.messaging.SagaPublisher;
 import br.com.eventhorizon.saga.repository.SagaRepository;
@@ -28,9 +28,7 @@ public class SagaTransaction {
     @Singular
     private final List<SagaFilter> filters;
 
-    @NonNull
-    @Singular
-    private final List<SagaContentSerializer> serializers;
+    private final SagaContentSerializer serializer;
 
     private final SagaContentChecker checker;
 
@@ -53,8 +51,8 @@ public class SagaTransaction {
         return filters;
     }
 
-    public List<SagaContentSerializer> serializers() {
-        return serializers;
+    public SagaContentSerializer serializer() {
+        return serializer;
     }
 
     public SagaContentChecker checker() {

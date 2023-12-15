@@ -1,13 +1,12 @@
-my.custom.property: my-custom-property
-
 br.com.eventhorizon.mywallet:
   service:
     name: ms-assets
     env: ${spring.profiles.active}
   kafka:
     topics:
-      asset-management: ${br.com.eventhorizon.mywallet.service.env}-asset-management
       assets-get-asset: ${br.com.eventhorizon.mywallet.service.env}-assets-get-asset
+      assets-asset-created: ${br.com.eventhorizon.mywallet.service.env}-assets-asset-created
+      assets-asset-updated: ${br.com.eventhorizon.mywallet.service.env}-assets-asset-updated
 
 spring:
   application:

@@ -33,7 +33,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AssetDTO'
+              $ref: '#/components/schemas/CreateAssetDTO'
         description: Asset to create
       responses:
         '201':
@@ -100,7 +100,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AssetDTO'
+              $ref: '#/components/schemas/UpdateAssetDTO'
         description: Asset to update
       responses:
         '200':
@@ -200,6 +200,7 @@ components:
       allowEmptyValue: false
       schema:
         type: string
+        pattern: '(\d{4})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[01])([0-9A-Za-z]{10}?)([0-9]{18}?)([0-9]{3}?)'
     AssetIdPathParam:
       in: path
       name: assetId
@@ -258,6 +259,58 @@ components:
         - BUSINESS_ERROR
         - CLIENT_ERROR
         - SERVER_ERROR
+    CreateAssetDTO:
+      type: object
+      required:
+        - shortName
+        - longName
+        - strategy
+        - type
+      properties:
+        shortName:
+          type: string
+          example: PETROBRAS PN N2
+        longName:
+          type: string
+          example: Petróleo Brasileiro S.A. - Petrobras
+        strategy:
+          type: string
+          example: Variable Income
+        type:
+          type: string
+          example: STOCK
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            ticker: PETR4
+    UpdateAssetDTO:
+      type: object
+      required:
+        - shortName
+        - longName
+        - strategy
+        - type
+      properties:
+        shortName:
+          type: string
+          example: PETROBRAS PN N2
+        longName:
+          type: string
+          example: Petróleo Brasileiro S.A. - Petrobras
+        strategy:
+          type: string
+          example: Variable Income
+        type:
+          type: string
+          example: STOCK
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            ticker: PETR4
     AssetDTO:
       type: object
       required:

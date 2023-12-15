@@ -1,11 +1,15 @@
 package br.com.eventhorizon.saga.repository;
 
+import br.com.eventhorizon.common.common.DefaultErrors;
+import br.com.eventhorizon.common.exception.ServerErrorException;
 import br.com.eventhorizon.common.util.DateTimeUtils;
 import br.com.eventhorizon.saga.SagaEvent;
 import br.com.eventhorizon.saga.SagaHeaders;
 import br.com.eventhorizon.saga.SagaIdempotenceId;
-import br.com.eventhorizon.saga.content.serializer.SagaContentSerializer;
+import br.com.eventhorizon.saga.content.serialization.SagaContentSerializer;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public final class SagaEventMapper {
 
     public static SagaEventEntity modelToEntity(SagaEvent event, SagaContentSerializer serializer) {
@@ -26,18 +30,24 @@ public final class SagaEventMapper {
     }
 
     public static SagaEvent entityToModel(SagaEventEntity event, SagaContentSerializer serializer) {
-        return SagaEvent.builder()
-                .id(event.getId())
-                .originalIdempotenceId(SagaIdempotenceId.of(event.getOriginalIdempotenceId()))
-                .idempotenceId(SagaIdempotenceId.of(event.getIdempotenceId()))
-                .traceId(event.getTraceId())
-                .destination(event.getDestination())
-                .createdAt(DateTimeUtils.stringToOffsetDateTime(event.getCreatedAt()))
-                .replyOkTo(event.getReplyOkTo())
-                .replyNotOkTo(event.getReplyNotOkTo())
-                .headers(SagaHeaders.builder().headers(event.getHeaders()).build())
-                .content(serializer.deserialize(event.getContent()))
-                .publishCount(event.getPublishCount())
-                .build();
+        try {
+            return SagaEvent.builder()
+                    .id(event.getId())
+                    .originalIdempotenceId(SagaIdempotenceId.of(event.getOriginalIdempotenceId()))
+                    .idempotenceId(SagaIdempotenceId.of(event.getIdempotenceId()))
+                    .traceId(event.getTraceId())
+                    .destination(event.getDestination())
+                    .createdAt(DateTimeUtils.stringToOffsetDateTime(event.getCreatedAt()))
+                    .replyOkTo(event.getReplyOkTo())
+                    .replyNotOkTo(event.getReplyNotOkTo())
+                    .headers(SagaHeaders.builder().headers(event.getHeaders()).build())
+                    .content(serializer.deserialize(event.getContent(), Class.forName(event.getContentType())))
+                    .publishCount(event.getPublishCount())
+                    .build();
+        } catch (ClassNotFoundException e) {
+            var message = "Cannot map SAGA event from repository model to business model, invalid content type " + event.getContentType();
+            log.error(message, e);
+            throw new ServerErrorException(DefaultErrors.UNEXPECTED_SERVER_ERROR.getCode(), message);
+        }
     }
 }

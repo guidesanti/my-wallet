@@ -1,13 +1,7 @@
 package br.com.eventhorizon.mywallet.ms.assets.api.http.controller.delegate;
 
-import br.com.eventhorizon.common.common.DefaultErrors;
-import br.com.eventhorizon.common.exception.ClientErrorException;
-import br.com.eventhorizon.saga.InvalidSagaIdempotenceIdException;
+import br.com.eventhorizon.mywallet.ms.assets.api.http.model.*;
 import br.com.eventhorizon.saga.SagaIdempotenceId;
-import br.com.eventhorizon.mywallet.ms.assets.api.http.model.AssetDTO;
-import br.com.eventhorizon.mywallet.ms.assets.api.http.model.DeleteAsset200Response;
-import br.com.eventhorizon.mywallet.ms.assets.api.http.model.GetAllAssets200Response;
-import br.com.eventhorizon.mywallet.ms.assets.api.http.model.ResponseStatus;
 import br.com.eventhorizon.mywallet.ms.assets.api.http.model.mapper.AssetDTOMapper;
 import br.com.eventhorizon.mywallet.ms.assets.business.service.AssetsService;
 import br.com.eventhorizon.mywallet.ms.assets.api.http.AssetsApiDelegate;
@@ -28,53 +22,30 @@ public class AssetsApiDelegateImpl implements AssetsApiDelegate {
     private final AssetsService assetsService;
 
     @Override
-    public ResponseEntity<GetAllAssets200Response> createAsset(String traceId, String idempotenceId, AssetDTO asset) {
-        log.info("Create asset request: {}", asset);
-        validateCreateAssetRequest(traceId, idempotenceId, asset);
+    public ResponseEntity<GetAllAssets200Response> createAsset(String traceId,
+                                                               String idempotenceId,
+                                                               CreateAssetDTO createAssetDTO) {
+        log.info("Create asset request: {}", createAssetDTO);
         var createdAsset = AssetDTOMapper.toApiModel(assetsService.createAsset(SagaIdempotenceId.of(idempotenceId),
-                traceId, AssetDTOMapper.toBusinessModel(asset)));
+                traceId, AssetDTOMapper.toCreateAssetCommandRequestMessageModel(createAssetDTO)));
         log.info("Created asset: {}", createdAsset);
         var response = new GetAllAssets200Response(ResponseStatus.SUCCESS);
         response.setData(List.of(createdAsset));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    private void validateCreateAssetRequest(String traceId, String idempotenceId, AssetDTO asset) {
-        try {
-            SagaIdempotenceId.of(idempotenceId);
-        } catch (InvalidSagaIdempotenceIdException ex) {
-            throw new ClientErrorException(DefaultErrors.BAD_REQUEST.getCode(), "Invalid idempotence ID '" + idempotenceId + "'");
-        }
-    }
-
     @Override
     public ResponseEntity<GetAllAssets200Response> updateAsset(String traceId,
                                                                String idempotenceId,
                                                                String assetId,
-                                                               AssetDTO asset) {
-        log.info("Update asset request: {}", asset);
-        validateUpdateAssetRequest(traceId, idempotenceId, assetId, asset);
+                                                               UpdateAssetDTO updateAssetDTO) {
+        log.info("Update asset request: {}", updateAssetDTO);
         var updatedAsset = AssetDTOMapper.toApiModel(assetsService.updateAsset(SagaIdempotenceId.of(idempotenceId),
-                traceId, AssetDTOMapper.toBusinessModel(asset)));
+                traceId, AssetDTOMapper.toUpdateAssetCommandRequestMessageModel(assetId, updateAssetDTO)));
         log.info("Updated asset: {}", updatedAsset);
         var response = new GetAllAssets200Response(ResponseStatus.SUCCESS);
         response.setData(List.of(updatedAsset));
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    private void validateUpdateAssetRequest(String traceId, String idempotenceId, String assetId, AssetDTO asset) {
-        try {
-            SagaIdempotenceId.of(idempotenceId);
-        } catch (InvalidSagaIdempotenceIdException ex) {
-            throw new ClientErrorException(DefaultErrors.BAD_REQUEST.getCode(), "Invalid idempotence ID '" + idempotenceId + "'");
-        }
-        if (asset.getId() == null) {
-            asset.setId(assetId);
-        }
-        if (!asset.getId().equals(assetId)) {
-            throw new ClientErrorException(DefaultErrors.BAD_REQUEST.getCode(), "Asset ID on path parameter '" + assetId +
-                    "' does not match the asset ID '" + asset.getId() + "' on body");
-        }
     }
 
     @Override

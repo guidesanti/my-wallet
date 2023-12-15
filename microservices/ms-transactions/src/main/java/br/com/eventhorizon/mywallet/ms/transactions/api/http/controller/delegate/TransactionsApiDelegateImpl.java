@@ -25,12 +25,12 @@ public class TransactionsApiDelegateImpl implements TransactionsApiDelegate {
 
     @Override
     public ResponseEntity<GetAllTransactions200Response> createTransaction(
-            String traceId, String idempotenceId, CreateTransactionRequestDTO transactionDTO) {
+            String traceId, String idempotenceId, CreateTransactionRequestDTO createTransactionRequestDTO) {
         var createdTransaction = TransactionDTOMapper.toApiModel(
                 transactionsService.createTransaction(
                         SagaIdempotenceId.of(idempotenceId),
                         traceId,
-                        TransactionDTOMapper.toMessagingModel(transactionDTO)));
+                        TransactionDTOMapper.toMessagingModel(createTransactionRequestDTO)));
         var response = new GetAllTransactions200Response(ResponseStatus.SUCCESS);
         response.setData(List.of(createdTransaction));
         return new ResponseEntity<>(response, HttpStatus.OK);

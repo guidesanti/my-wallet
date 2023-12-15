@@ -25,7 +25,7 @@ public class SagaIdempotenceFilter implements SagaFilter {
 
             var repository = chain.repository();
             var checker = chain.checker();
-            var serializers = chain.serializers();
+            var serializer = chain.serializer();
             var notProcessedMessages = new ArrayList<SagaMessage>();
             var outputBuilder = SagaOutput.builder();
 
@@ -40,8 +40,8 @@ public class SagaIdempotenceFilter implements SagaFilter {
                     }
                 } else if (transaction.getChecksum().equalsIgnoreCase(checksum)) {
                     log.warn("Idempotence ID already processed, will return previous output");
-                    outputBuilder.response(repository.findResponse(message.idempotenceId().toString(), serializers));
-                    outputBuilder.events(repository.findEvents(message.idempotenceId().toString(), serializers));
+                    outputBuilder.response(repository.findResponse(message.idempotenceId().toString(), serializer));
+                    outputBuilder.events(repository.findEvents(message.idempotenceId().toString(), serializer));
                 } else {
                     throw new ClientErrorException("IDEMPOTENCE_ID_CONFLICT",
                             "Idempotence ID conflict, idempotence ID '" + message.idempotenceId()
@@ -54,9 +54,9 @@ public class SagaIdempotenceFilter implements SagaFilter {
                 outputBuilder.response(output.response());
                 outputBuilder.events(output.events());
                 if (output.response() != null) {
-                    repository.createResponse(output.response(), serializers);
+                    repository.createResponse(output.response(), serializer);
                 }
-                repository.createEvents(output.events(), serializers);
+                repository.createEvents(output.events(), serializer);
             }
 
             return outputBuilder.build();

@@ -4,7 +4,7 @@ import br.com.eventhorizon.saga.Conventions;
 import br.com.eventhorizon.saga.SagaEvent;
 import br.com.eventhorizon.common.messaging.impl.DefaultHeaders;
 import br.com.eventhorizon.common.messaging.impl.DefaultMessage;
-import br.com.eventhorizon.saga.content.serializer.SagaContentSerializer;
+import br.com.eventhorizon.saga.content.serialization.SagaContentSerializer;
 import br.com.eventhotizon.messaging.provider.publisher.PublisherRequest;
 import br.com.eventhotizon.messaging.provider.publisher.TransactionablePublisher;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 @RequiredArgsConstructor
@@ -27,9 +26,7 @@ public class DefaultSagaPublisher implements SagaPublisher {
     private final TransactionablePublisher publisher;
 
     @Override
-    public void publish(SagaEvent event, Map<Class<?>, SagaContentSerializer> serializers) {
-        var serde = findSerde(serializers, event.content().getContent().getClass());
-
+    public void publish(SagaEvent event, SagaContentSerializer serializer) {
         var headersBuilder = DefaultHeaders.builder()
                 .header(Conventions.HEADER_IDEMPOTENCE_ID, event.idempotenceId().toString())
                 .header(Conventions.HEADER_TRACE_ID, event.traceId())
@@ -49,7 +46,7 @@ public class DefaultSagaPublisher implements SagaPublisher {
 
         var message = DefaultMessage.builder()
                 .headers(headersBuilder.build())
-                .content(serde.serialize(event.content()))
+                .content(serializer.serialize(event.content()))
                 .build();
 
         var request = PublisherRequest.builder()
@@ -58,14 +55,6 @@ public class DefaultSagaPublisher implements SagaPublisher {
                 .build();
 
         publisher.publishAsync(request);
-    }
-
-    private SagaContentSerializer findSerde(Map<Class<?>, SagaContentSerializer> serializers, Class<?> type) {
-        var serializer = serializers.get(type);
-        if (serializer == null) {
-            throw new RuntimeException("Implementation error, cannot find a serializer/deserializer for class " + type.getName());
-        }
-        return serializer;
     }
 
     @Override

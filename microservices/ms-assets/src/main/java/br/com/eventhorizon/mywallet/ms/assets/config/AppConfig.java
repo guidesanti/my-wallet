@@ -1,6 +1,5 @@
 package br.com.eventhorizon.mywallet.ms.assets.config;
 
-import br.com.eventhorizon.common.config.Config;
 import br.com.eventhorizon.common.http.controller.BaseControllerAdvice;
 import br.com.eventhorizon.common.http.filter.TracingFilter;
 import br.com.eventhorizon.saga.messaging.DefaultSagaPublisher;
@@ -22,15 +21,9 @@ import org.springframework.context.annotation.Import;
 public class AppConfig {
 
     @Autowired
-    public AppConfig(ApplicationProperties props, Config config) {
+    public AppConfig(ApplicationProperties props) {
         log.info("===================================================================================================");
         log.info("Application properties: {}", props);
-        log.info("===================================================================================================");
-
-        log.info("===================================================================================================");
-        log.info("Application properties 2:");
-        log.info("MY_CUSTOM_ENV: {}", config.getValue("MY_CUSTOM_ENV"));
-        log.info("my.custom.property: {}", config.getValue("my.custom.property"));
         log.info("===================================================================================================");
     }
 }

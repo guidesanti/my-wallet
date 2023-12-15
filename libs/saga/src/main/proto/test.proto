@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package br.com.eventhorizon.saga.proto;
+
+option java_outer_classname = "TestProto";
+option java_multiple_files = false;
+option java_package = "br.com.eventhorizon.saga.proto";
+option optimize_for = LITE_RUNTIME;
+
+message TestMessage {
+  string field1 = 1;
+  string field2 = 2;
+  string field3 = 3;
+}

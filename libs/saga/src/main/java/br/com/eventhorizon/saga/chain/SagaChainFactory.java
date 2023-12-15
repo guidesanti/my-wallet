@@ -2,7 +2,8 @@ package br.com.eventhorizon.saga.chain;
 
 import br.com.eventhorizon.saga.content.checker.impl.DefaultSagaContentChecker;
 import br.com.eventhorizon.saga.content.checker.SagaContentChecker;
-import br.com.eventhorizon.saga.content.serializer.SagaContentSerializer;
+import br.com.eventhorizon.saga.content.serialization.SagaContentSerializer;
+import br.com.eventhorizon.saga.content.serialization.impl.DefaultSagaContentSerializer;
 import br.com.eventhorizon.saga.transaction.SagaTransaction;
 import br.com.eventhorizon.saga.chain.filter.*;
 
@@ -18,7 +19,7 @@ public final class SagaChainFactory {
                 sagaTransaction.repository(),
                 sagaTransaction.publisher(),
                 getChecker(sagaTransaction),
-                getSerializersMap(sagaTransaction),
+                getSerializer(sagaTransaction),
                 options);
     }
 
@@ -40,10 +41,8 @@ public final class SagaChainFactory {
         return filters;
     }
 
-    private static Map<Class<?>, SagaContentSerializer> getSerializersMap(SagaTransaction sagaTransaction) {
-        Map<Class<?>, SagaContentSerializer> serializers = new HashMap<>();
-        sagaTransaction.serializers().forEach(serializer -> serializers.put(serializer.getTargetClass(), serializer));
-        return serializers;
+    private static SagaContentSerializer getSerializer(SagaTransaction sagaTransaction) {
+        return sagaTransaction.serializer() == null ? new DefaultSagaContentSerializer() : sagaTransaction.serializer();
     }
 
     private static SagaContentChecker getChecker(SagaTransaction sagaTransaction) {

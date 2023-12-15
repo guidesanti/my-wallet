@@ -10,18 +10,6 @@ import java.math.BigDecimal;
 
 public final class TransactionDTOMapper {
 
-    public static Transaction toBusinessModel(CreateTransactionRequestDTO createTransactionRequestDTO) {
-        return Transaction.builder()
-                .type(Transaction.Type.valueOf(createTransactionRequestDTO.getType().name()))
-                .units(createTransactionRequestDTO.getUnits())
-                .price(createTransactionRequestDTO.getPrice())
-                .sourceAccountId(createTransactionRequestDTO.getSourceAccountId())
-                .destinationAccountId(createTransactionRequestDTO.getDestinationAccountId())
-                .assetId(createTransactionRequestDTO.getAssetId())
-                .description(createTransactionRequestDTO.getDescription())
-                .build();
-    }
-
     public static TransactionsProto.CreateTransactionCommandRequest toMessagingModel(CreateTransactionRequestDTO createTransactionRequestDTO) {
         var builder = TransactionsProto.CreateTransactionCommandRequest.newBuilder()
                 .setType(TransactionsProto.TransactionType.valueOf(createTransactionRequestDTO.getType().name()))
@@ -47,17 +35,6 @@ public final class TransactionDTOMapper {
         return builder.build();
     }
 
-    public static TransactionDTO toApiModel(Transaction transaction) {
-        var transactionDTO = new TransactionDTO(transaction.getId(), transaction.getState().name(), transaction.getType().name(), transaction.getUnits(), transaction.getPrice());
-        transactionDTO.setCreatedAt(DateTimeUtils.offsetDateTimeToString(transaction.getCreatedAt()));
-        transactionDTO.setSettledAt(DateTimeUtils.offsetDateTimeToString(transaction.getSettledAt()));
-        transactionDTO.setSourceAccountId(transaction.getSourceAccountId());
-        transactionDTO.setDestinationAccountId(transaction.getDestinationAccountId());
-        transactionDTO.setAssetId(transaction.getAssetId());
-        transactionDTO.setDescription(transaction.getDescription());
-        return transactionDTO;
-    }
-
     public static TransactionDTO toApiModel(TransactionsProto.Transaction transaction) {
         var transactionDTO = new TransactionDTO(transaction.getId(), transaction.getState().name(), transaction.getType().name(), new BigDecimal(transaction.getUnits()), new BigDecimal(transaction.getPrice()));
         transactionDTO.setCreatedAt(transaction.getCreatedAt());
@@ -66,6 +43,22 @@ public final class TransactionDTOMapper {
         transactionDTO.setDestinationAccountId(transaction.getDestinationAccountId());
         transactionDTO.setAssetId(transaction.getAssetId());
         transactionDTO.setDescription(transaction.getDescription());
+        return transactionDTO;
+    }
+
+    public static TransactionDTO toApiModel(TransactionsProto.CreateTransactionCommandReply createTransactionCommandReply) {
+        TransactionsProto.Transaction transactionMessage = createTransactionCommandReply.getTransaction();
+        var transactionDTO = new TransactionDTO(transactionMessage.getId(),
+                transactionMessage.getState().name(),
+                transactionMessage.getType().name(),
+                new BigDecimal(transactionMessage.getUnits()),
+                new BigDecimal(transactionMessage.getPrice()));
+        transactionDTO.setCreatedAt(transactionMessage.getCreatedAt());
+        transactionDTO.setSettledAt(transactionMessage.getSettledAt());
+        transactionDTO.setSourceAccountId(transactionMessage.getSourceAccountId());
+        transactionDTO.setDestinationAccountId(transactionMessage.getDestinationAccountId());
+        transactionDTO.setAssetId(transactionMessage.getAssetId());
+        transactionDTO.setDescription(transactionMessage.getDescription());
         return transactionDTO;
     }
 }

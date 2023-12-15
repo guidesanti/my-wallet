@@ -1,5 +1,6 @@
 package br.com.eventhorizon.common.messaging.provider.kafka.publisher.impl;
 
+import br.com.eventhorizon.common.exception.ServerErrorException;
 import br.com.eventhotizon.messaging.provider.publisher.PublisherRequest;
 import br.com.eventhotizon.messaging.provider.publisher.PublisherResponse;
 import br.com.eventhotizon.messaging.provider.publisher.TransactionablePublisher;
@@ -34,7 +35,7 @@ public class KafkaPublisher implements TransactionablePublisher {
                     return PublisherResponse.builder().isOk(true).build();
                 } catch (Exception ex) {
                     log.error("Failed to send message to Kafka", ex);
-                    return PublisherResponse.builder().isOk(false).build();
+                    throw ex;
                 }
             });
         }

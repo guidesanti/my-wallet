@@ -18,6 +18,7 @@
         <module>messaging</module>
         <module>common</module>
         <module>saga</module>
+        <module>proto</module>
     </modules>
 
     <dependencies>

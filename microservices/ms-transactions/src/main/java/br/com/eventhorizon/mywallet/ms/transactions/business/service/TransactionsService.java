@@ -2,11 +2,10 @@ package br.com.eventhorizon.mywallet.ms.transactions.business.service;
 
 import br.com.eventhorizon.common.exception.BusinessErrorException;
 import br.com.eventhorizon.mywallet.common.proto.AssetsProto;
+import br.com.eventhorizon.mywallet.common.proto.ResponseProto;
 import br.com.eventhorizon.mywallet.common.proto.TransactionsProto;
-import br.com.eventhorizon.common.repository.DuplicateKeyException;
 import br.com.eventhorizon.saga.*;
 import br.com.eventhorizon.saga.content.SagaContent;
-import br.com.eventhorizon.saga.content.serializer.impl.DefaultSagaContentSerializer;
 import br.com.eventhorizon.saga.handler.SagaSingleHandler;
 import br.com.eventhorizon.saga.messaging.SagaPublisher;
 import br.com.eventhorizon.saga.repository.SagaRepository;
@@ -17,7 +16,6 @@ import br.com.eventhorizon.mywallet.ms.transactions.ApplicationProperties;
 import br.com.eventhorizon.mywallet.ms.transactions.business.Errors;
 import br.com.eventhorizon.mywallet.ms.transactions.business.model.validation.CreateTransactionCommandRequestValidator;
 import br.com.eventhorizon.mywallet.ms.transactions.api.messaging.model.mapper.TransactionMessageMapper;
-import br.com.eventhorizon.mywallet.ms.transactions.business.model.Transaction;
 import br.com.eventhorizon.mywallet.ms.transactions.persistence.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,15 +46,11 @@ public class TransactionsService {
                 .handler(new CreateTransactionRequestHandler(applicationProperties, transactionRepository))
                 .repository(sagaRepository)
                 .publisher(sagaPublisher)
-                .serializer(new DefaultSagaContentSerializer(TransactionsProto.Transaction.class))
-                .serializer(new DefaultSagaContentSerializer(TransactionsProto.CreateTransactionCommandRequest.class))
-                .serializer(new DefaultSagaContentSerializer(TransactionsProto.TransactionCreatedEvent.class))
-                .serializer(new DefaultSagaContentSerializer(AssetsProto.GetAssetCommandRequest.class))
                 .build();
         this.createTransactionRequestValidator  = createTransactionRequestValidator;
     }
 
-    public TransactionsProto.Transaction createTransaction(
+    public TransactionsProto.CreateTransactionCommandReply createTransaction(
             SagaIdempotenceId idempotenceId,
             String traceId,
             TransactionsProto.CreateTransactionCommandRequest createTransactionCommandRequest) {
@@ -68,7 +62,7 @@ public class TransactionsService {
                         .traceId(traceId)
                         .content(SagaContent.of(createTransactionCommandRequest))
                         .build());
-        return (TransactionsProto.Transaction) sagaResponse.content().getContent();
+        return (TransactionsProto.CreateTransactionCommandReply) sagaResponse.content().getContent();
     }
 
     private void handleCreateTransactionRequestValidationErrors(List<ValidationError> errors) {
@@ -97,49 +91,42 @@ public class TransactionsService {
 
         @Override
         public SagaOutput handle(SagaMessage message) {
-            var createTransactionRequest = (TransactionsProto.CreateTransactionCommandRequest) message.content().getContent();
-            var transaction = TransactionMessageMapper.toBusinessModel(createTransactionRequest);
-            try {
-                var createdTransaction = transactionRepository.create(transaction);
-                return SagaOutput.builder()
-                        .response(SagaResponse.builder()
-                                .idempotenceId(message.idempotenceId())
-                                .content(SagaContent.of(TransactionMessageMapper.toMessageModel(createdTransaction)))
-                                .build())
-                        .event(SagaEvent.builder()
-                                .originalIdempotenceId(message.idempotenceId())
-                                .idempotenceId(message.idempotenceId().incrementIdempotenceStep(1))
-                                .traceId(message.traceId())
-                                .destination(applicationProperties.getKafka().getTopics().get("transactions-transaction-created"))
-                                .headers(SagaHeaders.builder()
-                                        .header("transaction-id", createdTransaction.getId())
-                                        .build())
-                                .content(SagaContent.of(getCreatedTransactionEvent(createdTransaction)))
-                                .build())
-                        .event(SagaEvent.builder()
-                                .originalIdempotenceId(message.idempotenceId())
-                                .idempotenceId(message.idempotenceId().incrementIdempotenceStep(1))
-                                .traceId(message.traceId())
-                                .destination(applicationProperties.getKafka().getTopics().get("assets-get-asset"))
-                                .headers(SagaHeaders.builder()
-                                        .header("transaction-id", createdTransaction.getId())
-                                        .build())
-                                .content(SagaContent.of(AssetsProto.GetAssetCommandRequest.newBuilder()
-                                                .setAssetId(transaction.getAssetId())
-                                        .build()))
-                                .build())
-                        .build();
-            } catch (DuplicateKeyException ex) {
-                throw new BusinessErrorException(
-                        "TRANSACTION_ALREADY_EXIST", "Transaction already exist with ID '" +
-                        transaction.getId() + "'",
-                        ex);
-            }
-        }
-
-        private TransactionsProto.TransactionCreatedEvent getCreatedTransactionEvent(Transaction transaction) {
-            return TransactionsProto.TransactionCreatedEvent.newBuilder()
-                    .setTransaction(TransactionMessageMapper.toMessageModel(transaction))
+            var createTransactionCommandRequest = (TransactionsProto.CreateTransactionCommandRequest) message.content().getContent();
+            var transaction = TransactionMessageMapper.toBusinessModel(createTransactionCommandRequest);
+            var createdTransaction = transactionRepository.create(transaction);
+            var createdTransactionMessage = TransactionMessageMapper.toMessageModel(createdTransaction);
+            return SagaOutput.builder()
+                    .response(SagaResponse.builder()
+                            .idempotenceId(message.idempotenceId())
+                            .content(SagaContent.of(TransactionsProto.CreateTransactionCommandReply.newBuilder()
+                                    .setStatus(ResponseProto.Status.SUCCESS)
+                                    .setTransaction(createdTransactionMessage)
+                                    .build()))
+                            .build())
+                    .event(SagaEvent.builder()
+                            .originalIdempotenceId(message.idempotenceId())
+                            .idempotenceId(message.idempotenceId().incrementIdempotenceStep(1))
+                            .traceId(message.traceId())
+                            .destination(applicationProperties.getKafka().getTopics().get("transactions-transaction-created"))
+                            .headers(SagaHeaders.builder()
+                                    .header("transaction-id", createdTransaction.getId())
+                                    .build())
+                            .content(SagaContent.of(TransactionsProto.TransactionCreatedEvent.newBuilder()
+                                    .setTransaction(createdTransactionMessage)
+                                    .build()))
+                            .build())
+                    .event(SagaEvent.builder()
+                            .originalIdempotenceId(message.idempotenceId())
+                            .idempotenceId(message.idempotenceId().incrementIdempotenceStep(1))
+                            .traceId(message.traceId())
+                            .destination(applicationProperties.getKafka().getTopics().get("assets-get-asset"))
+                            .headers(SagaHeaders.builder()
+                                    .header("transaction-id", createdTransaction.getId())
+                                    .build())
+                            .content(SagaContent.of(AssetsProto.GetAssetCommandRequest.newBuilder()
+                                    .setAssetId(transaction.getAssetId())
+                                    .build()))
+                            .build())
                     .build();
         }
     }

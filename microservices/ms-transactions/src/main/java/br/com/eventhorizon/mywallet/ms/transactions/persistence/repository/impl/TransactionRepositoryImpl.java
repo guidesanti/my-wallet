@@ -1,6 +1,5 @@
 package br.com.eventhorizon.mywallet.ms.transactions.persistence.repository.impl;
 
-import br.com.eventhorizon.common.repository.DuplicateKeyException;
 import br.com.eventhorizon.mywallet.ms.transactions.business.model.Transaction;
 import br.com.eventhorizon.mywallet.ms.transactions.persistence.model.mapper.TransactionDocumentMapper;
 import br.com.eventhorizon.mywallet.ms.transactions.persistence.repository.TransactionRepository;
@@ -18,12 +17,8 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     private final MongoDBTransactionRepository mongoDBTransactionRepository;
 
     @Override
-    public Transaction create(Transaction asset) throws DuplicateKeyException {
-        try {
-            return TransactionDocumentMapper.toBusinessModel(mongoDBTransactionRepository.create(TransactionDocumentMapper.toPersistenceModel(asset)));
-        } catch (org.springframework.dao.DuplicateKeyException ex) {
-            throw new DuplicateKeyException("", ex);
-        }
+    public Transaction create(Transaction asset) {
+        return TransactionDocumentMapper.toBusinessModel(mongoDBTransactionRepository.create(TransactionDocumentMapper.toPersistenceModel(asset)));
     }
 
     @Override

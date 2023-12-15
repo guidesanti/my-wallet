@@ -5,7 +5,7 @@ import br.com.eventhorizon.saga.SagaResponse;
 import br.com.eventhorizon.saga.SagaEvent;
 import br.com.eventhorizon.saga.SagaOption;
 import br.com.eventhorizon.saga.chain.SagaOptions;
-import br.com.eventhorizon.saga.content.serializer.SagaContentSerializer;
+import br.com.eventhorizon.saga.content.serialization.SagaContentSerializer;
 import br.com.eventhorizon.saga.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -22,7 +22,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -82,31 +81,27 @@ public class MongoDBSagaRepository implements SagaRepository {
     }
 
     @Override
-    public void createResponse(SagaResponse response, Map<Class<?>, SagaContentSerializer> serializers) {
-        var responseEntity = SagaResponseMapper.modelToEntity(response, serializers.get(response.content().getContent().getClass()));
+    public void createResponse(SagaResponse response, SagaContentSerializer serializer) {
+        var responseEntity = SagaResponseMapper.modelToEntity(response, serializer);
         responseEntity.setExpireAt(getExpirationDate(response.createdAt()));
         mongoTemplate.insert(responseEntity, options.get(SagaOption.RESPONSE_COLLECTION_NAME));
     }
 
     @Override
-    public SagaResponse findResponse(String idempotenceId, Map<Class<?>, SagaContentSerializer> serializers) {
+    public SagaResponse findResponse(String idempotenceId, SagaContentSerializer serializer) {
         var response = mongoTemplate.findOne(Query.query(where(IDEMPOTENCE_ID_FIELD_NAME).is(idempotenceId)),
                 SagaResponseEntity.class, options.get(SagaOption.RESPONSE_COLLECTION_NAME));
         if (response != null) {
-            try {
-                return SagaResponseMapper.entityToModel(response, serializers.get(Class.forName(response.getContentType())));
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            return SagaResponseMapper.entityToModel(response, serializer);
         }
         return null;
     }
 
     @Override
-    public void createEvents(List<SagaEvent> events, Map<Class<?>, SagaContentSerializer> serializers) {
+    public void createEvents(List<SagaEvent> events, SagaContentSerializer serializer) {
         mongoTemplate.insert(events.stream()
                         .map(e -> {
-                            var eventDocument = SagaEventMapper.modelToEntity(e, serializers.get(e.content().getContent().getClass()));
+                            var eventDocument = SagaEventMapper.modelToEntity(e, serializer);
                             eventDocument.setExpireAt(getExpirationDate(e.createdAt()));
                             return eventDocument;
                         })
@@ -115,16 +110,10 @@ public class MongoDBSagaRepository implements SagaRepository {
     }
 
     @Override
-    public List<SagaEvent> findEvents(String originalIdempotenceId, Map<Class<?>, SagaContentSerializer> serializers) {
+    public List<SagaEvent> findEvents(String originalIdempotenceId, SagaContentSerializer serializer) {
         var events = mongoTemplate.find(Query.query(where(ORIGINAL_IDEMPOTENCE_ID_FIELD_NAME).is(originalIdempotenceId)),
                 SagaEventEntity.class, options.get(SagaOption.EVENT_COLLECTION_NAME));
-        return events.stream().map(e -> {
-            try {
-                return SagaEventMapper.entityToModel(e, serializers.get(Class.forName(e.getContentType())));
-            } catch (ClassNotFoundException ex) {
-                throw new RuntimeException(ex);
-            }
-        }).toList();
+        return events.stream().map(e -> SagaEventMapper.entityToModel(e, serializer)).toList();
     }
 
     @Override

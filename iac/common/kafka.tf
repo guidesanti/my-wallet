@@ -46,12 +46,29 @@ locals {
   ######################################################################################################################
   topics = {
     ####################################################################################################################
-    # Topic:
-    # Type:
-    # Description:
+    # Topic: assets-asset-created
+    # Type: EVENT
+    # Description: Topic to broadcast asset created events
     ####################################################################################################################
-    asset_management = {
-      name                = "asset-management"
+    assets_asset_created = {
+      name                = "assets-asset-created"
+      replication_factor  = 3
+      partitions          = 1
+
+      config = {
+        "retention.ms"    = "604800000"
+        "segment.ms"      = "604800000"
+        "cleanup.policy"  = "delete"
+      }
+    }
+
+    ####################################################################################################################
+    # Topic: assets-asset-updated
+    # Type: EVENT
+    # Description: Topic to broadcast asset updated events
+    ####################################################################################################################
+    assets_asset_updated = {
+      name                = "assets-asset-updated"
       replication_factor  = 3
       partitions          = 1
 
