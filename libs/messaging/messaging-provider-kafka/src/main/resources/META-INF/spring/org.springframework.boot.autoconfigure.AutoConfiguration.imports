@@ -1,1 +1,1 @@
-br.com.eventhorizon.common.messaging.provider.kafka.ModuleAutoConfiguration
+br.com.eventhorizon.messaging.provider.kafka.ModuleAutoConfiguration

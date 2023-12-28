@@ -20,9 +20,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoRepositories(
         value = ApplicationProperties.REPOSITORY_PACKAGE,
         repositoryBaseClass = BaseRepositoryImpl.class)
-@Import({
-        MongoDBSagaRepository.class
-})
 public class MongoConfig {
 
     @Bean

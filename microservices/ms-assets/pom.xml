@@ -22,18 +22,22 @@
     <dependencies>
         <dependency>
             <groupId>br.com.eventhorizon</groupId>
-            <artifactId>saga</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <artifactId>messaging-provider-kafka</artifactId>
         </dependency>
+
         <dependency>
             <groupId>br.com.eventhorizon</groupId>
-            <artifactId>messaging-provider-kafka</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <artifactId>saga-core</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>br.com.eventhorizon</groupId>
+            <artifactId>saga-messaging-provider-kafka</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>br.com.eventhorizon</groupId>
             <artifactId>proto</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

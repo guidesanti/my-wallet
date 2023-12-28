@@ -5,12 +5,12 @@ import br.com.eventhorizon.common.repository.DuplicateKeyException;
 import br.com.eventhorizon.mywallet.common.proto.AssetsProto;
 import br.com.eventhorizon.mywallet.common.proto.ResponseProto;
 import br.com.eventhorizon.saga.*;
-import br.com.eventhorizon.saga.content.SagaContent;
 import br.com.eventhorizon.saga.handler.SagaSingleHandler;
-import br.com.eventhorizon.saga.messaging.SagaPublisher;
+import br.com.eventhorizon.saga.messaging.publisher.SagaPublisher;
 import br.com.eventhorizon.saga.repository.SagaRepository;
+import br.com.eventhorizon.saga.transaction.DefaultSagaTransaction;
 import br.com.eventhorizon.saga.transaction.SagaTransaction;
-import br.com.eventhorizon.saga.transaction.SagaTransactionManager;
+import br.com.eventhorizon.saga.transaction.SagaTransactionExecutor;
 import br.com.eventhorizon.mywallet.ms.assets.ApplicationProperties;
 import br.com.eventhorizon.mywallet.ms.assets.api.messaging.model.mapper.AssetMessageMapper;
 import br.com.eventhorizon.mywallet.ms.assets.business.model.Asset;
@@ -28,7 +28,7 @@ public class AssetsService {
 
     private final AssetRepository assetRepository;
 
-    private final SagaTransactionManager sagaTransactionManager;
+    private final SagaTransactionExecutor sagaTransactionExecutor;
 
     private final SagaTransaction createAssetRequestSagaTransaction;
 
@@ -37,16 +37,19 @@ public class AssetsService {
     @Autowired
     public AssetsService(ApplicationProperties applicationProperties,
                          AssetRepository assetRepository,
+                         SagaTransactionExecutor sagaTransactionExecutor,
                          SagaRepository sagaRepository,
                          SagaPublisher sagaPublisher) {
         this.assetRepository = assetRepository;
-        this.sagaTransactionManager = new SagaTransactionManager();
-        this.createAssetRequestSagaTransaction = SagaTransaction.builder()
+        this.sagaTransactionExecutor = sagaTransactionExecutor;
+        this.createAssetRequestSagaTransaction = DefaultSagaTransaction.builder()
+                .id("create-asset-saga-transaction")
                 .handler(new CreateAssetRequestHandler(applicationProperties.getAssetCreatedKafkaTopicName(), assetRepository))
                 .repository(sagaRepository)
                 .publisher(sagaPublisher)
                 .build();
-        this.updateAssetRequestSagaTransaction = SagaTransaction.builder()
+        this.updateAssetRequestSagaTransaction = DefaultSagaTransaction.builder()
+                .id("update-asset-saga-transaction")
                 .handler(new UpdateAssetRequestHandler(applicationProperties.getAssetUpdatedKafkaTopicName(), assetRepository))
                 .repository(sagaRepository)
                 .publisher(sagaPublisher)
@@ -55,26 +58,26 @@ public class AssetsService {
 
     public AssetsProto.CreateAssetCommandReply createAsset(SagaIdempotenceId idempotenceId, String traceId, AssetsProto.CreateAssetCommandRequest createAssetCommandRequest) {
         SagaResponse sagaResponse;
-        sagaResponse = sagaTransactionManager.execute(
+        sagaResponse = sagaTransactionExecutor.execute(
                 createAssetRequestSagaTransaction,
                 SagaMessage.builder()
                         .idempotenceId(idempotenceId)
                         .traceId(traceId)
-                        .content(SagaContent.of(createAssetCommandRequest))
+                        .content(createAssetCommandRequest)
                         .build());
-        return (AssetsProto.CreateAssetCommandReply) sagaResponse.content().getContent();
+        return (AssetsProto.CreateAssetCommandReply) sagaResponse.content();
     }
 
     public AssetsProto.UpdateAssetCommandReply updateAsset(SagaIdempotenceId idempotenceId, String traceId, AssetsProto.UpdateAssetCommandRequest updateAssetCommandRequest) {
         SagaResponse sagaResponse;
-        sagaResponse = sagaTransactionManager.execute(
+        sagaResponse = sagaTransactionExecutor.execute(
                 updateAssetRequestSagaTransaction,
                 SagaMessage.builder()
                         .idempotenceId(idempotenceId)
                         .traceId(traceId)
-                        .content(SagaContent.of(updateAssetCommandRequest))
+                        .content(updateAssetCommandRequest)
                         .build());
-        return (AssetsProto.UpdateAssetCommandReply) sagaResponse.content().getContent();
+        return (AssetsProto.UpdateAssetCommandReply) sagaResponse.content();
     }
 
     public void deleteAsset(String id) {
@@ -94,6 +97,11 @@ public class AssetsService {
         }
     }
 
+    public AssetsProto.GetAssetCommandReply findAssetById(SagaIdempotenceId idempotenceId, String traceId, AssetsProto.GetAssetCommandRequest getAssetCommandRequest) {
+        // TODO
+        return null;
+    }
+
     @RequiredArgsConstructor
     private static class CreateAssetRequestHandler implements SagaSingleHandler {
 
@@ -103,7 +111,7 @@ public class AssetsService {
 
         @Override
         public SagaOutput handle(SagaMessage message) {
-            var createAssetCommandRequest = (AssetsProto.CreateAssetCommandRequest) message.content().getContent();
+            var createAssetCommandRequest = (AssetsProto.CreateAssetCommandRequest) message.content();
             try {
                 var asset = Asset.builder()
                         .shortName(createAssetCommandRequest.getShortName())
@@ -117,19 +125,19 @@ public class AssetsService {
                 return SagaOutput.builder()
                         .response(SagaResponse.builder()
                                 .idempotenceId(message.idempotenceId())
-                                .content(SagaContent.of(AssetsProto.CreateAssetCommandReply.newBuilder()
+                                .content(AssetsProto.CreateAssetCommandReply.newBuilder()
                                         .setStatus(ResponseProto.Status.SUCCESS)
                                         .setData(createdAssetMessage)
-                                        .build()))
+                                        .build())
                                 .build())
                         .event(SagaEvent.builder()
                                 .originalIdempotenceId(message.idempotenceId())
                                 .idempotenceId(message.idempotenceId().incrementIdempotenceStep(1))
                                 .traceId(message.traceId())
                                 .destination(assetCreatedKafkaTopicName)
-                                .content(SagaContent.of(AssetsProto.AssetCreatedEvent.newBuilder()
+                                .content(AssetsProto.AssetCreatedEvent.newBuilder()
                                         .setData(createdAssetMessage)
-                                        .build()))
+                                        .build())
                                 .build())
                         .build();
             } catch (DuplicateKeyException ex) {
@@ -151,7 +159,7 @@ public class AssetsService {
 
         @Override
         public SagaOutput handle(SagaMessage message) throws Exception {
-            var updateAssetCommandRequest = (AssetsProto.UpdateAssetCommandRequest) message.content().getContent();
+            var updateAssetCommandRequest = (AssetsProto.UpdateAssetCommandRequest) message.content();
             var asset = Asset.builder()
                     .id(updateAssetCommandRequest.getId())
                     .shortName(updateAssetCommandRequest.getShortName())
@@ -170,19 +178,19 @@ public class AssetsService {
             return SagaOutput.builder()
                     .response(SagaResponse.builder()
                             .idempotenceId(message.idempotenceId())
-                            .content(SagaContent.of(AssetsProto.UpdateAssetCommandReply.newBuilder()
+                            .content(AssetsProto.UpdateAssetCommandReply.newBuilder()
                                     .setStatus(ResponseProto.Status.SUCCESS)
                                     .setData(updatedAssetMessage)
-                                    .build()))
+                                    .build())
                             .build())
                     .event(SagaEvent.builder()
                             .originalIdempotenceId(message.idempotenceId())
                             .idempotenceId(message.idempotenceId().incrementIdempotenceStep(1))
                             .traceId(message.traceId())
                             .destination(assetUpdatedKafkaTopicName)
-                            .content(SagaContent.of(AssetsProto.AssetUpdatedEvent.newBuilder()
+                            .content(AssetsProto.AssetUpdatedEvent.newBuilder()
                                     .setData(updatedAssetMessage)
-                                    .build()))
+                                    .build())
                             .build())
                     .build();
         }

@@ -22,16 +22,20 @@
 		<maven.compiler.source>20</maven.compiler.source>
 		<maven.compiler.target>20</maven.compiler.target>
 		<maven.plugin.validation>VERBOSE</maven.plugin.validation>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Plugin Versions -->
 		<org.springframework.boot.spring-boot-maven-plugin.version>3.1.2</org.springframework.boot.spring-boot-maven-plugin.version>
 		<org.apache.maven.plugins.maven-compiler-plugin.version>3.8.0</org.apache.maven.plugins.maven-compiler-plugin.version>
 		<org.xolstice.maven.plugins.protobuf-maven-plugin.version>0.6.1</org.xolstice.maven.plugins.protobuf-maven-plugin.version>
 		<org.openapitools.openapi-generator-maven-plugin.version>6.6.0</org.openapitools.openapi-generator-maven-plugin.version>
+		<io.openliberty.tools.liberty-maven-plugin.version>3.10</io.openliberty.tools.liberty-maven-plugin.version>
 
 		<!-- Dependency Versions -->
 		<lombok.version>1.18.28</lombok.version>
 		<lombok.mapstruct.version>0.2.0</lombok.mapstruct.version>
+		<jakarta.jakartaee-api.version>10.0.0</jakarta.jakartaee-api.version>
+		<org.eclipse.microprofile.version>6.1</org.eclipse.microprofile.version>
 		<spring.kafka.version>3.0.9</spring.kafka.version>
 		<hibernate.validator.version>8.0.1.Final</hibernate.validator.version>
 		<javax.servlet-api.version>4.0.1</javax.servlet-api.version>
@@ -57,6 +61,36 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>br.com.eventhorizon</groupId>
+				<artifactId>messaging-provider</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>br.com.eventhorizon</groupId>
+				<artifactId>messaging-provider-kafka</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>br.com.eventhorizon</groupId>
+				<artifactId>saga-core</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>br.com.eventhorizon</groupId>
+				<artifactId>saga-messaging-provider-kafka</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>br.com.eventhorizon</groupId>
+				<artifactId>proto</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+
 			<!-- Lombok -->
 			<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 			<dependency>

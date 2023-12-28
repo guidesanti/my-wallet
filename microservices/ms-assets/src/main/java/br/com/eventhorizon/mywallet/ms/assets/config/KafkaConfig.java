@@ -39,29 +39,29 @@ public class KafkaConfig {
         return props;
     }
 
-    @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, byte[]>> kafkaListenerContainerFactory(
-            ApplicationProperties applicationProperties) {
-        ConcurrentKafkaListenerContainerFactory<String, byte[]> factory
-                = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory(applicationProperties));
-        factory.setConcurrency(1);
-        factory.getContainerProperties().setPollTimeout(3000);
-        return factory;
-    }
-
-    @Bean
-    public ConsumerFactory<String, byte[]> consumerFactory(ApplicationProperties applicationProperties) {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs(applicationProperties));
-    }
-
-    @Bean
-    public Map<String, Object> consumerConfigs(ApplicationProperties applicationProperties) {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, applicationProperties.getKafkaBootstrapServers());
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, applicationProperties.getServiceName());
-        return props;
-    }
+//    @Bean
+//    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, byte[]>> kafkaListenerContainerFactory(
+//            ApplicationProperties applicationProperties) {
+//        ConcurrentKafkaListenerContainerFactory<String, byte[]> factory
+//                = new ConcurrentKafkaListenerContainerFactory<>();
+//        factory.setConsumerFactory(consumerFactory(applicationProperties));
+//        factory.setConcurrency(1);
+//        factory.getContainerProperties().setPollTimeout(3000);
+//        return factory;
+//    }
+//
+//    @Bean
+//    public ConsumerFactory<String, byte[]> consumerFactory(ApplicationProperties applicationProperties) {
+//        return new DefaultKafkaConsumerFactory<>(consumerConfigs(applicationProperties));
+//    }
+//
+//    @Bean
+//    public Map<String, Object> consumerConfigs(ApplicationProperties applicationProperties) {
+//        Map<String, Object> props = new HashMap<>();
+//        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, applicationProperties.getKafkaBootstrapServers());
+//        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+//        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class);
+//        props.put(ConsumerConfig.GROUP_ID_CONFIG, applicationProperties.getServiceName());
+//        return props;
+//    }
 }
