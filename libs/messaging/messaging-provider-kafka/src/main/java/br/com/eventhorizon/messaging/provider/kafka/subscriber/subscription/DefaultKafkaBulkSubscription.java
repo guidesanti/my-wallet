@@ -25,5 +25,5 @@ public class DefaultKafkaBulkSubscription<T> implements KafkaBulkSubscription<T>
 
     private final Class<T> sourceType;
 
-    private final Map<String, Object> config;
+    private final Map<String, Object> kafkaConsumerConfig;
 }

@@ -6,5 +6,5 @@ import java.util.Map;
 
 public interface KafkaSubscription<T> extends Subscription<T> {
 
-    Map<String, Object> getConfig();
+    Map<String, Object> getKafkaConsumerConfig();
 }

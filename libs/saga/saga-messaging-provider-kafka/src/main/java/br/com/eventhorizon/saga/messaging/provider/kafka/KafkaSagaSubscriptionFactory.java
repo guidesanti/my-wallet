@@ -25,7 +25,7 @@ public class KafkaSagaSubscriptionFactory implements SagaSubscriptionFactory {
                         new KafkaSagaSingleMessageHandler<>(sagaSingleHandler),
                         kafkaSagaTransaction.getSource(),
                         kafkaSagaTransaction.getSourceType(),
-                        kafkaSagaTransaction.getConfig());
+                        kafkaSagaTransaction.getKafkaConsumerConfig());
             }
 
             if (kafkaSagaTransaction.getHandler() instanceof SagaBulkHandler sagaBulkHandler) {
@@ -34,7 +34,7 @@ public class KafkaSagaSubscriptionFactory implements SagaSubscriptionFactory {
                         new KafkaSagaBulkMessageHandler<>(sagaBulkHandler),
                         kafkaSagaTransaction.getSource(),
                         kafkaSagaTransaction.getSourceType(),
-                        kafkaSagaTransaction.getConfig());
+                        kafkaSagaTransaction.getKafkaConsumerConfig());
             }
         }
 

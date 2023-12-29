@@ -6,7 +6,6 @@ import br.com.eventhorizon.messaging.provider.subscriber.Subscriber;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberFactory;
 import br.com.eventhorizon.messaging.provider.subscriber.subscription.Subscription;
 import br.com.eventhorizon.messaging.provider.subscriber.subscription.UnsupportedSubscriptionException;
-import br.com.eventhorizon.messaging.provider.subscriber.DefaultSubscriber;
 import lombok.RequiredArgsConstructor;
 
 import java.util.concurrent.ExecutorService;
@@ -28,8 +27,8 @@ public class KafkaSubscriberFactory implements SubscriberFactory {
     public <T> Subscriber<T> create(Subscription<T> subscription) {
         if (subscription instanceof KafkaSubscription<T> kafkaSubscription) {
             var name = Conventions.PROVIDER_NAME + "-subscriber-" + count.getAndIncrement();
-            var poller = new KafkaMessagePoller<T>(kafkaSubscription.getSource(), kafkaSubscription.getConfig());
-            return new DefaultSubscriber<>(name, executorService, subscription, poller);
+            var poller = new KafkaMessagePoller<T>(kafkaSubscription.getSource(), kafkaSubscription.getKafkaConsumerConfig());
+            return new Subscriber<>(name, executorService, subscription, poller);
         }
 
         throw new UnsupportedSubscriptionException(subscription, this);

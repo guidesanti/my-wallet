@@ -10,5 +10,5 @@ import java.util.Map;
 @SuperBuilder
 public class KafkaSagaTransaction<T> extends DefaultSagaTransaction<T> {
 
-    private final Map<String, Object> config;
+    private final Map<String, Object> kafkaConsumerConfig;
 }

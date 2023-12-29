@@ -7,6 +7,8 @@ import lombok.*;
 import java.util.List;
 import java.util.Map;
 
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public class SagaMessage<T> extends Message<T> {
 

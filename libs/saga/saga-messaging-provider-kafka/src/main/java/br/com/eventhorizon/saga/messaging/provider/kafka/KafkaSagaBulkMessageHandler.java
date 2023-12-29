@@ -27,7 +27,7 @@ public class KafkaSagaBulkMessageHandler<T> implements BulkMessageHandler<T> {
             var headersBuilder = Headers.builder();
             message.headers().forEach(header -> header.getValue().forEach(value -> headersBuilder.header(header.getKey(), value)));
             sagaMessages.add(SagaMessage.builder()
-                    .idempotenceId(SagaIdempotenceId.of(message.headers().firstValue(br.com.eventhorizon.saga.Conventions.HEADER_IDEMPOTENCE_ID).get()))
+                    .idempotenceId(message.headers().firstValue(Conventions.HEADER_IDEMPOTENCE_ID).map(SagaIdempotenceId::of).orElse(null))
                     .traceId(message.headers().firstValue(br.com.eventhorizon.saga.Conventions.HEADER_TRACE_ID).orElse(null))
                     .source(message.headers().firstValue(Conventions.HEADER_SOURCE).orElse(null))
                     .headers(headersBuilder.build())

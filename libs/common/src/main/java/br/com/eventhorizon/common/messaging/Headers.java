@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.util.*;
 
+@ToString
 @EqualsAndHashCode
 public class Headers implements Iterable<Map.Entry<String, List<String>>> {
 

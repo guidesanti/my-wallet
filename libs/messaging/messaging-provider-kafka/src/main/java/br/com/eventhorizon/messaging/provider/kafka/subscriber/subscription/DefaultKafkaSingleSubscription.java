@@ -25,5 +25,5 @@ public class DefaultKafkaSingleSubscription<T> implements KafkaSingleSubscriptio
 
     private final Class<T> sourceType;
 
-    private final Map<String, Object> config;
+    private final Map<String, Object> kafkaConsumerConfig;
 }

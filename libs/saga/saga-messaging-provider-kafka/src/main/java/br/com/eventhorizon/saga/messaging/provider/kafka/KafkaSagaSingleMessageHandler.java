@@ -22,7 +22,7 @@ public class KafkaSagaSingleMessageHandler<T> implements SingleMessageHandler<T>
         message.headers().forEach(header -> header.getValue().forEach(value -> headersBuilder.header(header.getKey(), value)));
 
         handler.handle(SagaMessage.builder()
-                .idempotenceId(SagaIdempotenceId.of(message.headers().firstValue(Conventions.HEADER_IDEMPOTENCE_ID).orElse(null)))
+                .idempotenceId(message.headers().firstValue(Conventions.HEADER_IDEMPOTENCE_ID).map(SagaIdempotenceId::of).orElse(null))
                 .traceId(message.headers().firstValue(Conventions.HEADER_TRACE_ID).orElse(null))
                 .source(message.headers().firstValue(Conventions.HEADER_SOURCE).orElse(null))
                 .headers(headersBuilder.build())
