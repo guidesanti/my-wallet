@@ -1,5 +1,6 @@
 package br.com.eventhorizon.saga.content.serialization.impl;
 
+import br.com.eventhorizon.common.serialization.OffsetDateTimeJsonDeserializer;
 import br.com.eventhorizon.saga.content.serialization.exception.SagaDeserializationException;
 import br.com.eventhorizon.saga.content.serialization.exception.SagaSerializationException;
 import br.com.eventhorizon.saga.content.serialization.SagaContentSerializer;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.protobuf.Message;
 import lombok.Getter;
 
+import java.io.*;
 import java.lang.reflect.Method;
 import java.time.OffsetDateTime;
 
@@ -20,8 +22,10 @@ public class DefaultSagaContentSerializer implements SagaContentSerializer {
     private final ObjectMapper objectMapper;
 
     public DefaultSagaContentSerializer() {
-        this.objectMapper = new ObjectMapper()
-                .registerModule(new SimpleModule().addSerializer(OffsetDateTime.class, new OffsetDateTimeJsonSerializer()));
+        var simpleModule = new SimpleModule()
+                .addSerializer(OffsetDateTime.class, new OffsetDateTimeJsonSerializer())
+                .addDeserializer(OffsetDateTime.class, new OffsetDateTimeJsonDeserializer());
+        this.objectMapper = new ObjectMapper().registerModule(simpleModule);
     }
 
     @Override
@@ -30,6 +34,11 @@ public class DefaultSagaContentSerializer implements SagaContentSerializer {
         try {
             if (content instanceof Message) {
                 return ((Message) content).toByteArray();
+            } if (content instanceof Serializable) {
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+                objectOutputStream.writeObject(content);
+                return byteArrayOutputStream.toByteArray();
             } else {
                 return objectMapper.writeValueAsString(content).getBytes();
             }
@@ -47,6 +56,10 @@ public class DefaultSagaContentSerializer implements SagaContentSerializer {
                 var array = new byte[0];
                 Method method = type.getMethod("parseFrom", array.getClass());
                 return (T) method.invoke(null, content);
+            } else if (Serializable.class.isAssignableFrom(type)) {
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(content);
+                ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+                return (T) objectInputStream.readObject();
             } else {
                 return objectMapper.readValue(content, type);
             }
