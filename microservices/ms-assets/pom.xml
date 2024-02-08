@@ -37,6 +37,11 @@
 
         <dependency>
             <groupId>br.com.eventhorizon</groupId>
+            <artifactId>saga-repository-provider-mongodb</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>br.com.eventhorizon</groupId>
             <artifactId>proto</artifactId>
         </dependency>
     </dependencies>

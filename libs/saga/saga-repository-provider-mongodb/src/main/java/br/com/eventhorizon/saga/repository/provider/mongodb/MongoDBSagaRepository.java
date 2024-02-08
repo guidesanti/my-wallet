@@ -1,4 +1,4 @@
-package br.com.eventhorizon.saga.repository.impl;
+package br.com.eventhorizon.saga.repository.provider.mongodb;
 
 import br.com.eventhorizon.common.util.DateTimeUtils;
 import br.com.eventhorizon.saga.SagaEvent;

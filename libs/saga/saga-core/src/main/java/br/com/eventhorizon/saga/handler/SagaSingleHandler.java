@@ -3,7 +3,7 @@ package br.com.eventhorizon.saga.handler;
 import br.com.eventhorizon.saga.SagaMessage;
 import br.com.eventhorizon.saga.SagaOutput;
 
-public interface SagaSingleHandler extends SagaHandler {
+public interface SagaSingleHandler<T> extends SagaHandler<T> {
 
-    SagaOutput handle(SagaMessage message) throws Exception;
+    SagaOutput handle(SagaMessage<T> message) throws Exception;
 }

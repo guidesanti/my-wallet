@@ -1,4 +1,4 @@
-package br.com.eventhorizon.common.common.concurrent.impl;
+package br.com.eventhorizon.common.concurrent.impl;
 
 import br.com.eventhorizon.common.concurrent.Sleeper;
 import br.com.eventhorizon.common.concurrent.impl.SimpleSleeper;

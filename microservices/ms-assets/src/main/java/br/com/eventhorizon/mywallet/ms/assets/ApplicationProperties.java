@@ -25,6 +25,8 @@ public final class ApplicationProperties {
 
     private final String getAssetKafkaTopicName;
 
+    private final String getAssetDlqKafkaTopicName;
+
     private final String assetCreatedKafkaTopicName;
 
     private final String assetUpdatedKafkaTopicName;
@@ -35,6 +37,7 @@ public final class ApplicationProperties {
         this.serviceName = getPropertyValue("service.name", String.class);
         this.kafkaBootstrapServers = getPropertyValue("kafka.bootstrap-servers", String.class);
         this.getAssetKafkaTopicName = getPropertyValue("kafka.topics.assets-get-asset", String.class);
+        this.getAssetDlqKafkaTopicName = getPropertyValue("kafka.topics.assets-get-asset-dlq", String.class);
         this.assetCreatedKafkaTopicName = getPropertyValue("kafka.topics.assets-asset-created", String.class);
         this.assetUpdatedKafkaTopicName = getPropertyValue("kafka.topics.assets-asset-updated", String.class);
     }

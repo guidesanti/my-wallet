@@ -1,6 +1,7 @@
 package br.com.eventhorizon.saga.chain.filter;
 
-import br.com.eventhorizon.common.exception.ClientErrorException;
+import br.com.eventhorizon.common.exception.ClientErrorErrorException;
+import br.com.eventhorizon.saga.SagaError;
 import br.com.eventhorizon.saga.SagaMessage;
 import br.com.eventhorizon.saga.SagaOutput;
 import br.com.eventhorizon.saga.chain.SagaChain;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class SagaIdempotenceFilter implements SagaFilter {
+public class SagaIdempotenceFilter<T> implements SagaFilter<T> {
 
     @Override
     public int order() {
@@ -19,14 +20,14 @@ public class SagaIdempotenceFilter implements SagaFilter {
     }
 
     @Override
-    public SagaOutput filter(List<SagaMessage> messages, SagaChain chain) throws Exception {
+    public SagaOutput filter(List<SagaMessage<T>> messages, SagaChain<T> chain) throws Exception {
         try {
             log.info("SAGA IDEMPOTENCE FILTER START");
 
             var repository = chain.repository();
             var checker = chain.checker();
             var serializer = chain.serializer();
-            var notProcessedMessages = new ArrayList<SagaMessage>();
+            var notProcessedMessages = new ArrayList<SagaMessage<T>>();
             var outputBuilder = SagaOutput.builder();
 
             for (var message : messages) {
@@ -43,9 +44,9 @@ public class SagaIdempotenceFilter implements SagaFilter {
                     outputBuilder.response(repository.findResponse(message.idempotenceId().toString(), serializer));
                     outputBuilder.events(repository.findEvents(message.idempotenceId().toString(), serializer));
                 } else {
-                    throw new ClientErrorException("IDEMPOTENCE_ID_CONFLICT",
-                            "Idempotence ID conflict, idempotence ID '" + message.idempotenceId()
-                                    + "'already used for a different request");
+                    throw new ClientErrorErrorException(
+                            SagaError.IDEMPOTENCE_ID_CONFLICT.getCode(),
+                            SagaError.IDEMPOTENCE_ID_CONFLICT.getMessage(message.idempotenceId()));
                 }
             }
 

@@ -1,6 +1,7 @@
 package br.com.eventhorizon.saga.transaction;
 
 import br.com.eventhorizon.common.runtime.ApplicationLifecycleListener;
+import br.com.eventhorizon.messaging.provider.subscriber.subscription.Subscription;
 import br.com.eventhorizon.messaging.provider.subscriber.subscription.SubscriptionManager;
 import br.com.eventhorizon.saga.messaging.subscriber.subscription.SagaSubscriptionFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +35,7 @@ public class SagaTransactionManager implements ApplicationLifecycleListener {
     public void onStarted() {
         log.info("==================================== Creating subscriptions for SAGA transactions ====================================");
         transactions.forEach(transaction -> {
-            log.info("Creating subscription for SAGa transaction: {}", transaction.getId());
+            log.info("Creating subscription for SAGA transaction: {}", transaction.getId());
             var factory = factories.get(transaction.getMessagingProviderName());
             checkFactory(transaction, factory);
             var subscription = factory.create(transaction);

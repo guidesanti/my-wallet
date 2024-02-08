@@ -82,6 +82,10 @@ public class Headers implements Iterable<Map.Entry<String, List<String>>> {
         };
     }
 
+    public Builder toBuilder() {
+        return new Builder().headers(this.headers);
+    }
+
     public static Builder builder() {
         return new Builder();
     }

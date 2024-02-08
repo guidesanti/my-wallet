@@ -2,12 +2,15 @@ package br.com.eventhorizon.messaging.provider.subscriber;
 
 import br.com.eventhorizon.messaging.provider.subscriber.handler.BulkMessageHandler;
 import br.com.eventhorizon.messaging.provider.subscriber.handler.SingleMessageHandler;
+import br.com.eventhorizon.messaging.provider.subscriber.subscription.BulkSubscription;
 import br.com.eventhorizon.messaging.provider.subscriber.subscription.Subscription;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 @Slf4j
@@ -77,10 +80,9 @@ public class Subscriber<T> {
                 state = State.RUNNING;
             }
             while (state == State.RUNNING) {
-//                log.info("[{}] Subscriber running", this);
-                var messages = poller.poll();
+                var messages = poll();
                 try {
-                    if (subscription.getHandler() instanceof BulkMessageHandler<T>) {
+                    if (subscription instanceof BulkSubscription<T>) {
                         ((BulkMessageHandler<T>) subscription.getHandler()).handle(messages);
                     } else {
                         for (SubscriberMessage<T> message : messages) {
@@ -92,13 +94,23 @@ public class Subscriber<T> {
                 }
             }
         } catch (Exception ex) {
-            log.error(String.format("[%s] Exception occurred while subscriber was running", this), ex);
+            log.error(String.format("[%s] Unexpected exception occurred while subscriber was running", this), ex);
         } finally {
             synchronized (this) {
                 state = State.STOPPED;
                 this.notifyAll();
             }
         }
+    }
+
+    private List<SubscriberMessage<T>> poll() {
+        try {
+            return poller.poll();
+        } catch (Exception ex) {
+            log.error(String.format("[%s] Exception not handled by message poller", this), ex);
+        }
+
+        return Collections.emptyList();
     }
 
     private enum State {

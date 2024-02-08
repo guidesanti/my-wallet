@@ -11,13 +11,3 @@ spring:
     mongodb:
       uri: mongodb://admin:admin@mongo1:27017,mongo2:27017,mongo3:27017/${br.com.eventhorizon.mywallet.mongo.db-name}?replicaSet=rs0&authSource=admin
       database: mywallet-${br.com.eventhorizon.mywallet.service.env}-${br.com.eventhorizon.mywallet.service.name}
-
-  kafka:
-    bootstrap-servers: kafka1:9092,kafka2:9093,kafka3:9094
-    producer:
-      bootstrap-servers: kafka1:9092,kafka2:9093,kafka3:9094
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.StringOrBytesSerializer
-    admin:
-      properties:
-        bootstrap.servers: kafka1:9092,kafka2:9093,kafka3:9094

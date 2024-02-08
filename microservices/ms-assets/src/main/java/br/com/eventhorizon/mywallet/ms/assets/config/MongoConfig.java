@@ -1,7 +1,6 @@
 package br.com.eventhorizon.mywallet.ms.assets.config;
 
 import br.com.eventhorizon.common.repository.BaseRepositoryImpl;
-import br.com.eventhorizon.saga.repository.impl.MongoDBSagaRepository;
 import br.com.eventhorizon.mywallet.ms.assets.ApplicationProperties;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
@@ -10,7 +9,6 @@ import com.mongodb.WriteConcern;
 import io.mongock.runner.springboot.EnableMongock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;

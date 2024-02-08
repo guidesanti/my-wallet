@@ -6,10 +6,17 @@ import br.com.eventhorizon.messaging.provider.subscriber.subscription.Subscripti
 import br.com.eventhorizon.saga.handler.SagaBulkHandler;
 import br.com.eventhorizon.saga.handler.SagaSingleHandler;
 import br.com.eventhorizon.saga.messaging.subscriber.subscription.SagaSubscriptionFactory;
+import br.com.eventhorizon.saga.messaging.subscriber.subscription.SubscriberBulkMessageHandler;
+import br.com.eventhorizon.saga.messaging.subscriber.subscription.SubscriberSingleMessageHandler;
 import br.com.eventhorizon.saga.transaction.SagaTransaction;
+import br.com.eventhorizon.saga.transaction.SagaTransactionExecutor;
 import br.com.eventhorizon.saga.transaction.UnsupportedSagaTransactionException;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class KafkaSagaSubscriptionFactory implements SagaSubscriptionFactory {
+
+    private final SagaTransactionExecutor sagaTransactionExecutor;
 
     @Override
     public String getProviderName() {
@@ -19,19 +26,19 @@ public class KafkaSagaSubscriptionFactory implements SagaSubscriptionFactory {
     @Override
     public <T> Subscription<T> create(SagaTransaction<T> sagaTransaction) {
         if (sagaTransaction instanceof KafkaSagaTransaction<T> kafkaSagaTransaction) {
-            if (kafkaSagaTransaction.getHandler() instanceof SagaSingleHandler sagaSingleHandler) {
+            if (kafkaSagaTransaction.getHandler() instanceof SagaSingleHandler<T>) {
                 return new DefaultKafkaSingleSubscription<>(
                         String.format("%s-kafka-subscription", kafkaSagaTransaction.getId()),
-                        new KafkaSagaSingleMessageHandler<>(sagaSingleHandler),
+                        new SubscriberSingleMessageHandler<>(sagaTransactionExecutor, sagaTransaction),
                         kafkaSagaTransaction.getSource(),
                         kafkaSagaTransaction.getSourceType(),
                         kafkaSagaTransaction.getKafkaConsumerConfig());
             }
 
-            if (kafkaSagaTransaction.getHandler() instanceof SagaBulkHandler sagaBulkHandler) {
+            if (kafkaSagaTransaction.getHandler() instanceof SagaBulkHandler<T>) {
                 return new DefaultKafkaBulkSubscription<>(
                         String.format("%s-kafka-subscription", kafkaSagaTransaction.getId()),
-                        new KafkaSagaBulkMessageHandler<>(sagaBulkHandler),
+                        new SubscriberBulkMessageHandler<>(sagaTransactionExecutor, sagaTransaction),
                         kafkaSagaTransaction.getSource(),
                         kafkaSagaTransaction.getSourceType(),
                         kafkaSagaTransaction.getKafkaConsumerConfig());

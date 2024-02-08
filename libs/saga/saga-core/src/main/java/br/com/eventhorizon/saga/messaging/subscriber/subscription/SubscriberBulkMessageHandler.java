@@ -1,0 +1,37 @@
+package br.com.eventhorizon.saga.messaging.subscriber.subscription;
+
+import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
+import br.com.eventhorizon.messaging.provider.subscriber.handler.BulkMessageHandler;
+import br.com.eventhorizon.saga.SagaMessage;
+import br.com.eventhorizon.saga.transaction.SagaTransaction;
+import br.com.eventhorizon.saga.transaction.SagaTransactionExecutor;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Slf4j
+public class SubscriberBulkMessageHandler<T> extends SubscriberMessageHandler<T> implements BulkMessageHandler<T> {
+
+    public SubscriberBulkMessageHandler(SagaTransactionExecutor sagaTransactionExecutor, SagaTransaction<T> sagaTransaction) {
+        super(sagaTransactionExecutor, sagaTransaction);
+    }
+
+    @Override
+    public void handle(List<SubscriberMessage<T>> subscriberMessages) throws Exception {
+        if (subscriberMessages.isEmpty()) {
+            return;
+        }
+        List<SagaMessage<T>> sagaMessages = new ArrayList<>();
+        subscriberMessages.forEach(subscriberMessage -> {
+            try {
+                sagaMessages.add(toSagaMessage(subscriberMessage));
+            } catch (Exception ex) {
+                log.error("Error while handling subscriber message: " + ex.getMessage(), ex);
+                // TODO: Send message to DLQ
+            }
+        });
+        log.info("Handling SAGA messages: {}", sagaMessages);
+        sagaTransactionExecutor.execute(sagaTransaction, sagaMessages);
+    }
+}

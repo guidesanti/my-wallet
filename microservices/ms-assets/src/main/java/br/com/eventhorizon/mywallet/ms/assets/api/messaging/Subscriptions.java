@@ -51,10 +51,11 @@ public class Subscriptions {
                 .messagingProviderName("kafka")
                 .source(applicationProperties.getGetAssetKafkaTopicName())
                 .sourceType(byte[].class)
+                .dlq(applicationProperties.getGetAssetDlqKafkaTopicName())
                 .handler(handler)
                 .repository(sagaRepository)
                 .publisher(sagaPublisher)
-                .config(config)
+                .kafkaConsumerConfig(config)
                 .build();
     }
 }

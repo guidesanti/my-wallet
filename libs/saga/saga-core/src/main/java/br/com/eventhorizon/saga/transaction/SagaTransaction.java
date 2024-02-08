@@ -3,35 +3,57 @@ package br.com.eventhorizon.saga.transaction;
 import br.com.eventhorizon.saga.SagaOption;
 import br.com.eventhorizon.saga.chain.filter.SagaFilter;
 import br.com.eventhorizon.saga.content.checker.SagaContentChecker;
+import br.com.eventhorizon.saga.content.checker.impl.DefaultSagaContentChecker;
 import br.com.eventhorizon.saga.content.serialization.SagaContentSerializer;
+import br.com.eventhorizon.saga.content.serialization.impl.DefaultSagaContentSerializer;
 import br.com.eventhorizon.saga.handler.SagaHandler;
 import br.com.eventhorizon.saga.messaging.publisher.SagaPublisher;
 import br.com.eventhorizon.saga.repository.SagaRepository;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 import java.util.Map;
 
-public interface SagaTransaction<T> {
+@Getter
+@SuperBuilder
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+public class SagaTransaction<T> {
 
-    String getId();
+    @NonNull
+    protected final String id;
 
-    String getMessagingProviderName();
+    @NonNull
+    protected final String messagingProviderName;
 
-    String getSource();
+    @NonNull
+    protected final String source;
 
-    Class<T> getSourceType();
+    @NonNull
+    protected final Class<T> sourceType;
 
-    SagaHandler getHandler();
+    protected final String dlq;
 
-    SagaRepository getRepository();
+    @NonNull
+    protected final SagaHandler<T> handler;
 
-    SagaPublisher getPublisher();
+    @NonNull
+    protected final SagaRepository repository;
 
-    List<SagaFilter> getFilters();
+    @NonNull
+    protected final SagaPublisher publisher;
 
-    SagaContentSerializer getSerializer();
+    @Singular
+    protected final List<SagaFilter<T>> filters;
 
-    SagaContentChecker getChecker();
+    @NonNull
+    @Builder.Default
+    protected final SagaContentSerializer serializer = new DefaultSagaContentSerializer();
 
-    Map<SagaOption, Object> getOptions();
+    @NonNull
+    @Builder.Default
+    protected final SagaContentChecker<T> checker = new DefaultSagaContentChecker<>();
+
+    @Singular
+    protected final Map<SagaOption, Object> options;
 }

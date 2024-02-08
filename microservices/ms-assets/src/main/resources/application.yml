@@ -5,6 +5,7 @@ br.com.eventhorizon.mywallet:
   kafka:
     topics:
       assets-get-asset: ${br.com.eventhorizon.mywallet.service.env}-assets-get-asset
+      assets-get-asset-dlq: ${br.com.eventhorizon.mywallet.service.env}-assets-get-asset-dlq
       assets-asset-created: ${br.com.eventhorizon.mywallet.service.env}-assets-asset-created
       assets-asset-updated: ${br.com.eventhorizon.mywallet.service.env}-assets-asset-updated
 

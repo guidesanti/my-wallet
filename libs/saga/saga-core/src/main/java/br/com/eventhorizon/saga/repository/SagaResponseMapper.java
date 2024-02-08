@@ -1,7 +1,7 @@
 package br.com.eventhorizon.saga.repository;
 
-import br.com.eventhorizon.common.common.DefaultErrors;
-import br.com.eventhorizon.common.exception.ServerErrorException;
+import br.com.eventhorizon.common.error.DefaultErrors;
+import br.com.eventhorizon.common.exception.ServerErrorErrorException;
 import br.com.eventhorizon.common.messaging.Headers;
 import br.com.eventhorizon.common.util.DateTimeUtils;
 import br.com.eventhorizon.saga.SagaIdempotenceId;
@@ -33,7 +33,7 @@ public final class SagaResponseMapper {
         } catch (ClassNotFoundException e) {
             var message = "Cannot map SAGA response from repository model to business model, invalid content type " + response.getContentType();
             log.error(message, e);
-            throw new ServerErrorException(DefaultErrors.UNEXPECTED_SERVER_ERROR.getCode(), message);
+            throw new ServerErrorErrorException(DefaultErrors.UNEXPECTED_SERVER_ERROR.getCode(), message);
         }
     }
 }

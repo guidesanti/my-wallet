@@ -6,9 +6,9 @@ import br.com.eventhorizon.saga.chain.SagaChain;
 
 import java.util.List;
 
-public interface SagaFilter {
+public interface SagaFilter<T> {
 
     int order();
 
-    SagaOutput filter(List<SagaMessage> requests, SagaChain chain) throws Exception;
+    SagaOutput filter(List<SagaMessage<T>> requests, SagaChain<T> chain) throws Exception;
 }

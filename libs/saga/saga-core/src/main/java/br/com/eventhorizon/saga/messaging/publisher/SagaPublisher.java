@@ -6,5 +6,5 @@ import br.com.eventhorizon.common.transaction.TransactionManager;
 
 public interface SagaPublisher extends TransactionManager {
 
-    void publish(SagaEvent event, SagaContentSerializer serializer);
+    <T> void publish(SagaEvent<T> event, SagaContentSerializer serializer);
 }

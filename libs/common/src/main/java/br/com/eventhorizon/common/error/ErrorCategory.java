@@ -1,4 +1,4 @@
-package br.com.eventhorizon.common.common;
+package br.com.eventhorizon.common.error;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

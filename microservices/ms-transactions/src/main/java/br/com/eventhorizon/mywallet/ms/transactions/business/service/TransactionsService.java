@@ -1,6 +1,6 @@
 package br.com.eventhorizon.mywallet.ms.transactions.business.service;
 
-import br.com.eventhorizon.common.exception.BusinessErrorException;
+import br.com.eventhorizon.common.exception.BusinessErrorErrorException;
 import br.com.eventhorizon.mywallet.common.proto.AssetsProto;
 import br.com.eventhorizon.mywallet.common.proto.ResponseProto;
 import br.com.eventhorizon.mywallet.common.proto.TransactionsProto;
@@ -75,7 +75,7 @@ public class TransactionsService {
                             .append(", message: ").append(error.getMessage())
                             .append("}")
             ));
-            throw new BusinessErrorException(
+            throw new BusinessErrorErrorException(
                     Errors.INVALID_CREATE_TRANSACTION_REQUEST.getCode(),
                     String.format(Errors.INVALID_CREATE_TRANSACTION_REQUEST.getMessageTemplate()),
                     details.toString());
@@ -107,7 +107,7 @@ public class TransactionsService {
                             .originalIdempotenceId(message.idempotenceId())
                             .idempotenceId(message.idempotenceId().incrementIdempotenceStep(1))
                             .traceId(message.traceId())
-                            .destination(applicationProperties.getKafka().getTopics().get("transactions-transaction-created"))
+                            .destination(applicationProperties.getTransactionCreatedKafkaTopicName())
                             .headers(SagaHeaders.builder()
                                     .header("transaction-id", createdTransaction.getId())
                                     .build())
@@ -119,7 +119,7 @@ public class TransactionsService {
                             .originalIdempotenceId(message.idempotenceId())
                             .idempotenceId(message.idempotenceId().incrementIdempotenceStep(1))
                             .traceId(message.traceId())
-                            .destination(applicationProperties.getKafka().getTopics().get("assets-get-asset"))
+                            .destination(applicationProperties.getGetAssetKafkaTopicName())
                             .headers(SagaHeaders.builder()
                                     .header("transaction-id", createdTransaction.getId())
                                     .build())

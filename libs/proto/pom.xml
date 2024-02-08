@@ -12,6 +12,13 @@
     <artifactId>proto</artifactId>
     <packaging>jar</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>br.com.eventhorizon</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>

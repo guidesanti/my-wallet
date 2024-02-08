@@ -11,22 +11,24 @@ import br.com.eventhorizon.saga.handler.SagaSingleHandler;
 import br.com.eventhorizon.saga.messaging.publisher.SagaPublisher;
 import br.com.eventhorizon.saga.repository.SagaRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Iterator;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
-public class SagaChain {
+public class SagaChain<T> {
 
-    private final Iterator<SagaFilter> filters;
+    private final Iterator<SagaFilter<T>> filters;
 
-    private final SagaHandler handler;
+    private final SagaHandler<T> handler;
 
     private final SagaRepository repository;
 
     private final SagaPublisher publisher;
 
-    private final SagaContentChecker checker;
+    private final SagaContentChecker<T> checker;
 
     private final SagaContentSerializer serializer;
 
@@ -40,7 +42,7 @@ public class SagaChain {
         return publisher;
     }
 
-    public SagaContentChecker checker() {
+    public SagaContentChecker<T> checker() {
         return checker;
     }
 
@@ -52,19 +54,21 @@ public class SagaChain {
         return serializer;
     }
 
-    public SagaOutput next(List<SagaMessage> messages) throws Exception {
+    public SagaOutput next(List<SagaMessage<T>> messages) throws Exception {
         return doNext(messages);
     }
 
-    private SagaOutput doNext(List<SagaMessage> messages) throws Exception {
+    private SagaOutput doNext(List<SagaMessage<T>> messages) throws Exception {
         if (filters.hasNext()) {
             return filters.next().filter(messages, this);
         } else if (handler instanceof SagaBulkHandler) {
-            return ((SagaBulkHandler) handler).handle(messages);
+            log.info("SAGA HANDLING IN BULK MODE");
+            return ((SagaBulkHandler<T>) handler).handle(messages);
         } else {
+            log.info("SAGA HANDLING IN SINGLE MODE");
             var builder = SagaOutput.builder();
             for (var message : messages) {
-                var output = ((SagaSingleHandler) handler).handle(message);
+                var output = ((SagaSingleHandler<T>) handler).handle(message);
                 if (output != null) {
                     builder.response(output.response()).events(output.events());
                 }

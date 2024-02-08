@@ -3,11 +3,14 @@ package br.com.eventhorizon.saga;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public final class SagaIdempotenceId {
+
+    public static final SagaIdempotenceId NULL = SagaIdempotenceId.of("20240101", "0000000000", "000000000000000000", 0);
 
     private static final int DATE_INDEX = 0;
 

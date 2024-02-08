@@ -2,7 +2,7 @@ package br.com.eventhorizon.saga.content.checker;
 
 import br.com.eventhorizon.saga.SagaMessage;
 
-public interface SagaContentChecker {
+public interface SagaContentChecker<T> {
 
-    String checksum(SagaMessage message);
+    String checksum(SagaMessage<T> message);
 }

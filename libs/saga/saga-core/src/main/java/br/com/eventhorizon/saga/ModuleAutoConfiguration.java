@@ -6,14 +6,11 @@ import br.com.eventhorizon.messaging.provider.subscriber.subscription.Subscripti
 import br.com.eventhorizon.saga.messaging.publisher.DefaultSagaPublisher;
 import br.com.eventhorizon.saga.messaging.publisher.SagaPublisher;
 import br.com.eventhorizon.saga.messaging.subscriber.subscription.SagaSubscriptionFactory;
-import br.com.eventhorizon.saga.repository.SagaRepository;
-import br.com.eventhorizon.saga.repository.impl.MongoDBSagaRepository;
 import br.com.eventhorizon.saga.transaction.SagaTransaction;
 import br.com.eventhorizon.saga.transaction.SagaTransactionExecutor;
 import br.com.eventhorizon.saga.transaction.SagaTransactionManager;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.List;
 
@@ -39,10 +36,5 @@ public class ModuleAutoConfiguration {
     @Bean
     public SagaPublisher sagaPublisher(TransactionablePublisher transactionablePublisher) {
         return new DefaultSagaPublisher(transactionablePublisher);
-    }
-
-    @Bean
-    public SagaRepository sagaRepository(MongoTemplate mongoTemplate) {
-        return new MongoDBSagaRepository(mongoTemplate);
     }
 }

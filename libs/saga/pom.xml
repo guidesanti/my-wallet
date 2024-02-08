@@ -14,5 +14,6 @@
     <modules>
         <module>saga-core</module>
         <module>saga-messaging-provider-kafka</module>
+        <module>saga-repository-provider-mongodb</module>
     </modules>
 </project>

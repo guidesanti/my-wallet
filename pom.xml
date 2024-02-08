@@ -63,6 +63,12 @@
 		<dependencies>
 			<dependency>
 				<groupId>br.com.eventhorizon</groupId>
+				<artifactId>common</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>br.com.eventhorizon</groupId>
 				<artifactId>messaging-provider</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
@@ -82,6 +88,12 @@
 			<dependency>
 				<groupId>br.com.eventhorizon</groupId>
 				<artifactId>saga-messaging-provider-kafka</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
+				<groupId>br.com.eventhorizon</groupId>
+				<artifactId>saga-repository-provider-mongodb</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 

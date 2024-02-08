@@ -20,6 +20,9 @@ locals {
   #   For queries a reply is always expected
   # - COMMAND_QUERY_REPLY:
   #   Topics used to send command/query reply with status and potentially some result
+  # - DLQ
+  #   Topics used as dead letter queues, when a message couldn't be processed for some reason and is redirected to
+  #   respective DQL
   #
   # Topic Naming Convention:
   #
@@ -41,6 +44,14 @@ locals {
   # Examples:
   #   prod-transactions-create-asset-reply
   #   prod-transactions-get-asset-reply
+  #
+  # Type: DLQ
+  # Format: {env}-{context}-{?}-dlq
+  # Where: {?} should be one of [{event-name}, {command-query}, {command-query}-reply]
+  # Examples:
+  #   prod-assets-asset-created-dlq
+  #   prod-assets-create-asset-dlq
+  #   prod-transactions-create-asset-reply-dlq
   #
   # NOTE: The {env} should not be explicitly added, since it will be added automatically
   ######################################################################################################################
@@ -86,6 +97,23 @@ locals {
     ####################################################################################################################
     assets_get_asset = {
       name                = "assets-get-asset"
+      replication_factor  = 3
+      partitions          = 1
+
+      config = {
+        "retention.ms"    = "604800000"
+        "segment.ms"      = "604800000"
+        "cleanup.policy"  = "delete"
+      }
+    }
+
+    ####################################################################################################################
+    # Topic: assets-get-asset-dlq
+    # Type: DLQ
+    # Description: Topic to send dead letters ?
+    ####################################################################################################################
+    assets_get_asset_dlq = {
+      name                = "assets-get-asset-dlq"
       replication_factor  = 3
       partitions          = 1
 

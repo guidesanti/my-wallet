@@ -13,7 +13,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.OffsetDateTime;
 
-public class DefaultSagaContentChecker implements SagaContentChecker {
+public class DefaultSagaContentChecker<T> implements SagaContentChecker<T> {
 
     private final ObjectMapper objectMapper;
 
@@ -23,7 +23,7 @@ public class DefaultSagaContentChecker implements SagaContentChecker {
     }
 
     @Override
-    public String checksum(SagaMessage message) {
+    public String checksum(SagaMessage<T> message) {
         try {
             var content = message.content();
             byte[] contentByteArray;

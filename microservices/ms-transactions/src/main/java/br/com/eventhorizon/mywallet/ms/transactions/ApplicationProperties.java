@@ -1,14 +1,12 @@
 package br.com.eventhorizon.mywallet.ms.transactions;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import br.com.eventhorizon.common.config.Config;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-
-@Data
+@Getter
 @Component
-@ConfigurationProperties(prefix = ApplicationProperties.PROPERTIES_PREFIX)
 public final class ApplicationProperties {
 
     public static final String PROPERTIES_PREFIX = "br.com.eventhorizon.mywallet";
@@ -19,25 +17,26 @@ public final class ApplicationProperties {
 
     public static final String START_DELAY_PROP_NAME =  PROPERTIES_PREFIX + ".start-delay";
 
-    private Service service;
+    private final Config config;
 
-    private Kafka kafka;
+    private final String serviceName;
 
-    @Data
-    public static final class Service {
+    private final String kafkaBootstrapServers;
 
-        private String name;
+    private final String transactionCreatedKafkaTopicName;
 
-        private String env;
+    private final String getAssetKafkaTopicName;
 
-        private int startDelay;
+    @Autowired
+    public ApplicationProperties(Config config) {
+        this.config = config;
+        this.serviceName = getPropertyValue("service.name", String.class);
+        this.kafkaBootstrapServers = getPropertyValue("kafka.bootstrap-servers", String.class);
+        this.transactionCreatedKafkaTopicName = getPropertyValue("kafka.topics.transactions-transaction-created", String.class);
+        this.getAssetKafkaTopicName = getPropertyValue("kafka.topics.assets-get-asset", String.class);
     }
 
-    @Data
-    public static final class Kafka {
-
-        private String bootstrapServers;
-
-        private Map<String, String> topics;
+    private <T> T getPropertyValue(String name, Class<T> type) {
+        return config.getValue(PROPERTIES_PREFIX + "." + name, type);
     }
 }

@@ -1,6 +1,6 @@
 package br.com.eventhorizon.mywallet.ms.transactions.persistence.model;
 
-import br.com.eventhorizon.common.common.Error;
+import br.com.eventhorizon.common.error.Error;
 import br.com.eventhorizon.common.repository.BaseModel;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

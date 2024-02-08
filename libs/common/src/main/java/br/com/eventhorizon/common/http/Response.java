@@ -1,8 +1,8 @@
 package br.com.eventhorizon.common.http;
 
-import br.com.eventhorizon.common.common.ErrorCategory;
-import br.com.eventhorizon.common.common.Error;
-import br.com.eventhorizon.common.common.StatusCode;
+import br.com.eventhorizon.common.error.ErrorCategory;
+import br.com.eventhorizon.common.error.Error;
+import br.com.eventhorizon.common.error.StatusCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -28,7 +28,7 @@ public class Response {
 
     public static Response error(ErrorCategory errorCategory, Error error) {
         return new Response(StatusCode.ERROR, null,
-                ResponseError.of(errorCategory.getValue(), error.getCode(), error.getMessage(), error.getExtraDetails()));
+                ResponseError.of(errorCategory.getValue(), error.getCode().toString(), error.getMessage(), error.getExtraDetails()));
     }
 
     public static Response error(ErrorCategory errorCategory, String errorCode, String errorMessage) {
