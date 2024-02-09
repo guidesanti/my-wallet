@@ -8,7 +8,7 @@ import java.util.Map;
 
 @Getter
 @SuperBuilder
-public class KafkaSagaTransaction<T> extends SagaTransaction<T> {
+public class KafkaSagaTransaction<R, M> extends SagaTransaction<R, M> {
 
     private final Map<String, Object> kafkaConsumerConfig;
 }

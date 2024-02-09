@@ -2,13 +2,18 @@ package br.com.eventhorizon.common.properties;
 
 import lombok.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Getter
 @ToString
 @EqualsAndHashCode
-public class PropertyDefinition<T> {
+public class PropertyDefinition<T> implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -1879897959957988082L;
 
     private static final String NAME_PATTERN = "^[a-z0-9.]+$";
 
@@ -29,7 +34,7 @@ public class PropertyDefinition<T> {
         SUPPORTED_TYPES.add(Double.class);
     }
 
-    private PropertyDefinition(String name, Class<T> type, T defaultValue, String description) {
+    public PropertyDefinition(String name, Class<T> type, T defaultValue, String description) {
         this.name = name;
         this.type = type;
         this.defaultValue = defaultValue;
@@ -58,7 +63,7 @@ public class PropertyDefinition<T> {
 
     private void validateDefaultValue(T defaultValue) {
         if (defaultValue == null) {
-            throw new InvalidPropertyDefinitionException(this, "Invalid default value, default value cannot be null");
+            return;
         }
         if (defaultValue.getClass() != this.type) {
             throw new InvalidPropertyDefinitionException(this, "Invalid default value, default value type must match property definition type");

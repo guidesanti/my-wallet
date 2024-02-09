@@ -9,11 +9,11 @@ import java.util.List;
 
 public class SagaTransactionExecutor {
 
-    public <T> SagaResponse<?> execute(SagaTransaction<T> transaction, SagaMessage<T> message) {
+    public <R, M> SagaResponse<R> execute(SagaTransaction<R, M> transaction, SagaMessage<M> message) {
         return execute(transaction, List.of(message));
     }
 
-    public <T> SagaResponse<?> execute(SagaTransaction<T> transaction, List<SagaMessage<T>> messages) {
+    public <R, M> SagaResponse<R> execute(SagaTransaction<R, M> transaction, List<SagaMessage<M>> messages) {
         try {
             var chain = SagaChainFactory.create(transaction);
             return chain.next(messages).response();

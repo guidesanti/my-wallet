@@ -1,4 +1,4 @@
-package br.com.eventhorizon.common.util;
+package br.com.eventhorizon.common.utils;
 
 import java.security.MessageDigest;
 import java.util.Base64;

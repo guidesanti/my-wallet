@@ -18,7 +18,7 @@ import java.util.Map;
 @Getter
 @SuperBuilder
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class SagaTransaction<T> {
+public class SagaTransaction<R, M> {
 
     @NonNull
     protected final String id;
@@ -30,12 +30,12 @@ public class SagaTransaction<T> {
     protected final String source;
 
     @NonNull
-    protected final Class<T> sourceType;
+    protected final Class<M> sourceType;
 
     protected final String dlq;
 
     @NonNull
-    protected final SagaHandler<T> handler;
+    protected final SagaHandler<R, M> handler;
 
     @NonNull
     protected final SagaRepository repository;
@@ -44,7 +44,7 @@ public class SagaTransaction<T> {
     protected final SagaPublisher publisher;
 
     @Singular
-    protected final List<SagaFilter<T>> filters;
+    protected final List<SagaFilter<R, M>> filters;
 
     @NonNull
     @Builder.Default
@@ -52,7 +52,7 @@ public class SagaTransaction<T> {
 
     @NonNull
     @Builder.Default
-    protected final SagaContentChecker<T> checker = new DefaultSagaContentChecker<>();
+    protected final SagaContentChecker<M> checker = new DefaultSagaContentChecker<>();
 
     @Singular
     protected final Map<SagaOption, Object> options;

@@ -1,7 +1,7 @@
 package br.com.eventhorizon.saga;
 
 import br.com.eventhorizon.common.messaging.Headers;
-import br.com.eventhorizon.common.util.IdUtil;
+import br.com.eventhorizon.common.utils.IdUtil;
 import lombok.*;
 
 import java.time.OffsetDateTime;

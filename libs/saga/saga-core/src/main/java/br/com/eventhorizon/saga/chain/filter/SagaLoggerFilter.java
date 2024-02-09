@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 @Slf4j
-public class SagaLoggerFilter<T> implements SagaFilter<T> {
+public class SagaLoggerFilter<R, M> implements SagaFilter<R, M> {
 
     @Override
     public int order() {
@@ -19,7 +19,7 @@ public class SagaLoggerFilter<T> implements SagaFilter<T> {
     }
 
     @Override
-    public SagaOutput filter(List<SagaMessage<T>> messages, SagaChain<T> chain) throws Exception {
+    public SagaOutput<R> filter(List<SagaMessage<M>> messages, SagaChain<R, M> chain) throws Exception {
         try {
             MDC.put("idempotenceId", buildCompoundIdempotenceId(messages));
             MDC.put("traceId", buildCompoundTraceId(messages));
@@ -30,13 +30,13 @@ public class SagaLoggerFilter<T> implements SagaFilter<T> {
         }
     }
 
-    private String buildCompoundIdempotenceId(List<SagaMessage<T>> messages) {
+    private String buildCompoundIdempotenceId(List<SagaMessage<M>> messages) {
         var compoundIdempotenceId = new StringJoiner(",");
         messages.forEach(message -> compoundIdempotenceId.add(message.idempotenceId().toString()));
         return compoundIdempotenceId.toString();
     }
 
-    private String buildCompoundTraceId(List<SagaMessage<T>> messages) {
+    private String buildCompoundTraceId(List<SagaMessage<M>> messages) {
         var compoundTraceId = new StringJoiner(",");
         messages.forEach(message -> compoundTraceId.add(message.traceId()));
         return compoundTraceId.toString();

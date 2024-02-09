@@ -1,6 +1,6 @@
 package br.com.eventhorizon.common.repository;
 
-import br.com.eventhorizon.common.util.IdUtil;
+import br.com.eventhorizon.common.utils.IdUtil;
 import com.fasterxml.jackson.databind.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;

@@ -9,14 +9,14 @@ import java.util.List;
 
 @Builder
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class SagaOutput {
+public class SagaOutput<R> {
 
-    private final SagaResponse<?> response;
+    private final SagaResponse<R> response;
 
     @Singular
     private final List<SagaEvent<?>> events;
 
-    public SagaResponse<?> response() {
+    public SagaResponse<R> response() {
         return response;
     }
 

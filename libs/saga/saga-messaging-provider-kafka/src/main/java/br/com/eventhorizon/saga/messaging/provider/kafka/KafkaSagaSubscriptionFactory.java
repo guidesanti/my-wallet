@@ -24,9 +24,9 @@ public class KafkaSagaSubscriptionFactory implements SagaSubscriptionFactory {
     }
 
     @Override
-    public <T> Subscription<T> create(SagaTransaction<T> sagaTransaction) {
-        if (sagaTransaction instanceof KafkaSagaTransaction<T> kafkaSagaTransaction) {
-            if (kafkaSagaTransaction.getHandler() instanceof SagaSingleHandler<T>) {
+    public <R, M> Subscription<M> create(SagaTransaction<R, M> sagaTransaction) {
+        if (sagaTransaction instanceof KafkaSagaTransaction<R, M> kafkaSagaTransaction) {
+            if (kafkaSagaTransaction.getHandler() instanceof SagaSingleHandler<R, M>) {
                 return new DefaultKafkaSingleSubscription<>(
                         String.format("%s-kafka-subscription", kafkaSagaTransaction.getId()),
                         new SubscriberSingleMessageHandler<>(sagaTransactionExecutor, sagaTransaction),
@@ -35,7 +35,7 @@ public class KafkaSagaSubscriptionFactory implements SagaSubscriptionFactory {
                         kafkaSagaTransaction.getKafkaConsumerConfig());
             }
 
-            if (kafkaSagaTransaction.getHandler() instanceof SagaBulkHandler<T>) {
+            if (kafkaSagaTransaction.getHandler() instanceof SagaBulkHandler<R, M>) {
                 return new DefaultKafkaBulkSubscription<>(
                         String.format("%s-kafka-subscription", kafkaSagaTransaction.getId()),
                         new SubscriberBulkMessageHandler<>(sagaTransactionExecutor, sagaTransaction),

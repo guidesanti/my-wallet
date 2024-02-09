@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 @Slf4j
-public class SagaRepositoryTransactionFilter<T> implements SagaFilter<T> {
+public class SagaRepositoryTransactionFilter<R, M> implements SagaFilter<R, M> {
 
     @Override
     public int order() {
@@ -17,7 +17,7 @@ public class SagaRepositoryTransactionFilter<T> implements SagaFilter<T> {
     }
 
     @Override
-    public SagaOutput filter(List<SagaMessage<T>> messages, SagaChain<T> chain) throws Exception {
+    public SagaOutput<R> filter(List<SagaMessage<M>> messages, SagaChain<R, M> chain) throws Exception {
         try {
             log.info("SAGA REPOSITORY TRANSACTION FILTER START");
             var repository = chain.repository();

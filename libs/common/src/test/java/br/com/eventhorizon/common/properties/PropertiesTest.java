@@ -18,6 +18,8 @@ public class PropertiesTest {
 
     private static final PropertyDefinition<?> PROPERTY_DEFINITION_4 = PropertyDefinition.of(CustomProperties.PROPERTY4, Double.class, 1.0, "Property 4 description");
 
+    private static final PropertyDefinition<?> PROPERTY_DEFINITION_5 = PropertyDefinition.of(CustomProperties.PROPERTY5, Double.class, null, "Property 5 description");
+
     @Test
     public void testDefaultValues() {
         var properties = new CustomProperties();
@@ -25,6 +27,7 @@ public class PropertiesTest {
         assertEquals(PROPERTY_DEFINITION_2.getDefaultValue(), properties.getPropertyValue(PROPERTY_DEFINITION_2.getName()));
         assertEquals(PROPERTY_DEFINITION_3.getDefaultValue(), properties.getPropertyValue(PROPERTY_DEFINITION_3.getName()));
         assertEquals(PROPERTY_DEFINITION_4.getDefaultValue(), properties.getPropertyValue(PROPERTY_DEFINITION_4.getName()));
+        assertEquals(PROPERTY_DEFINITION_5.getDefaultValue(), properties.getPropertyValue(PROPERTY_DEFINITION_5.getName()));
     }
 
     @Test
@@ -34,12 +37,14 @@ public class PropertiesTest {
         propertiesMap.put("property2", false);
         propertiesMap.put("property3", 2L);
         propertiesMap.put("property4", 2.0);
+        propertiesMap.put("property5", 3.0);
 
         var properties = new CustomProperties(propertiesMap);
         assertEquals("custom-value", properties.getPropertyValue(PROPERTY_DEFINITION_1.getName()));
         assertEquals(false, properties.getPropertyValue(PROPERTY_DEFINITION_2.getName()));
         assertEquals(Long.valueOf(2L), properties.getPropertyValue(PROPERTY_DEFINITION_3.getName()));
         assertEquals(Double.valueOf(2.0), properties.getPropertyValue(PROPERTY_DEFINITION_4.getName()));
+        assertEquals(Double.valueOf(3.0), properties.getPropertyValue(PROPERTY_DEFINITION_5.getName()));
     }
 
     @Test
@@ -48,6 +53,7 @@ public class PropertiesTest {
         assertThrows(InvalidPropertyValueException.class, () -> new CustomProperties(Map.of("property2", "value")));
         assertThrows(InvalidPropertyValueException.class, () -> new CustomProperties(Map.of("property3", 1.0)));
         assertThrows(InvalidPropertyValueException.class, () -> new CustomProperties(Map.of("property4", "value")));
+        assertThrows(InvalidPropertyValueException.class, () -> new CustomProperties(Map.of("property5", "value")));
     }
 
     @Test
@@ -75,12 +81,15 @@ public class PropertiesTest {
 
         public static final String PROPERTY4 = "property4";
 
+        public static final String PROPERTY5 = "property5";
+
         static {
             PROPERTY_DEFINITIONS = new PropertyDefinitions()
-                    .define(PROPERTY_DEFINITION_1)
-                    .define(PROPERTY_DEFINITION_2)
-                    .define(PROPERTY_DEFINITION_3)
-                    .define(PROPERTY_DEFINITION_4);
+                    .add(PROPERTY_DEFINITION_1)
+                    .add(PROPERTY_DEFINITION_2)
+                    .add(PROPERTY_DEFINITION_3)
+                    .add(PROPERTY_DEFINITION_4)
+                    .add(PROPERTY_DEFINITION_5);
         }
 
         public CustomProperties() {

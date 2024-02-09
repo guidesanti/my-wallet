@@ -1,6 +1,6 @@
 package br.com.eventhorizon.saga.content.checker.impl;
 
-import br.com.eventhorizon.common.util.HexUtils;
+import br.com.eventhorizon.common.utils.HexUtils;
 import br.com.eventhorizon.saga.SagaMessage;
 import br.com.eventhorizon.saga.content.checker.SagaContentChecker;
 import br.com.eventhorizon.common.serialization.OffsetDateTimeJsonSerializer;
@@ -13,7 +13,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.OffsetDateTime;
 
-public class DefaultSagaContentChecker<T> implements SagaContentChecker<T> {
+public class DefaultSagaContentChecker<M> implements SagaContentChecker<M> {
 
     private final ObjectMapper objectMapper;
 
@@ -23,7 +23,7 @@ public class DefaultSagaContentChecker<T> implements SagaContentChecker<T> {
     }
 
     @Override
-    public String checksum(SagaMessage<T> message) {
+    public String checksum(SagaMessage<M> message) {
         try {
             var content = message.content();
             byte[] contentByteArray;

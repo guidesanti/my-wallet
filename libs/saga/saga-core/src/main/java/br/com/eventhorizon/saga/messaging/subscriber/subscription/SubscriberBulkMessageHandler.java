@@ -11,18 +11,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class SubscriberBulkMessageHandler<T> extends SubscriberMessageHandler<T> implements BulkMessageHandler<T> {
+public class SubscriberBulkMessageHandler<R, M> extends SubscriberMessageHandler<R, M> implements BulkMessageHandler<M> {
 
-    public SubscriberBulkMessageHandler(SagaTransactionExecutor sagaTransactionExecutor, SagaTransaction<T> sagaTransaction) {
+    public SubscriberBulkMessageHandler(SagaTransactionExecutor sagaTransactionExecutor, SagaTransaction<R, M> sagaTransaction) {
         super(sagaTransactionExecutor, sagaTransaction);
     }
 
     @Override
-    public void handle(List<SubscriberMessage<T>> subscriberMessages) throws Exception {
+    public void handle(List<SubscriberMessage<M>> subscriberMessages) throws Exception {
         if (subscriberMessages.isEmpty()) {
             return;
         }
-        List<SagaMessage<T>> sagaMessages = new ArrayList<>();
+        List<SagaMessage<M>> sagaMessages = new ArrayList<>();
         subscriberMessages.forEach(subscriberMessage -> {
             try {
                 sagaMessages.add(toSagaMessage(subscriberMessage));

@@ -3,7 +3,7 @@ package br.com.eventhorizon.saga.repository;
 import br.com.eventhorizon.common.error.DefaultErrors;
 import br.com.eventhorizon.common.exception.ServerErrorErrorException;
 import br.com.eventhorizon.common.messaging.Headers;
-import br.com.eventhorizon.common.util.DateTimeUtils;
+import br.com.eventhorizon.common.utils.DateTimeUtils;
 import br.com.eventhorizon.saga.SagaIdempotenceId;
 import br.com.eventhorizon.saga.SagaResponse;
 import br.com.eventhorizon.saga.content.serialization.SagaContentSerializer;

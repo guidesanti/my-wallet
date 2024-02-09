@@ -19,9 +19,8 @@ public abstract class Properties {
     }
 
     public <T> T getPropertyValue(String propertyName) {
-        var value = properties.get(propertyName);
-        if (value != null) {
-            return (T) value;
+        if (properties.containsKey(propertyName)) {
+            return (T) properties.get(propertyName);
         }
         throw new PropertyNotFoundException(propertyName);
     }

@@ -11,7 +11,7 @@ import java.util.*;
 
 public final class SagaChainFactory {
 
-    public static <T> SagaChain<T> create(SagaTransaction<T> sagaTransaction) {
+    public static <R, M> SagaChain<R, M> create(SagaTransaction<R, M> sagaTransaction) {
         var options = SagaOptions.of(sagaTransaction.getOptions());
         sagaTransaction.getRepository().configure(options);
         return new SagaChain<>(mergeFilters(sagaTransaction).iterator(),
@@ -23,8 +23,8 @@ public final class SagaChainFactory {
                 options);
     }
 
-    private static <T> List<SagaFilter<T>> mergeFilters(SagaTransaction<T> sagaTransaction) {
-        List<SagaFilter<T>> filters = new ArrayList<>();
+    private static <R, M> List<SagaFilter<R, M>> mergeFilters(SagaTransaction<R, M> sagaTransaction) {
+        List<SagaFilter<R, M>> filters = new ArrayList<>();
 
         if (sagaTransaction.getFilters() != null && !sagaTransaction.getFilters().isEmpty()) {
             filters.addAll(sagaTransaction.getFilters());
@@ -41,11 +41,11 @@ public final class SagaChainFactory {
         return filters;
     }
 
-    private static <T> SagaContentSerializer getSerializer(SagaTransaction<T> sagaTransaction) {
+    private static <R, M> SagaContentSerializer getSerializer(SagaTransaction<R, M> sagaTransaction) {
         return sagaTransaction.getSerializer() == null ? new DefaultSagaContentSerializer() : sagaTransaction.getSerializer();
     }
 
-    private static <T> SagaContentChecker<T> getChecker(SagaTransaction<T> sagaTransaction) {
+    private static <R, M> SagaContentChecker<M> getChecker(SagaTransaction<R, M> sagaTransaction) {
         return sagaTransaction.getChecker() == null ? new DefaultSagaContentChecker<>() : sagaTransaction.getChecker();
     }
 }

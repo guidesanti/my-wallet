@@ -5,7 +5,7 @@ import br.com.eventhorizon.saga.SagaOutput;
 
 import java.util.List;
 
-public interface SagaBulkHandler<T> extends SagaHandler<T> {
+public interface SagaBulkHandler<R, M> extends SagaHandler<R, M> {
 
-    SagaOutput handle(List<SagaMessage<T>> messages) throws Exception;
+    SagaOutput<R> handle(List<SagaMessage<M>> messages) throws Exception;
 }

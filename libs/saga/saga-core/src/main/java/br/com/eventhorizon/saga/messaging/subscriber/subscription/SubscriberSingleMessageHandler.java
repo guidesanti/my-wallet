@@ -1,7 +1,7 @@
 package br.com.eventhorizon.saga.messaging.subscriber.subscription;
 
 import br.com.eventhorizon.common.exception.BaseErrorException;
-import br.com.eventhorizon.common.util.LogUtils;
+import br.com.eventhorizon.common.utils.LogUtils;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
 import br.com.eventhorizon.messaging.provider.subscriber.handler.SingleMessageHandler;
 import br.com.eventhorizon.saga.SagaIdempotenceId;
@@ -10,14 +10,14 @@ import br.com.eventhorizon.saga.transaction.SagaTransactionExecutor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SubscriberSingleMessageHandler<T> extends SubscriberMessageHandler<T> implements SingleMessageHandler<T> {
+public class SubscriberSingleMessageHandler<R, M> extends SubscriberMessageHandler<R, M> implements SingleMessageHandler<M> {
 
-    public SubscriberSingleMessageHandler(SagaTransactionExecutor sagaTransactionExecutor, SagaTransaction<T> sagaTransaction) {
+    public SubscriberSingleMessageHandler(SagaTransactionExecutor sagaTransactionExecutor, SagaTransaction<R, M> sagaTransaction) {
         super(sagaTransactionExecutor, sagaTransaction);
     }
 
     @Override
-    public void handle(SubscriberMessage<T> subscriberMessage) throws Exception {
+    public void handle(SubscriberMessage<M> subscriberMessage) throws Exception {
         SagaIdempotenceId idempotenceId = null;
         String traceId = null;
         try {

@@ -18,9 +18,9 @@ public class SagaTransactionManager implements ApplicationLifecycleListener {
 
     private final Map<String, SagaSubscriptionFactory> factories;
 
-    private final List<SagaTransaction<?>> transactions;
+    private final List<SagaTransaction<?, ?>> transactions;
 
-    public SagaTransactionManager(SubscriptionManager subscriptionManager, List<SagaSubscriptionFactory> factories, List<SagaTransaction<?>> transactions) {
+    public SagaTransactionManager(SubscriptionManager subscriptionManager, List<SagaSubscriptionFactory> factories, List<SagaTransaction<?, ?>> transactions) {
         this.subscriptionManager = subscriptionManager;
         this.factories = factories.stream().collect(Collectors.toMap(SagaSubscriptionFactory::getProviderName, Function.identity()));
         this.transactions = transactions;
@@ -53,7 +53,7 @@ public class SagaTransactionManager implements ApplicationLifecycleListener {
         // Do nothing
     }
 
-    private void checkFactory(SagaTransaction<?> transaction, SagaSubscriptionFactory factory) {
+    private void checkFactory(SagaTransaction<?, ?> transaction, SagaSubscriptionFactory factory) {
         if (factory == null) {
             var message = String.format(
                     "Cannot find factory for provider name '%s', available providers are: %s",

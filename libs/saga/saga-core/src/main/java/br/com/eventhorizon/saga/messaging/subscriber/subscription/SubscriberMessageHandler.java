@@ -14,14 +14,14 @@ import java.io.StringWriter;
 
 @Slf4j
 @RequiredArgsConstructor
-public abstract class SubscriberMessageHandler<T> {
+public abstract class SubscriberMessageHandler<R, M> {
 
     protected final SagaTransactionExecutor sagaTransactionExecutor;
 
-    protected final SagaTransaction<T> sagaTransaction;
+    protected final SagaTransaction<R, M> sagaTransaction;
 
-    protected SagaMessage<T> toSagaMessage(SubscriberMessage<T> subscriberMessage) {
-        return SagaMessage.<T>builder()
+    protected SagaMessage<M> toSagaMessage(SubscriberMessage<M> subscriberMessage) {
+        return SagaMessage.<M>builder()
                 .idempotenceId(extractIdempotenceId(subscriberMessage))
                 .traceId(subscriberMessage.headers().firstValue(SagaConventions.HEADER_TRACE_ID).orElse(null))
                 .source(subscriberMessage.headers().firstValue(SagaConventions.HEADER_PUBLISHER).orElse(null))
@@ -30,7 +30,7 @@ public abstract class SubscriberMessageHandler<T> {
                 .build();
     }
 
-    protected SagaIdempotenceId extractIdempotenceId(SubscriberMessage<T> message) {
+    protected SagaIdempotenceId extractIdempotenceId(SubscriberMessage<M> message) {
         return message.headers()
                 .firstValue(SagaConventions.HEADER_IDEMPOTENCE_ID)
                 .map(s -> {
@@ -49,7 +49,7 @@ public abstract class SubscriberMessageHandler<T> {
                 ));
     }
 
-    protected void sendToDlq(SagaIdempotenceId idempotenceId, String traceId, SubscriberMessage<T> subscriberMessage, Exception ex) {
+    protected void sendToDlq(SagaIdempotenceId idempotenceId, String traceId, SubscriberMessage<M> subscriberMessage, Exception ex) {
         var dlq = sagaTransaction.getDlq();
         if (dlq != null) {
             try {

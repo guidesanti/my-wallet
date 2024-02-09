@@ -16,7 +16,7 @@ public interface SagaRepository extends TransactionManager {
 
     void createResponse(SagaResponse<?> response, SagaContentSerializer serializer);
 
-    SagaResponse<?> findResponse(String idempotenceId, SagaContentSerializer serializer);
+    <R> SagaResponse<R> findResponse(String idempotenceId, SagaContentSerializer serializer);
 
     void createEvents(List<SagaEvent<?>> events, SagaContentSerializer serializer);
 

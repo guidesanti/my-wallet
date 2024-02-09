@@ -7,5 +7,5 @@ public interface SagaSubscriptionFactory {
 
     String getProviderName();
 
-    <T> Subscription<T> create(SagaTransaction<T> sagaTransaction);
+    <R, M> Subscription<M> create(SagaTransaction<R, M> sagaTransaction);
 }

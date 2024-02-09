@@ -6,7 +6,7 @@ public class UnsupportedSagaTransactionException extends RuntimeException {
 
     private static final String MESSAGE_TEMPLATE = "Transaction of type '%s' is not supported by factory class '%s'";
 
-    public UnsupportedSagaTransactionException(SagaSubscriptionFactory factory, SagaTransaction<?> sagaTransaction) {
+    public UnsupportedSagaTransactionException(SagaSubscriptionFactory factory, SagaTransaction<?, ?> sagaTransaction) {
         super(String.format(MESSAGE_TEMPLATE, sagaTransaction.getClass(), factory.getClass()));
     }
 }

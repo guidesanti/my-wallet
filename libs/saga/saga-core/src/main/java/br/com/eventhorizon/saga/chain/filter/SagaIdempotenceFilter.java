@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class SagaIdempotenceFilter<T> implements SagaFilter<T> {
+public class SagaIdempotenceFilter<R, M> implements SagaFilter<R, M> {
 
     @Override
     public int order() {
@@ -20,15 +20,15 @@ public class SagaIdempotenceFilter<T> implements SagaFilter<T> {
     }
 
     @Override
-    public SagaOutput filter(List<SagaMessage<T>> messages, SagaChain<T> chain) throws Exception {
+    public SagaOutput<R> filter(List<SagaMessage<M>> messages, SagaChain<R, M> chain) throws Exception {
         try {
             log.info("SAGA IDEMPOTENCE FILTER START");
 
             var repository = chain.repository();
             var checker = chain.checker();
             var serializer = chain.serializer();
-            var notProcessedMessages = new ArrayList<SagaMessage<T>>();
-            var outputBuilder = SagaOutput.builder();
+            var notProcessedMessages = new ArrayList<SagaMessage<M>>();
+            var outputBuilder = SagaOutput.<R>builder();
 
             for (var message : messages) {
                 var checksum = checker.checksum(message);

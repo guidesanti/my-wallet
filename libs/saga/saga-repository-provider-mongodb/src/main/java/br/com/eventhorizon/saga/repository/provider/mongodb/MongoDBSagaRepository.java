@@ -1,6 +1,6 @@
 package br.com.eventhorizon.saga.repository.provider.mongodb;
 
-import br.com.eventhorizon.common.util.DateTimeUtils;
+import br.com.eventhorizon.common.utils.DateTimeUtils;
 import br.com.eventhorizon.saga.SagaEvent;
 import br.com.eventhorizon.saga.SagaOption;
 import br.com.eventhorizon.saga.SagaResponse;
@@ -88,7 +88,7 @@ public class MongoDBSagaRepository implements SagaRepository {
     }
 
     @Override
-    public SagaResponse<?>  findResponse(String idempotenceId, SagaContentSerializer serializer) {
+    public <R> SagaResponse<R>  findResponse(String idempotenceId, SagaContentSerializer serializer) {
         var response = mongoTemplate.findOne(Query.query(where(IDEMPOTENCE_ID_FIELD_NAME).is(idempotenceId)),
                 SagaResponseEntity.class, options.get(SagaOption.RESPONSE_COLLECTION_NAME));
         if (response != null) {

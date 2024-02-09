@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 @Slf4j
-public class SagaEventPublisherFilter<T> implements SagaFilter<T> {
+public class SagaEventPublisherFilter<R, M> implements SagaFilter<R, M> {
 
     @Override
     public int order() {
@@ -18,7 +18,7 @@ public class SagaEventPublisherFilter<T> implements SagaFilter<T> {
     }
 
     @Override
-    public SagaOutput filter(List<SagaMessage<T>> messages, SagaChain<T> chain) throws Exception {
+    public SagaOutput<R> filter(List<SagaMessage<M>> messages, SagaChain<R, M> chain) throws Exception {
         try {
             log.info("SAGA EVENT PUBLISHER FILTER START");
             var repository = chain.repository();

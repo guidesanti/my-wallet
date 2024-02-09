@@ -22,7 +22,7 @@ public class ModuleAutoConfiguration {
             ApplicationLifecycleDispatcher applicationLifecycleDispatcher,
             SubscriptionManager subscriptionManager,
             List<SagaSubscriptionFactory> factories,
-            List<SagaTransaction<?>> transactions) {
+            List<SagaTransaction<?, ?>> transactions) {
         var sagaTransactionManager = new SagaTransactionManager(subscriptionManager, factories, transactions);
         applicationLifecycleDispatcher.addListener(sagaTransactionManager);
         return sagaTransactionManager;

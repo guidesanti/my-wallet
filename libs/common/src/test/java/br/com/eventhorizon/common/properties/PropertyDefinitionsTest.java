@@ -19,10 +19,10 @@ public class PropertyDefinitionsTest {
     @Test
     public void testDefineAndGet1() {
         var propertyDefinitions = new PropertyDefinitions()
-                .define("property1", String.class, "default-value", "Property 1 description")
-                .define("property2", Boolean.class, true, "Property 2 description")
-                .define("property3", Long.class, 1L, "Property 3 description")
-                .define("property4", Double.class, 1.0, "Property 4 description");
+                .add("property1", String.class, "default-value", "Property 1 description")
+                .add("property2", Boolean.class, true, "Property 2 description")
+                .add("property3", Long.class, 1L, "Property 3 description")
+                .add("property4", Double.class, 1.0, "Property 4 description");
 
         propertyDefinitions.forEach(propertyDefinition -> log.info("{}", propertyDefinition));
 
@@ -54,10 +54,10 @@ public class PropertyDefinitionsTest {
     @Test
     public void testDefineAndGet2() {
         var propertyDefinitions = new PropertyDefinitions()
-                .define(PROPERTY_DEFINITION_1)
-                .define(PROPERTY_DEFINITION_2)
-                .define(PROPERTY_DEFINITION_3)
-                .define(PROPERTY_DEFINITION_4);
+                .add(PROPERTY_DEFINITION_1)
+                .add(PROPERTY_DEFINITION_2)
+                .add(PROPERTY_DEFINITION_3)
+                .add(PROPERTY_DEFINITION_4);
 
         propertyDefinitions.forEach(propertyDefinition -> log.info("{}", propertyDefinition));
 
@@ -89,7 +89,25 @@ public class PropertyDefinitionsTest {
     @Test
     public void testDuplicateDefinition() {
         assertThrows(PropertyDefinitionAlreadyExistsException.class, () -> new PropertyDefinitions()
-                .define(PROPERTY_DEFINITION_1)
-                .define(PROPERTY_DEFINITION_1));
+                .add(PROPERTY_DEFINITION_1)
+                .add(PROPERTY_DEFINITION_1));
+    }
+
+    @Test
+    public void testToCollection() {
+        var propertyDefinitions = new PropertyDefinitions()
+                .add(PROPERTY_DEFINITION_1)
+                .add(PROPERTY_DEFINITION_2)
+                .add(PROPERTY_DEFINITION_3)
+                .add(PROPERTY_DEFINITION_4);
+
+        var propertyDefinitionsCollection = propertyDefinitions.toCollection();
+
+        assertNotNull(propertyDefinitionsCollection);
+        assertEquals(4, propertyDefinitionsCollection.size());
+        assertTrue(propertyDefinitionsCollection.contains(PROPERTY_DEFINITION_1));
+        assertTrue(propertyDefinitionsCollection.contains(PROPERTY_DEFINITION_2));
+        assertTrue(propertyDefinitionsCollection.contains(PROPERTY_DEFINITION_3));
+        assertTrue(propertyDefinitionsCollection.contains(PROPERTY_DEFINITION_4));
     }
 }

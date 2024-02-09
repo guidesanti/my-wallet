@@ -18,17 +18,17 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public class SagaChain<T> {
+public class SagaChain<R, M> {
 
-    private final Iterator<SagaFilter<T>> filters;
+    private final Iterator<SagaFilter<R, M>> filters;
 
-    private final SagaHandler<T> handler;
+    private final SagaHandler<R, M> handler;
 
     private final SagaRepository repository;
 
     private final SagaPublisher publisher;
 
-    private final SagaContentChecker<T> checker;
+    private final SagaContentChecker<M> checker;
 
     private final SagaContentSerializer serializer;
 
@@ -42,7 +42,7 @@ public class SagaChain<T> {
         return publisher;
     }
 
-    public SagaContentChecker<T> checker() {
+    public SagaContentChecker<M> checker() {
         return checker;
     }
 
@@ -54,21 +54,21 @@ public class SagaChain<T> {
         return serializer;
     }
 
-    public SagaOutput next(List<SagaMessage<T>> messages) throws Exception {
+    public SagaOutput<R> next(List<SagaMessage<M>> messages) throws Exception {
         return doNext(messages);
     }
 
-    private SagaOutput doNext(List<SagaMessage<T>> messages) throws Exception {
+    private SagaOutput<R> doNext(List<SagaMessage<M>> messages) throws Exception {
         if (filters.hasNext()) {
             return filters.next().filter(messages, this);
         } else if (handler instanceof SagaBulkHandler) {
             log.info("SAGA HANDLING IN BULK MODE");
-            return ((SagaBulkHandler<T>) handler).handle(messages);
+            return ((SagaBulkHandler<R, M>) handler).handle(messages);
         } else {
             log.info("SAGA HANDLING IN SINGLE MODE");
-            var builder = SagaOutput.builder();
+            var builder = SagaOutput.<R>builder();
             for (var message : messages) {
-                var output = ((SagaSingleHandler<T>) handler).handle(message);
+                var output = ((SagaSingleHandler<R, M>) handler).handle(message);
                 if (output != null) {
                     builder.response(output.response()).events(output.events());
                 }

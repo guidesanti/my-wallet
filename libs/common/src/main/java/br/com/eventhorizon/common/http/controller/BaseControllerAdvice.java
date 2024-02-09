@@ -6,7 +6,7 @@ import br.com.eventhorizon.common.exception.ClientErrorErrorException;
 import br.com.eventhorizon.common.exception.BusinessErrorErrorException;
 import br.com.eventhorizon.common.exception.ServerErrorErrorException;
 import br.com.eventhorizon.common.error.ErrorCategory;
-import br.com.eventhorizon.common.util.LogUtils;
+import br.com.eventhorizon.common.utils.LogUtils;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

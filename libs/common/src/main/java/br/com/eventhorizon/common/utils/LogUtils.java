@@ -1,4 +1,4 @@
-package br.com.eventhorizon.common.util;
+package br.com.eventhorizon.common.utils;
 
 import br.com.eventhorizon.common.error.ErrorCategory;
 import br.com.eventhorizon.common.exception.BaseErrorException;
