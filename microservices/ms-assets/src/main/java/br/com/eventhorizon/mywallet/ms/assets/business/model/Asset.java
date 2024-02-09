@@ -1,27 +1,30 @@
 package br.com.eventhorizon.mywallet.ms.assets.business.model;
 
+import br.com.eventhorizon.common.properties.Properties;
 import lombok.*;
 
-import java.util.Map;
+import java.io.Serializable;
 
-@Getter
+@Data
 @Builder
-public class Asset {
+@NoArgsConstructor
+@AllArgsConstructor
+public class Asset implements Serializable {
+
+    // TODO: Add serial
 
     private String id;
 
-    @NonNull
     private String shortName;
 
-    @NonNull
     private String longName;
 
-    @NonNull
-    private String strategy;
+    private AssetType type;
 
-    @NonNull
-    private String type;
+    private String description;
 
-    @Singular
-    private Map<String, String> properties;
+    private Properties properties;
+
+//    @Singular
+//    private Map<String, String> properties;
 }

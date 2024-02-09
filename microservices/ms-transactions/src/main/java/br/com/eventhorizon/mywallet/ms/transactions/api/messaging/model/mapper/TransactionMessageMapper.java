@@ -1,7 +1,7 @@
 package br.com.eventhorizon.mywallet.ms.transactions.api.messaging.model.mapper;
 
 import br.com.eventhorizon.mywallet.common.proto.TransactionsProto;
-import br.com.eventhorizon.common.util.DateTimeUtils;
+import br.com.eventhorizon.common.utils.DateTimeUtils;
 import br.com.eventhorizon.mywallet.ms.transactions.business.model.Transaction;
 
 import java.math.BigDecimal;

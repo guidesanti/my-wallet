@@ -2,6 +2,7 @@ package br.com.eventhorizon.mywallet.ms.assets.api.messaging;
 
 import br.com.eventhorizon.mywallet.ms.assets.ApplicationProperties;
 import br.com.eventhorizon.mywallet.ms.assets.api.messaging.handler.GetAssetSagaSingleHandler;
+import br.com.eventhorizon.mywallet.ms.assets.business.model.Asset;
 import br.com.eventhorizon.saga.messaging.provider.kafka.KafkaSagaTransaction;
 import br.com.eventhorizon.saga.messaging.publisher.SagaPublisher;
 import br.com.eventhorizon.saga.repository.SagaRepository;
@@ -35,7 +36,7 @@ public class Subscriptions {
 //    }
 
     @Bean
-    public KafkaSagaTransaction<byte[]> getAssetSingleSubscription(
+    public KafkaSagaTransaction<Asset, byte[]> getAssetSingleSubscription(
             ApplicationProperties applicationProperties,
             GetAssetSagaSingleHandler handler,
             SagaRepository sagaRepository,
@@ -46,7 +47,7 @@ public class Subscriptions {
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class);
         config.put(ConsumerConfig.GROUP_ID_CONFIG, applicationProperties.getServiceName());
 
-        return KafkaSagaTransaction.<byte[]>builder()
+        return KafkaSagaTransaction.<Asset, byte[]>builder()
                 .id("get-asset-saga-transaction")
                 .messagingProviderName("kafka")
                 .source(applicationProperties.getGetAssetKafkaTopicName())

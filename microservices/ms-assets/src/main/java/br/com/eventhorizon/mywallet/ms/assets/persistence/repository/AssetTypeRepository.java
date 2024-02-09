@@ -1,20 +1,20 @@
 package br.com.eventhorizon.mywallet.ms.assets.persistence.repository;
 
 import br.com.eventhorizon.common.repository.DuplicateKeyException;
-import br.com.eventhorizon.mywallet.ms.assets.business.model.Asset;
+import br.com.eventhorizon.mywallet.ms.assets.business.model.AssetType;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface AssetRepository {
+public interface AssetTypeRepository {
 
-    Asset create(Asset asset) throws DuplicateKeyException;
+    AssetType create(AssetType assetType) throws DuplicateKeyException;
 
-    Asset update(Asset asset);
+    AssetType update(AssetType assetType);
 
-    void delete(String id);
+//    void delete(String id);
 
-    List<Asset> findAll();
+    List<AssetType> findAll();
 
-    Optional<Asset> findOne(String id);
+    Optional<AssetType> findOne(String id);
 }

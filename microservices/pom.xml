@@ -191,12 +191,12 @@
             <artifactId>mongodb-driver-sync</artifactId>
         </dependency>
 
-<!--        &lt;!&ndash; MapStruct &ndash;&gt;-->
-<!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.mapstruct/mapstruct &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>org.mapstruct</groupId>-->
-<!--            <artifactId>mapstruct</artifactId>-->
-<!--        </dependency>-->
+        <!-- MapStruct -->
+        <!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
 
         <!-- Protocol Buffers -->
         <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->

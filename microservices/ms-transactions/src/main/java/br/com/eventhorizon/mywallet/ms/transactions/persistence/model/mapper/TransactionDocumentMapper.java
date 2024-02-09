@@ -1,6 +1,6 @@
 package br.com.eventhorizon.mywallet.ms.transactions.persistence.model.mapper;
 
-import br.com.eventhorizon.common.util.DateTimeUtils;
+import br.com.eventhorizon.common.utils.DateTimeUtils;
 import br.com.eventhorizon.mywallet.ms.transactions.business.model.Transaction;
 import br.com.eventhorizon.mywallet.ms.transactions.persistence.model.TransactionDocument;
 

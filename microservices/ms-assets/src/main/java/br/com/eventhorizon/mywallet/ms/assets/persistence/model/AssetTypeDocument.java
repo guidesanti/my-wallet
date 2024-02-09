@@ -5,7 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Map;
+import java.util.List;
 
 @Data
 @SuperBuilder
@@ -13,17 +13,35 @@ import java.util.Map;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Document(collection = "assets")
+@Document(collection = "asset-types")
 public class AssetTypeDocument extends BaseModel {
 
-    private String shortName;
-
-    private String longName;
+    private String name;
 
     private String strategy;
 
-    private String type;
+    private String income;
+
+    private boolean tradeableOnStockExchange;
+
+    private String description;
 
     @Singular
-    private Map<String, String> properties;
+    private List<PropertyDefinitionDocument<?>> propertyDefinitions;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode
+    public static class PropertyDefinitionDocument<T> {
+
+        private String name;
+
+        private String type;
+
+        private T defaultValue;
+
+        private String description;
+    }
 }

@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public enum IncomeType {
+public enum Income {
 
     NONE("Suitable for assets that do not have any income"),
     VARIABLE("Suitable for assets of variable income"),
@@ -18,11 +18,11 @@ public enum IncomeType {
 
     private final String description;
 
-    public static IncomeType of(String name) {
+    public static Income of(String name) {
         try {
-            return IncomeType.valueOf(name);
+            return Income.valueOf(name);
         } catch (Exception ex) {
-            return IncomeType.UNKNOWN;
+            return Income.UNKNOWN;
         }
     }
 }

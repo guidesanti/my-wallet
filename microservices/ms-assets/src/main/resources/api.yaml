@@ -15,10 +15,144 @@ servers:
     description: Local environment
 
 tags:
+  - name: asset-types
+    description: Manages finantial asset types
   - name: assets
-    description: Finantial assets
+    description: Manages finantial assets
 
 paths:
+  /asset-types:
+    post:
+      tags:
+        - asset-types
+      summary: Create asset type
+      operationId: createAssetType
+      description: Creates new asset type
+      parameters:
+        - $ref: '#/components/parameters/XIdempotenceIdHeader'
+        - $ref: '#/components/parameters/XTraceIdHeader'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAssetTypeDTO'
+        description: Asset type to create
+      responses:
+        '201':
+          description: Asset type created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/AssetTypeDTO'
+        '400':
+          $ref: '#/components/responses/ClientError'
+        '422':
+          $ref: '#/components/responses/BusinessError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    get:
+      tags:
+        - asset-types
+      summary: Get all asset types
+      operationId: getAllAssetTypes
+      description: Get all asset types
+      parameters:
+        - $ref: '#/components/parameters/XTraceIdHeader'
+      responses:
+        '200':
+          description: All asset types results
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/AssetTypeDTO'
+        '400':
+          $ref: '#/components/responses/ClientError'
+        '422':
+          $ref: '#/components/responses/BusinessError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /asset-types/{assetTypeId}:
+    put:
+      tags:
+        - asset-types
+      summary: Update asset type
+      operationId: updateAssetType
+      description: |
+        Update asset type by its ID
+      parameters:
+        - $ref: '#/components/parameters/AssetTypeIdPathParam'
+        - $ref: '#/components/parameters/XIdempotenceIdHeader'
+        - $ref: '#/components/parameters/XTraceIdHeader'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAssetTypeDTO'
+        description: Asset type to update
+      responses:
+        '200':
+          description: The updated asset type matching the ID
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/AssetTypeDTO'
+        '400':
+          $ref: '#/components/responses/ClientError'
+        '422':
+          $ref: '#/components/responses/BusinessError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    get:
+      tags:
+        - asset-types
+      summary: Get one asset type by ID
+      operationId: getOneAssetType
+      description: |
+        Get one asset type by ID
+      parameters:
+        - $ref: '#/components/parameters/XTraceIdHeader'
+        - $ref: '#/components/parameters/AssetTypeIdPathParam'
+      responses:
+        '200':
+          description: The asset type matching the ID
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/AssetTypeDTO'
+        '400':
+          $ref: '#/components/responses/ClientError'
+        '422':
+          $ref: '#/components/responses/BusinessError'
+        '500':
+          $ref: '#/components/responses/ServerError'
   /assets:
     post:
       tags:
@@ -208,6 +342,13 @@ components:
       description: Asset ID
       schema:
         type: string
+    AssetTypeIdPathParam:
+      in: path
+      name: assetTypeId
+      required: true
+      description: Asset Type ID
+      schema:
+        type: string
 
   # -------------------------------------------------------- #
   # Reusable schemas (data models)                           #
@@ -341,6 +482,99 @@ components:
             type: string
           example:
             ticker: PETR4
+    CreateAssetTypeDTO:
+      type: object
+      required:
+        - name
+        - strategy
+        - income
+        - tradeableOnStockExchange
+        - description
+      properties:
+        name:
+          type: string
+        strategy:
+          $ref: '#/components/schemas/AssetTypeStrategy'
+        income:
+          $ref: '#/components/schemas/AssetTypeIncome'
+        tradeableOnStockExchange:
+          type: boolean
+        description:
+          type: string
+        propertyDefinitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssetTypePropertyDefinition'
+    UpdateAssetTypeDTO:
+      type: object
+      required:
+        - strategy
+        - income
+        - tradeableOnStockExchange
+        - description
+      properties:
+        strategy:
+          $ref: '#/components/schemas/AssetTypeStrategy'
+        income:
+          $ref: '#/components/schemas/AssetTypeIncome'
+        tradeableOnStockExchange:
+          type: boolean
+        description:
+          type: string
+        propertyDefinitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssetTypePropertyDefinition'
+    AssetTypeDTO:
+      allOf:
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: string
+        - $ref: '#/components/schemas/CreateAssetTypeDTO'
+    AssetTypePropertyDefinition:
+      type: object
+      required:
+        - name
+        - type
+        - defaultValue
+        - description
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - STRING
+            - BOOLEAN
+            - LONG
+            - DOUBLE
+        defaultValue:
+          type: string
+        description:
+          type: string
+    AssetTypeStrategy:
+      type: string
+      enum:
+        - NO_INCOME
+        - VARIABLE_INCOME
+        - FIXED_INCOME
+        - HYBRID
+        - SAVINGS
+        - OTHER
+        - UNKNOWN
+    AssetTypeIncome:
+      type: string
+      enum:
+        - NONE
+        - VARIABLE
+        - FIXED
+        - INDEXED
+        - MIXED
+        - OTHER
+        - UNKNOWN
 
   # -------------------------------------------------------- #
   # Reusable responses                                       #

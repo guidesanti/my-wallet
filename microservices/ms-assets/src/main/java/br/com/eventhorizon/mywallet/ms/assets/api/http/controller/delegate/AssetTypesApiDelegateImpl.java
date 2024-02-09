@@ -1,77 +1,57 @@
 package br.com.eventhorizon.mywallet.ms.assets.api.http.controller.delegate;
 
-import br.com.eventhorizon.mywallet.ms.assets.api.http.AssetsApiDelegate;
+import br.com.eventhorizon.mywallet.ms.assets.api.http.AssetTypesApiDelegate;
 import br.com.eventhorizon.mywallet.ms.assets.api.http.model.*;
-import br.com.eventhorizon.mywallet.ms.assets.api.http.model.mapper.AssetDTOMapper;
-import br.com.eventhorizon.mywallet.ms.assets.business.service.AssetsService;
+import br.com.eventhorizon.mywallet.ms.assets.api.http.model.mapper.AssetTypeDTOMapper;
+import br.com.eventhorizon.mywallet.ms.assets.business.service.AssetTypesService;
 import br.com.eventhorizon.saga.SagaIdempotenceId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.NativeWebRequest;
 
-import java.util.List;
+import java.util.Optional;
 
-@Service
 @Slf4j
-@RequiredArgsConstructor(onConstructor = @__({@Autowired}))
-public class AssetTypesApiDelegateImpl implements AssetsApiDelegate {
+@Service
+@RequiredArgsConstructor
+public class AssetTypesApiDelegateImpl implements AssetTypesApiDelegate {
 
-    private final AssetsService assetsService;
+    private final AssetTypesService assetTypesService;
+
+    private final AssetTypeDTOMapper assetTypeDTOMapper = AssetTypeDTOMapper.INSTANCE;
 
     @Override
-    public ResponseEntity<GetAllAssets200Response> createAsset(String traceId,
-                                                               String idempotenceId,
-                                                               CreateAssetDTO createAssetDTO) {
-        log.info("Create asset request: {}", createAssetDTO);
-        var createdAsset = AssetDTOMapper.toApiModel(assetsService.createAsset(SagaIdempotenceId.of(idempotenceId),
-                traceId, AssetDTOMapper.toCreateAssetCommandRequestMessageModel(createAssetDTO)));
-        log.info("Created asset: {}", createdAsset);
-        var response = new GetAllAssets200Response(ResponseStatus.SUCCESS);
-        response.setData(List.of(createdAsset));
+    public ResponseEntity<GetAllAssetTypes200Response> createAssetType(String xIdempotenceId,
+                                                                       String xTraceId,
+                                                                       CreateAssetTypeDTO createAssetTypeDTO) {
+        var creatingAssetType = assetTypeDTOMapper.toBusiness(createAssetTypeDTO);
+        var createdAssetType = assetTypesService.createAssetType(SagaIdempotenceId.of(xIdempotenceId), xTraceId, creatingAssetType);
+        var createdAssetTypeDTO = assetTypeDTOMapper.toDTO(createdAssetType);
+        log.info("Asset type created: {}", createAssetTypeDTO);
+        var response = new GetAllAssetTypes200Response(ResponseStatus.SUCCESS).addDataItem(createdAssetTypeDTO);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<GetAllAssets200Response> updateAsset(String traceId,
-                                                               String idempotenceId,
-                                                               String assetId,
-                                                               UpdateAssetDTO updateAssetDTO) {
-        log.info("Update asset request: {}", updateAssetDTO);
-        var updatedAsset = AssetDTOMapper.toApiModel(assetsService.updateAsset(SagaIdempotenceId.of(idempotenceId),
-                traceId, AssetDTOMapper.toUpdateAssetCommandRequestMessageModel(assetId, updateAssetDTO)));
-        log.info("Updated asset: {}", updatedAsset);
-        var response = new GetAllAssets200Response(ResponseStatus.SUCCESS);
-        response.setData(List.of(updatedAsset));
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public Optional<NativeWebRequest> getRequest() {
+        return AssetTypesApiDelegate.super.getRequest();
     }
 
     @Override
-    public ResponseEntity<DeleteAsset200Response> deleteAsset(String xRequestId, String assetId) {
-        assetsService.deleteAsset(assetId);
-        var response = new DeleteAsset200Response(ResponseStatus.SUCCESS);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<GetAllAssetTypes200Response> getAllAssetTypes(String xTraceId) {
+        return AssetTypesApiDelegate.super.getAllAssetTypes(xTraceId);
     }
 
     @Override
-    public ResponseEntity<GetAllAssets200Response> getAllAssets(String xRequestId) {
-        log.info("Get all assets request");
-        var data = assetsService.findAssets().stream().map(AssetDTOMapper::toApiModel).toList();
-        log.info("Found assets: {}", data);
-        var response = new GetAllAssets200Response(ResponseStatus.SUCCESS);
-        response.setData(data);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<GetAllAssetTypes200Response> getOneAssetType(String xTraceId, String assetTypeId) {
+        return AssetTypesApiDelegate.super.getOneAssetType(xTraceId, assetTypeId);
     }
 
     @Override
-    public ResponseEntity<GetAllAssets200Response> getOneAsset(String xRequestId, String assetId) {
-        log.info("Get one asset request: {}", assetId);
-        var foundAsset = AssetDTOMapper.toApiModel(assetsService.findAssetById(assetId));
-        log.info("Found asset: {}", foundAsset);
-        var response = new GetAllAssets200Response(ResponseStatus.SUCCESS);
-        response.setData(List.of(foundAsset));
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<GetAllAssetTypes200Response> updateAssetType(String assetTypeId, String xIdempotenceId, String xTraceId, UpdateAssetTypeDTO updateAssetTypeDTO) {
+        return AssetTypesApiDelegate.super.updateAssetType(assetTypeId, xIdempotenceId, xTraceId, updateAssetTypeDTO);
     }
 }
