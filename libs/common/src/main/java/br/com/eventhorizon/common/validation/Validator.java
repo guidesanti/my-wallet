@@ -1,10 +1,14 @@
 package br.com.eventhorizon.common.validation;
 
-import lombok.NonNull;
-
-import java.util.List;
+import br.com.eventhorizon.common.validation.rule.ValidationRule;
 
 public interface Validator<T> {
 
-    List<ValidationError> validate(@NonNull T target);
+    ValidationResult validate(T target);
+
+    <P> void rule(ValidationRule<T, P> validationRule);
+
+    static <T1> Validator<T1> validator() {
+        return new ValidatorImpl<>();
+    }
 }

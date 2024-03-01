@@ -58,6 +58,7 @@
 		<mongock.mongodb-springdata-v4-driver.version>5.3.3</mongock.mongodb-springdata-v4-driver.version>
 		<org.springframework.boot.spring-boot-dependencies>3.2.2</org.springframework.boot.spring-boot-dependencies>
 		<org.apache.commons.commons-lang3.version>3.14.0</org.apache.commons.commons-lang3.version>
+		<com.github.mvallim.java-fluent-validator.version>1.10.0</com.github.mvallim.java-fluent-validator.version>
 	</properties>
 
 	<dependencyManagement>
@@ -288,6 +289,13 @@
 				<version>${org.apache.commons.commons-lang3.version}</version>
 			</dependency>
 
+			<!-- VALIDATION -->
+			<!-- https://mvnrepository.com/artifact/com.github.mvallim/java-fluent-validator -->
+			<dependency>
+				<groupId>com.github.mvallim</groupId>
+				<artifactId>java-fluent-validator</artifactId>
+				<version>${com.github.mvallim.java-fluent-validator.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

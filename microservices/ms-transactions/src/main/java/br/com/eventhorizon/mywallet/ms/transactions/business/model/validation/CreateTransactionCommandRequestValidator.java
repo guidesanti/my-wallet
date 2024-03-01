@@ -1,5 +1,6 @@
 package br.com.eventhorizon.mywallet.ms.transactions.business.model.validation;
 
+import br.com.eventhorizon.common.validation.ValidationResult;
 import br.com.eventhorizon.mywallet.common.proto.TransactionsProto;
 import br.com.eventhorizon.common.validation.ValidationError;
 import br.com.eventhorizon.common.validation.ValidationErrorCode;
@@ -14,7 +15,7 @@ import java.util.List;
 public class CreateTransactionCommandRequestValidator implements Validator<TransactionsProto.CreateTransactionCommandRequest> {
 
     @Override
-    public List<ValidationError> validate(@NonNull TransactionsProto.CreateTransactionCommandRequest target) {
+    public ValidationResult validate(@NonNull TransactionsProto.CreateTransactionCommandRequest target) {
         var errors = new ArrayList<ValidationError>();
         var type = target.getType();
 
@@ -69,7 +70,7 @@ public class CreateTransactionCommandRequestValidator implements Validator<Trans
             errors.add(ValidationError.of("type", ValidationErrorCode.INVALID_VALUE, "Invalid transaction type '" + type + "'"));
         }
 
-        return errors;
+        return ValidationResult.builder().errors(errors).build();
     }
 
     private String getErrorMessage(String field, TransactionsProto.TransactionType type) {
