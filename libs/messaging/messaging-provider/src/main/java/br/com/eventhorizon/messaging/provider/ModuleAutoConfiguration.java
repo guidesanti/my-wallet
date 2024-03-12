@@ -2,8 +2,8 @@ package br.com.eventhorizon.messaging.provider;
 
 import br.com.eventhorizon.common.runtime.impl.ApplicationLifecycleDispatcher;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberFactory;
-import br.com.eventhorizon.messaging.provider.subscriber.subscription.Subscription;
-import br.com.eventhorizon.messaging.provider.subscriber.subscription.SubscriptionManager;
+import br.com.eventhorizon.messaging.provider.subscription.Subscription;
+import br.com.eventhorizon.messaging.provider.subscription.SubscriptionManager;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 

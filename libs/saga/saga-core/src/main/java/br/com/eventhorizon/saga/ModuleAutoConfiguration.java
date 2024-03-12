@@ -2,7 +2,7 @@ package br.com.eventhorizon.saga;
 
 import br.com.eventhorizon.common.runtime.impl.ApplicationLifecycleDispatcher;
 import br.com.eventhorizon.messaging.provider.publisher.TransactionablePublisher;
-import br.com.eventhorizon.messaging.provider.subscriber.subscription.SubscriptionManager;
+import br.com.eventhorizon.messaging.provider.subscription.SubscriptionManager;
 import br.com.eventhorizon.saga.messaging.publisher.DefaultSagaPublisher;
 import br.com.eventhorizon.saga.messaging.publisher.SagaPublisher;
 import br.com.eventhorizon.saga.messaging.subscriber.subscription.SagaSubscriptionFactory;

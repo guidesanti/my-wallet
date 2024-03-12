@@ -36,6 +36,16 @@ public class Message<T> {
 
         private final Headers.Builder headersBuilder = Headers.builder();
 
+        public Builder<T> copy(@NonNull Message<T> message) {
+            if (message.headers != null) {
+                headersBuilder.headers(message.headers);
+            }
+            if (message.content != null) {
+                content = message.content;
+            }
+            return this;
+        }
+
         public Builder<T> header(@NonNull String name, @NonNull String value) {
             headersBuilder.header(name, Collections.singletonList(value));
             return this;

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 public class AssetsProtoTest {
 
     @Test
-    public void serialize() {
+    public void testGetAsset() {
         var obj = AssetsProto.GetAssetCommandRequest.newBuilder()
                 .setAssetId("0d5efd82-2640-4453-b4dc-0c49cbafed85")
                 .build();

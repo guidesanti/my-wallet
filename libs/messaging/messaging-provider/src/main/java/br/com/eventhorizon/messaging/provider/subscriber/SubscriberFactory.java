@@ -1,6 +1,6 @@
 package br.com.eventhorizon.messaging.provider.subscriber;
 
-import br.com.eventhorizon.messaging.provider.subscriber.subscription.Subscription;
+import br.com.eventhorizon.messaging.provider.subscription.Subscription;
 
 public interface SubscriberFactory {
 

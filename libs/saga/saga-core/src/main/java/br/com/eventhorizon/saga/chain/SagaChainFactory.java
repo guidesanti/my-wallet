@@ -1,7 +1,7 @@
 package br.com.eventhorizon.saga.chain;
 
 import br.com.eventhorizon.saga.chain.filter.*;
-import br.com.eventhorizon.saga.content.checker.impl.DefaultSagaContentChecker;
+import br.com.eventhorizon.saga.content.checker.MD5SumSagaContentChecker;
 import br.com.eventhorizon.saga.content.checker.SagaContentChecker;
 import br.com.eventhorizon.saga.content.serialization.SagaContentSerializer;
 import br.com.eventhorizon.saga.content.serialization.impl.DefaultSagaContentSerializer;
@@ -46,6 +46,6 @@ public final class SagaChainFactory {
     }
 
     private static <R, M> SagaContentChecker<M> getChecker(SagaTransaction<R, M> sagaTransaction) {
-        return sagaTransaction.getChecker() == null ? new DefaultSagaContentChecker<>() : sagaTransaction.getChecker();
+        return sagaTransaction.getChecker() == null ? new MD5SumSagaContentChecker<>() : sagaTransaction.getChecker();
     }
 }

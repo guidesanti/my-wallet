@@ -17,7 +17,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.Callable;
 
 @RequiredArgsConstructor
-@Component
 public class DefaultSagaPublisher implements SagaPublisher {
 
     @Value("${br.com.eventhorizon.mywallet.service.name}")

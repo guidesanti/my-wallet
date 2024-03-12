@@ -8,7 +8,7 @@ import lombok.Value;
 @Value
 @Builder
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class PublisherResponse {
+public class PublisherResult {
 
     boolean isOk;
 }

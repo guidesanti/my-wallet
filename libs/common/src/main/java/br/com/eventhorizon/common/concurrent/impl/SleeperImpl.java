@@ -8,13 +8,13 @@ import java.time.Duration;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class SimpleSleeper implements Sleeper {
+public class SleeperImpl implements Sleeper {
 
     private static final class InstanceHolder {
-        private static final SimpleSleeper instance = new SimpleSleeper();
+        private static final SleeperImpl instance = new SleeperImpl();
     }
 
-    public static SimpleSleeper getInstance() {
+    public static SleeperImpl getInstance() {
         return InstanceHolder.instance;
     }
 

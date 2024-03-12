@@ -1,4 +1,4 @@
-package br.com.eventhorizon.messaging.provider.subscriber.subscription;
+package br.com.eventhorizon.messaging.provider.subscription;
 
 import br.com.eventhorizon.common.runtime.ApplicationLifecycleListener;
 import br.com.eventhorizon.messaging.provider.subscriber.Subscriber;

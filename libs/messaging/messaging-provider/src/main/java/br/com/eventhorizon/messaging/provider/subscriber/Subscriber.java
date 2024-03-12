@@ -1,9 +1,10 @@
 package br.com.eventhorizon.messaging.provider.subscriber;
 
+import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageChainFactory;
 import br.com.eventhorizon.messaging.provider.subscriber.handler.BulkMessageHandler;
 import br.com.eventhorizon.messaging.provider.subscriber.handler.SingleMessageHandler;
-import br.com.eventhorizon.messaging.provider.subscriber.subscription.BulkSubscription;
-import br.com.eventhorizon.messaging.provider.subscriber.subscription.Subscription;
+import br.com.eventhorizon.messaging.provider.subscription.BulkSubscription;
+import br.com.eventhorizon.messaging.provider.subscription.Subscription;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -80,18 +81,7 @@ public class Subscriber<T> {
                 state = State.RUNNING;
             }
             while (state == State.RUNNING) {
-                var messages = poll();
-                try {
-                    if (subscription instanceof BulkSubscription<T>) {
-                        ((BulkMessageHandler<T>) subscription.getHandler()).handle(messages);
-                    } else {
-                        for (SubscriberMessage<T> message : messages) {
-                            ((SingleMessageHandler<T>) subscription.getHandler()).handle(message);
-                        }
-                    }
-                } catch (Exception ex) {
-                    log.error(String.format("[%s] Exception not handled by subscription handler", this), ex);
-                }
+                handle(poll());
             }
         } catch (Exception ex) {
             log.error(String.format("[%s] Unexpected exception occurred while subscriber was running", this), ex);
@@ -111,6 +101,14 @@ public class Subscriber<T> {
         }
 
         return Collections.emptyList();
+    }
+
+    private void handle(List<SubscriberMessage<T>> messages) {
+        try {
+            MessageChainFactory.create(subscription).next(messages);
+        } catch (Exception ex) {
+            log.error(String.format("[%s] Exception not handled by filters/handler", this), ex);
+        }
     }
 
     private enum State {

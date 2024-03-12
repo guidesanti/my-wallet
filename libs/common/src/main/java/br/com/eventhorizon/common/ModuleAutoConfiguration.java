@@ -1,6 +1,6 @@
 package br.com.eventhorizon.common;
 
-import br.com.eventhorizon.common.concurrent.impl.ExecutorServiceProvider;
+import br.com.eventhorizon.common.concurrent.ExecutorServiceProvider;
 import br.com.eventhorizon.common.config.Config;
 import br.com.eventhorizon.common.config.ConfigProvider;
 import br.com.eventhorizon.common.runtime.impl.ApplicationLifecycleDispatcher;
@@ -23,7 +23,7 @@ public class ModuleAutoConfiguration {
 
     @Bean
     public ExecutorServiceProvider executorServiceProvider() {
-        return ExecutorServiceProvider.getInstance();
+        return ExecutorServiceProvider.getDefaultExecutorServiceProvider();
     }
 
     @Bean

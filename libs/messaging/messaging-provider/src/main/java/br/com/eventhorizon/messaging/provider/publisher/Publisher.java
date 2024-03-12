@@ -6,18 +6,18 @@ import java.util.concurrent.Future;
 
 public interface Publisher {
 
-    default <T> Future<PublisherResponse> publishAsync(String destination, T content) {
+    default <T> Future<PublisherResult> publishAsync(String destination, T content) {
         return publishAsync(destination, Message.<T>builder()
                 .content(content)
                 .build());
     }
 
-    default <T> Future<PublisherResponse> publishAsync(String destination, Message<T> message) {
+    default <T> Future<PublisherResult> publishAsync(String destination, Message<T> message) {
         return publishAsync(PublisherRequest.<T>builder()
                 .destination(destination)
                 .message(message)
                 .build());
     }
 
-    <T> Future<PublisherResponse> publishAsync(PublisherRequest<T> request);
+    <T> Future<PublisherResult> publishAsync(PublisherRequest<T> request);
 }

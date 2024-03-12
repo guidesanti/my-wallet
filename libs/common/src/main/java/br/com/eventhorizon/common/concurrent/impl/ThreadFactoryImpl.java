@@ -7,7 +7,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor
-public class SimpleThreadFactory implements ThreadFactory {
+public class ThreadFactoryImpl implements ThreadFactory {
 
     private final AtomicInteger threadNumber = new AtomicInteger(1);
 

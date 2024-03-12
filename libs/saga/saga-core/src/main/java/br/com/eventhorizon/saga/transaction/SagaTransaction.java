@@ -3,7 +3,7 @@ package br.com.eventhorizon.saga.transaction;
 import br.com.eventhorizon.saga.SagaOption;
 import br.com.eventhorizon.saga.chain.filter.SagaFilter;
 import br.com.eventhorizon.saga.content.checker.SagaContentChecker;
-import br.com.eventhorizon.saga.content.checker.impl.DefaultSagaContentChecker;
+import br.com.eventhorizon.saga.content.checker.MD5SumSagaContentChecker;
 import br.com.eventhorizon.saga.content.serialization.SagaContentSerializer;
 import br.com.eventhorizon.saga.content.serialization.impl.DefaultSagaContentSerializer;
 import br.com.eventhorizon.saga.handler.SagaHandler;
@@ -52,7 +52,7 @@ public class SagaTransaction<R, M> {
 
     @NonNull
     @Builder.Default
-    protected final SagaContentChecker<M> checker = new DefaultSagaContentChecker<>();
+    protected final SagaContentChecker<M> checker = new MD5SumSagaContentChecker<>();
 
     @Singular
     protected final Map<SagaOption, Object> options;

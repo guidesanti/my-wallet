@@ -1,7 +1,6 @@
-package br.com.eventhorizon.messaging.provider.subscriber.subscription;
+package br.com.eventhorizon.messaging.provider.subscription;
 
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberFactory;
-import br.com.eventhorizon.messaging.provider.subscriber.subscription.Subscription;
 
 public class UnsupportedSubscriptionException extends RuntimeException {
 

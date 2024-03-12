@@ -1,23 +1,28 @@
-package br.com.eventhorizon.messaging.provider.kafka.subscriber.subscription;
+package br.com.eventhorizon.messaging.provider.kafka.subscription;
 
 import br.com.eventhorizon.messaging.provider.kafka.Conventions;
+import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageFilter;
 import br.com.eventhorizon.messaging.provider.subscriber.handler.BulkMessageHandler;
+import br.com.eventhorizon.messaging.provider.subscription.BulkSubscription;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import java.util.List;
 import java.util.Map;
 
 @Getter
 @Builder
 @ToString
 @RequiredArgsConstructor
-public class DefaultKafkaBulkSubscription<T> implements KafkaBulkSubscription<T> {
+public class KafkaBulkSubscription<T> implements BulkSubscription<T>, KafkaSubscription<T> {
 
     private final String id;
 
     private final String providerName = Conventions.PROVIDER_NAME;
+
+    private final List<MessageFilter<T>> filters;
 
     private final BulkMessageHandler<T> handler;
 
@@ -25,5 +30,5 @@ public class DefaultKafkaBulkSubscription<T> implements KafkaBulkSubscription<T>
 
     private final Class<T> sourceType;
 
-    private final Map<String, Object> kafkaConsumerConfig;
+    private final Map<String, Object> configs;
 }
