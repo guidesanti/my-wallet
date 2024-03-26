@@ -1,6 +1,7 @@
 package br.com.eventhorizon.messaging.provider.subscriber.chain;
 
 import br.com.eventhorizon.messaging.provider.subscriber.chain.filter.LoggerMessageFilter;
+import br.com.eventhorizon.messaging.provider.subscriber.chain.filter.MetricsMessageFilter;
 import br.com.eventhorizon.messaging.provider.subscription.Subscription;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public final class MessageChainFactory {
         }
 
         filters.add(new LoggerMessageFilter<>());
+        filters.add(new MetricsMessageFilter<>());
 
         filters.sort(Comparator.comparingInt(MessageFilter::order));
 
