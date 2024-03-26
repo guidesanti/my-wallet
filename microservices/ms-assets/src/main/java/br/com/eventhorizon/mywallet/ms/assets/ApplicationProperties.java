@@ -13,7 +13,7 @@ public final class ApplicationProperties {
 
     public static final String BASE_PACKAGE = "br.com.eventhorizon.mywallet.ms.assets";
 
-    public static final String REPOSITORY_PACKAGE = BASE_PACKAGE + ".persistence.repository";
+    public static final String REPOSITORY_PACKAGE = BASE_PACKAGE + ".infrastructure.persistence.repository";
 
     public static final String START_DELAY_PROP_NAME =  PROPERTIES_PREFIX + ".start-delay";
 

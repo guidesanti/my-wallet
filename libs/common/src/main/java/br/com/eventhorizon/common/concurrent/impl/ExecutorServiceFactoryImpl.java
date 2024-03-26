@@ -18,8 +18,12 @@ public class ExecutorServiceFactoryImpl implements ExecutorServiceFactory {
     }
 
     @Override
-    public ExecutorService createThreadPoolExecutorService(String threadNamePrefix) {
-        return new ThreadPoolExecutor(1, Integer.MAX_VALUE, 10L, TimeUnit.SECONDS,
+    public ExecutorService createThreadPoolExecutorService(String threadNamePrefix,
+                                                           int corePoolSize,
+                                                           int maximumPoolSize,
+                                                           long keepAliveTime,
+                                                           TimeUnit unit) {
+        return new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit,
                 new SynchronousQueue<>(), new ThreadFactoryImpl(threadNamePrefix));
     }
 

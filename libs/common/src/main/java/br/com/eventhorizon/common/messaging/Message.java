@@ -1,69 +1,67 @@
 package br.com.eventhorizon.common.messaging;
 
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.util.*;
 
+@Accessors(fluent = true, chain = false)
+@Getter
 @ToString
 @EqualsAndHashCode
-@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 public class Message<T> {
 
     private final Headers headers;
 
     private final T content;
 
-    public Message(Builder<T> builder) {
+    protected Message(Builder<?, T> builder) {
         this.headers = builder.headersBuilder.build();
         this.content = builder.content;
     }
 
-    public Headers headers() {
-        return headers;
-    }
-
-    public T content() {
-        return content;
-    }
-
-    public static <T> Builder<T> builder() {
+    public static <T> Builder<?, T> builder() {
         return new Builder<>();
     }
 
-    public static class Builder<T> {
-
-        private T content;
+    public static class Builder<B extends Builder<B, T>, T> {
 
         private final Headers.Builder headersBuilder = Headers.builder();
 
-        public Builder<T> copy(@NonNull Message<T> message) {
+        private T content;
+
+        protected B self() {
+            return (B) this;
+        }
+
+        public B copy(@NonNull Message<T> message) {
             if (message.headers != null) {
                 headersBuilder.headers(message.headers);
             }
             if (message.content != null) {
                 content = message.content;
             }
-            return this;
+            return self();
         }
 
-        public Builder<T> header(@NonNull String name, @NonNull String value) {
+        public B header(@NonNull String name, @NonNull String value) {
             headersBuilder.header(name, Collections.singletonList(value));
-            return this;
+            return self();
         }
 
-        public Builder<T> headers(@NonNull Map<String, List<String>> headers) {
+        public B header(@NonNull String name, @NonNull List<String> values) {
+            headersBuilder.header(name, values);
+            return self();
+        }
+
+        public B headers(@NonNull Headers headers) {
             headersBuilder.headers(headers);
-            return this;
+            return self();
         }
 
-        public Builder<T> headers(@NonNull Headers headers) {
-            headers.names().forEach(name -> this.headersBuilder.header(name, headers.values(name)));
-            return this;
-        }
-
-        public Builder<T> content(@NonNull T content) {
+        public B content(@NonNull T content) {
             this.content = content;
-            return this;
+            return self();
         }
 
         public Message<T> build() {

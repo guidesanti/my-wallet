@@ -2,6 +2,7 @@ package br.com.eventhorizon.saga.messaging.subscriber.subscription;
 
 import br.com.eventhorizon.common.exception.BaseErrorException;
 import br.com.eventhorizon.common.exception.ClientErrorErrorException;
+import br.com.eventhorizon.common.messaging.Headers;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
 import br.com.eventhorizon.saga.*;
 import br.com.eventhorizon.saga.transaction.SagaTransaction;
@@ -22,11 +23,10 @@ public abstract class SubscriberMessageHandler<R, M> {
 
     protected SagaMessage<M> toSagaMessage(SubscriberMessage<M> subscriberMessage) {
         return SagaMessage.<M>builder()
+                .copy(subscriberMessage)
                 .idempotenceId(extractIdempotenceId(subscriberMessage))
                 .traceId(subscriberMessage.headers().firstValue(SagaConventions.HEADER_TRACE_ID).orElse(null))
                 .source(subscriberMessage.headers().firstValue(SagaConventions.HEADER_PUBLISHER).orElse(null))
-                .headers(subscriberMessage.headers())
-                .content(subscriberMessage.content())
                 .build();
     }
 
@@ -53,7 +53,7 @@ public abstract class SubscriberMessageHandler<R, M> {
         var dlq = sagaTransaction.getDlq();
         if (dlq != null) {
             try {
-                var headersBuilder = subscriberMessage.headers().toBuilder();
+                var headersBuilder = Headers.builder().headers(subscriberMessage.headers());
                 if (ex instanceof BaseErrorException baseErrorException) {
                     headersBuilder.header(SagaConventions.HEADER_ERROR_CODE, baseErrorException.getErrorCode().toString());
                     headersBuilder.header(SagaConventions.HEADER_ERROR_MESSAGE, baseErrorException.getErrorMessage());

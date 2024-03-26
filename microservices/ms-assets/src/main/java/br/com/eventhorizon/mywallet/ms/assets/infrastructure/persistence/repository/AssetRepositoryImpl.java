@@ -1,24 +1,20 @@
-package br.com.eventhorizon.mywallet.ms.assets.infrastructure.persistence.repository.impl;
+package br.com.eventhorizon.mywallet.ms.assets.infrastructure.persistence.repository;
 
 import br.com.eventhorizon.common.repository.DuplicateKeyException;
 import br.com.eventhorizon.mywallet.ms.assets.domain.entities.Asset;
 import br.com.eventhorizon.mywallet.ms.assets.infrastructure.persistence.model.mapper.AssetDocumentMapper;
 import br.com.eventhorizon.mywallet.ms.assets.application.repository.AssetRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class AssetRepositoryImpl implements AssetRepository {
 
     private final MongoDBAssetRepository assetDocumentRepository;
-
-    @Autowired
-    public AssetRepositoryImpl(MongoDBAssetRepository assetDocumentRepository) {
-        this.assetDocumentRepository = assetDocumentRepository;
-    }
 
     @Override
     public Asset create(Asset asset) throws DuplicateKeyException {

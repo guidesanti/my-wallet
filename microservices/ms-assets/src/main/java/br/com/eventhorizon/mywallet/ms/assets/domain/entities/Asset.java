@@ -76,7 +76,7 @@ public class Asset {
                     .withMessage("Invalid short name")
                     .must(Predicate.not(StringPredicate.stringEmptyOrNull()))
                     .withFieldName("");
-            ruleFor("bla", s -> s)
+            ruleFor("bla", s -> s);
         }
     }
 }

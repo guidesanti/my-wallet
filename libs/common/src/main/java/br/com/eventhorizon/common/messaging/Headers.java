@@ -1,6 +1,8 @@
 package br.com.eventhorizon.common.messaging;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.ToString;
 
 import java.util.*;
 
@@ -10,14 +12,14 @@ public class Headers implements Iterable<Map.Entry<String, List<String>>> {
 
     public static final Headers EMPTY_HEADERS = new Headers();
 
-    private final Map<String, List<String>> headers;
+    protected final Map<String, List<String>> headers;
 
     private Headers() {
         this.headers = new HashMap<>();
     }
 
     private Headers(Builder builder) {
-        this.headers = builder.headers;
+        this.headers = new HashMap<>(builder.headers);
     }
 
     public static Headers emptyHeaders() {
@@ -82,17 +84,31 @@ public class Headers implements Iterable<Map.Entry<String, List<String>>> {
         };
     }
 
-    public Builder toBuilder() {
-        return new Builder().headers(this.headers);
-    }
-
     public static Builder builder() {
         return new Builder();
     }
 
     public static class Builder {
 
-        private final Map<String, List<String>> headers = new HashMap<>();
+        protected final Map<String, List<String>> headers = new HashMap<>();
+
+        public Builder headers(@NonNull Headers headers) {
+            headers.forEach(entry -> {
+                var currentValues = this.headers.getOrDefault(entry.getKey(), new ArrayList<>());
+                currentValues.addAll(entry.getValue());
+                this.headers.put(entry.getKey(), currentValues);
+            });
+            return this;
+        }
+
+        public Builder headers(@NonNull Map<String, List<String>> headers) {
+            headers.forEach((key, value) -> {
+                var currentValues = this.headers.getOrDefault(key, new ArrayList<>());
+                currentValues.addAll(value);
+                this.headers.put(key, currentValues);
+            });
+            return this;
+        }
 
         public Builder header(@NonNull String name, @NonNull String value) {
             var currentValues = this.headers.getOrDefault(name, new ArrayList<>());
@@ -105,24 +121,6 @@ public class Headers implements Iterable<Map.Entry<String, List<String>>> {
             var currentValues = this.headers.getOrDefault(name, new ArrayList<>());
             currentValues.addAll(values);
             this.headers.put(name, currentValues);
-            return this;
-        }
-
-        public Builder headers(@NonNull Map<String, List<String>> headers) {
-            headers.keySet().forEach(name -> {
-                var currentValues = this.headers.getOrDefault(name, new ArrayList<>());
-                currentValues.addAll(headers.get(name));
-                this.headers.put(name, currentValues);
-            });
-            return this;
-        }
-
-        public Builder headers(@NonNull Headers headers) {
-            headers.forEach(entry -> {
-                var currentValues = this.headers.getOrDefault(entry.getKey(), new ArrayList<>());
-                currentValues.addAll(entry.getValue());
-                this.headers.put(entry.getKey(), currentValues);
-            });
             return this;
         }
 

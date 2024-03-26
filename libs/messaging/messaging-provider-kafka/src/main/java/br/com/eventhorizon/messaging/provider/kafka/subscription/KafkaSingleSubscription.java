@@ -1,6 +1,6 @@
 package br.com.eventhorizon.messaging.provider.kafka.subscription;
 
-import br.com.eventhorizon.messaging.provider.kafka.Conventions;
+import br.com.eventhorizon.messaging.provider.kafka.KafkaMessagingProvider;
 import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageFilter;
 import br.com.eventhorizon.messaging.provider.subscriber.handler.SingleMessageHandler;
 import br.com.eventhorizon.messaging.provider.subscription.SingleSubscription;
@@ -17,7 +17,7 @@ public class KafkaSingleSubscription<T> implements SingleSubscription<T>, KafkaS
 
     private final String id;
 
-    private final String providerName = Conventions.PROVIDER_NAME;
+    private final String providerName = KafkaMessagingProvider.PROVIDER_NAME;
 
     @Singular
     private final List<MessageFilter<T>> filters;

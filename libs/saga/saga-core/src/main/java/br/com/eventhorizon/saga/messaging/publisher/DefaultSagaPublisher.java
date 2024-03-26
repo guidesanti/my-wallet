@@ -9,7 +9,6 @@ import br.com.eventhorizon.messaging.provider.publisher.PublisherRequest;
 import br.com.eventhorizon.messaging.provider.publisher.TransactionablePublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;

@@ -1,6 +1,6 @@
 package br.com.eventhorizon.messaging.provider.kafka.subscriber;
 
-import br.com.eventhorizon.messaging.provider.kafka.Conventions;
+import br.com.eventhorizon.messaging.provider.kafka.KafkaMessagingProvider;
 import br.com.eventhorizon.messaging.provider.kafka.subscription.KafkaSubscription;
 import br.com.eventhorizon.messaging.provider.subscriber.Subscriber;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberFactory;
@@ -20,15 +20,15 @@ public class KafkaSubscriberFactory implements SubscriberFactory {
 
     @Override
     public String getProviderName() {
-        return Conventions.PROVIDER_NAME;
+        return KafkaMessagingProvider.PROVIDER_NAME;
     }
 
     @Override
     public <T> Subscriber<T> create(Subscription<T> subscription) {
         if (subscription instanceof KafkaSubscription<T> kafkaSubscription) {
-            var name = Conventions.PROVIDER_NAME + "-subscriber-" + count.getAndIncrement();
+            var name = KafkaMessagingProvider.PROVIDER_NAME + "-subscriber-" + count.getAndIncrement();
             var poller = new KafkaMessagePoller<T>(kafkaSubscription.getSource(), kafkaSubscription.getConfigs());
-            return new Subscriber<>(name, executorService, subscription, poller);
+            return new Subscriber<>(name, executorService, subscription, poller, poller);
         }
 
         throw new UnsupportedSubscriptionException(subscription, this);

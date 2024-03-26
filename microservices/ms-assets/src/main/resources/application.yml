@@ -38,8 +38,9 @@ mongock:
 logging:
   config: classpath:log4j2.xml
   level:
-    root: INFO
-    org.springframework.web: INFO
+    root: TRACE
+    org: INFO
+    br.com.eventhorizon: DEBUG
 
 management:
   endpoints:
@@ -52,6 +53,3 @@ management:
       show-details: always
       show-components: always
     refresh.enabled: true
-
-log4j:
-  configurationFile: log4j2xml

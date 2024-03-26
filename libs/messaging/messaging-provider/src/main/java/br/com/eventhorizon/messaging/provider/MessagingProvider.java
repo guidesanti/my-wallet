@@ -1,6 +1,6 @@
 package br.com.eventhorizon.messaging.provider;
 
-public class MessagingConventions {
+public class MessagingProvider {
 
     public static final String HEADER_CREATED_AT = "eh-created-at";
 

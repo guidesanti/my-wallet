@@ -1,5 +1,6 @@
 package br.com.eventhorizon.mywallet.ms.assets.infrastructure.http.controller.delegate;
 
+import br.com.eventhorizon.messaging.provider.publisher.Publisher;
 import br.com.eventhorizon.mywallet.ms.assets.api.http.model.*;
 import br.com.eventhorizon.mywallet.ms.assets.infrastructure.http.model.mapper.AssetDTOMapper;
 import br.com.eventhorizon.saga.SagaIdempotenceId;
@@ -21,17 +22,27 @@ public class AssetsApiDelegateImpl implements AssetsApiDelegate {
 
     private final AssetsService assetsService;
 
+    private final Publisher publisher;
+
     @Override
     public ResponseEntity<GetAllAssets200Response> createAsset(String traceId,
                                                                String idempotenceId,
                                                                CreateAssetDTO createAssetDTO) {
-        log.info("Create asset request: {}", createAssetDTO);
-        var createdAsset = AssetDTOMapper.toApiModel(assetsService.createAsset(SagaIdempotenceId.of(idempotenceId),
-                traceId, AssetDTOMapper.toCreateAssetCommandRequestMessageModel(createAssetDTO)));
-        log.info("Created asset: {}", createdAsset);
-        var response = new GetAllAssets200Response(ResponseStatus.SUCCESS);
-        response.setData(List.of(createdAsset));
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        // ----------------------------------
+        // TODO: This is just for testing, remove it later
+        publisher.publishAsync("local-assets-asset-created", "This is a test".getBytes());
+        // ----------------------------------
+        return new ResponseEntity<>(new GetAllAssets200Response(ResponseStatus.SUCCESS), HttpStatus.OK);
+
+
+
+//        log.info("Create asset request: {}", createAssetDTO);
+//        var createdAsset = AssetDTOMapper.toApiModel(assetsService.createAsset(SagaIdempotenceId.of(idempotenceId),
+//                traceId, AssetDTOMapper.toCreateAssetCommandRequestMessageModel(createAssetDTO)));
+//        log.info("Created asset: {}", createdAsset);
+//        var response = new GetAllAssets200Response(ResponseStatus.SUCCESS);
+//        response.setData(List.of(createdAsset));
+//        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override

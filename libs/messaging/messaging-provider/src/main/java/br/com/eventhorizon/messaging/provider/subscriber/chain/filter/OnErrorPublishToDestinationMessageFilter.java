@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
-import static br.com.eventhorizon.messaging.provider.MessagingConventions.*;
+import static br.com.eventhorizon.messaging.provider.MessagingProvider.*;
 
 @Slf4j
 @Builder

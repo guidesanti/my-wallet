@@ -1,4 +1,4 @@
-package br.com.eventhorizon.mywallet.ms.assets.infrastructure.persistence.repository.impl;
+package br.com.eventhorizon.mywallet.ms.assets.infrastructure.persistence.repository;
 
 import br.com.eventhorizon.common.repository.BaseRepository;
 import br.com.eventhorizon.mywallet.ms.assets.infrastructure.persistence.model.AssetTypeDocument;

@@ -1,21 +1,36 @@
 package br.com.eventhorizon.messaging.provider.subscriber;
 
 import br.com.eventhorizon.common.messaging.Message;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class SubscriberMessage<T> extends Message<T> {
 
-    public SubscriberMessage(Builder<T> builder) {
+    private final String source;
+
+    protected SubscriberMessage(Builder<?, T> builder) {
         super(builder);
+        this.source = builder.source;
     }
 
-    public static <T> Builder<T> builder() {
+    public String source() {
+        return source;
+    }
+
+    public static <T> Builder<?, T> builder() {
         return new Builder<>();
     }
 
-    public static class Builder<T> extends Message.Builder<T> {
+    public static class Builder<B extends Builder<B, T>, T> extends Message.Builder<B, T> {
+
+        private String source;
+
+        public B source(String source) {
+            this.source = source;
+            return self();
+        }
 
         @Override
         public SubscriberMessage<T> build() {

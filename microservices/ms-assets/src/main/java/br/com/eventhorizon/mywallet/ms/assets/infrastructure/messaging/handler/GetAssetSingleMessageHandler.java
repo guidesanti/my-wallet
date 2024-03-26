@@ -24,6 +24,7 @@ public class GetAssetSingleMessageHandler implements SingleMessageHandler<byte[]
 //            message.headers().firstValue()
 //            assetsService.findAssetById(?, ?, getAssetCommandRequest);
         } catch (InvalidProtocolBufferException e) {
+            log.error("Message handling failed");
             throw new RuntimeException(e);
         }
     }

@@ -1,6 +1,6 @@
 package br.com.eventhorizon.messaging.provider.kafka.subscription;
 
-import br.com.eventhorizon.messaging.provider.kafka.Conventions;
+import br.com.eventhorizon.messaging.provider.kafka.KafkaMessagingProvider;
 import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageFilter;
 import br.com.eventhorizon.messaging.provider.subscriber.handler.BulkMessageHandler;
 import br.com.eventhorizon.messaging.provider.subscription.BulkSubscription;
@@ -20,7 +20,7 @@ public class KafkaBulkSubscription<T> implements BulkSubscription<T>, KafkaSubsc
 
     private final String id;
 
-    private final String providerName = Conventions.PROVIDER_NAME;
+    private final String providerName = KafkaMessagingProvider.PROVIDER_NAME;
 
     private final List<MessageFilter<T>> filters;
 

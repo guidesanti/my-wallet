@@ -1,9 +1,7 @@
 package br.com.eventhorizon.messaging.provider.subscriber;
 
-import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageChainFactory;
-import br.com.eventhorizon.messaging.provider.subscriber.handler.BulkMessageHandler;
-import br.com.eventhorizon.messaging.provider.subscriber.handler.SingleMessageHandler;
-import br.com.eventhorizon.messaging.provider.subscription.BulkSubscription;
+import br.com.eventhorizon.messaging.provider.subscriber.processor.*;
+import br.com.eventhorizon.messaging.provider.subscription.SingleSubscription;
 import br.com.eventhorizon.messaging.provider.subscription.Subscription;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +32,8 @@ public class Subscriber<T> {
     private final Subscription<T> subscription;
 
     private final SubscriberMessagePoller<T> poller;
+
+    private final SubscriberMessageProcessorListener<T> listener;
 
     public synchronized boolean start() {
         log.info("[{}] Starting subscriber", this);
@@ -81,7 +81,10 @@ public class Subscriber<T> {
                 state = State.RUNNING;
             }
             while (state == State.RUNNING) {
-                handle(poll());
+                var polledMessages = poll();
+                if (polledMessages != null && !polledMessages.isEmpty()) {
+                    process(polledMessages);
+                }
             }
         } catch (Exception ex) {
             log.error(String.format("[%s] Unexpected exception occurred while subscriber was running", this), ex);
@@ -93,7 +96,7 @@ public class Subscriber<T> {
         }
     }
 
-    private List<SubscriberMessage<T>> poll() {
+    private List<SubscriberPolledMessageBatch<T>> poll() {
         try {
             return poller.poll();
         } catch (Exception ex) {
@@ -103,9 +106,15 @@ public class Subscriber<T> {
         return Collections.emptyList();
     }
 
-    private void handle(List<SubscriberMessage<T>> messages) {
+    private void process(List<SubscriberPolledMessageBatch<T>> messages) {
         try {
-            MessageChainFactory.create(subscription).next(messages);
+            messages.forEach(polledMessages -> {
+                if (subscription instanceof SingleSubscription<T>) {
+                    executorService.submit(new SubscriberSingleMessageProcessor<>(subscription, polledMessages, listener));
+                } else {
+                    executorService.submit(new SubscriberBulkMessageProcessor<>(subscription, polledMessages, listener));
+                }
+            });
         } catch (Exception ex) {
             log.error(String.format("[%s] Exception not handled by filters/handler", this), ex);
         }

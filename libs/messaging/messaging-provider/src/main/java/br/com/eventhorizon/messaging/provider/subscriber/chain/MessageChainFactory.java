@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class MessageChainFactory {
+public final class MessageChainFactory {
 
     public static <T> MessageChain<T> create(Subscription<T> subscription) {
         return new MessageChain<>(mergeFilters(subscription).iterator(), subscription.getHandler());
