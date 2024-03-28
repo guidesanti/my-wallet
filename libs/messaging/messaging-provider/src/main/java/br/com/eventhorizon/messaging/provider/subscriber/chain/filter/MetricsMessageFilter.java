@@ -17,7 +17,7 @@ public class MetricsMessageFilter<T> implements MessageFilter<T> {
 
     @Override
     public int order() {
-        return SubscriberPhase.DLQ.order();
+        return SubscriberPhase.METRICS.order();
     }
 
     @Override

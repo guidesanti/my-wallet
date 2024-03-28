@@ -1,6 +1,6 @@
 package br.com.eventhorizon.mywallet.ms.assets.domain.services;
 
-import br.com.eventhorizon.common.exception.BusinessErrorErrorException;
+import br.com.eventhorizon.common.exception.BusinessErrorException;
 import br.com.eventhorizon.common.repository.DuplicateKeyException;
 import br.com.eventhorizon.mywallet.ms.assets.domain.AssetsError;
 import br.com.eventhorizon.mywallet.ms.assets.domain.entities.AssetType;
@@ -93,7 +93,7 @@ public class AssetTypesService {
                                 .build())
                         .build();
             } catch (DuplicateKeyException ex) {
-                throw new BusinessErrorErrorException(
+                throw new BusinessErrorException(
                         AssetsError.ASSET_TYPE_ALREADY_EXIST.getCode(),
                         AssetsError.ASSET_TYPE_ALREADY_EXIST.getMessage(
                                 createAssetTypeRequest.getName()),

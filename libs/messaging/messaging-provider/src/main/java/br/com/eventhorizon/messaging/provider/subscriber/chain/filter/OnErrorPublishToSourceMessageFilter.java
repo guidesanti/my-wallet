@@ -24,39 +24,56 @@ import java.util.List;
 @Slf4j
 @Builder
 @RequiredArgsConstructor
-public class OnErrorPublishToDestinationMessageFilter<T> implements MessageFilter<T> {
+public class OnErrorPublishToSourceMessageFilter<T> implements MessageFilter<T> {
 
     private final Config config;
 
     private final Publisher publisher;
 
-    private final String destination;
+    private final int maxRetries;
 
     @Override
     public int order() {
-        return SubscriberPhase.DLQ.order();
+        return SubscriberPhase.RETRY.order();
     }
 
     @Override
     public void filter(List<SubscriberMessage<T>> messages, MessageChain<T> chain) throws Exception {
         try {
-            log.debug("##### OnErrorPublishToDestinationMessageFilter MESSAGE FILTER START #####");
+            log.debug("##### OnErrorPublishToSourceMessageFilter MESSAGE FILTER START #####");
             chain.next(messages);
         } catch (Exception ex) {
             for (var message : messages) {
-                publishToDestination(message, ex);
+                var nextRetryCount = getNextRetryCount(message);
+                if (shouldRetry(nextRetryCount)) {
+                    publishToDestination(message, ex, nextRetryCount);
+                } else {
+                    throw ex;
+                }
             }
         } finally {
-            log.debug("##### OnErrorPublishToDestinationMessageFilter MESSAGE FILTER END #####");
+            log.debug("##### OnErrorPublishToSourceMessageFilter MESSAGE FILTER END #####");
         }
     }
 
-    private void publishToDestination(SubscriberMessage<T> message, Exception exception) {
+    private int getNextRetryCount(SubscriberMessage<T> message) {
         try {
-            publisher.publishAsync(destination, Message.<T>builder()
+            return Integer.parseInt(message.headers().firstValue(Header.RETRY_COUNT.getName()).orElse("0")) + 1;
+        } catch (Exception ex) {
+            return 1;
+        }
+    }
+
+    private boolean shouldRetry(int nextRetryCount) {
+        return nextRetryCount <= maxRetries;
+    }
+
+    private void publishToDestination(SubscriberMessage<T> message, Exception exception, int nextRetryCount) {
+        try {
+            publisher.publishAsync(message.source(), Message.<T>builder()
                     .headers(HeaderUtils.extractCustomHeaders(message.headers()))
                     .headers(HeaderUtils.buildBasePlatformHeaders(config, message.headers()))
-                    .header(Header.RETRY_COUNT.getName(), message.headers().values(Header.RETRY_COUNT.getName()))
+                    .header(Header.RETRY_COUNT.getName(), String.valueOf(nextRetryCount))
                     .header(Header.ERROR_CATEGORY.getName(), ErrorCategory.SERVER_ERROR.getValue())
                     .header(Header.ERROR_CODE.getName(), ErrorCode.lib("MESSAGING_PROVIDER", "UNEXPECTED_ERROR").toString())
                     .header(Header.ERROR_MESSAGE.getName(), "Failed to process message due to unexpected exception")
@@ -64,8 +81,8 @@ public class OnErrorPublishToDestinationMessageFilter<T> implements MessageFilte
                     .content(message.content())
                     .build());
         } catch (Exception ex) {
-            var error = Error.of(MessagingProviderError.MESSAGE_PUBLISH_TO_DESTINATION_FAILED.getCode(),
-                    MessagingProviderError.MESSAGE_PUBLISH_TO_DESTINATION_FAILED.getMessage(destination));
+            var error = Error.of(MessagingProviderError.MESSAGE_PUBLISH_TO_SOURCE_FAILED.getCode(),
+                    MessagingProviderError.MESSAGE_PUBLISH_TO_SOURCE_FAILED.getMessage(message.source(), maxRetries));
             log.error(error.toString(), ex);
             throw new ServerErrorException(error.getCode(), error.getMessage());
         }

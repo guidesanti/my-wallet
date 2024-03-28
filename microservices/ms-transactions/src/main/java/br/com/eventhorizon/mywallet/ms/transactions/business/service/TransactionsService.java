@@ -1,6 +1,6 @@
 package br.com.eventhorizon.mywallet.ms.transactions.business.service;
 
-import br.com.eventhorizon.common.exception.BusinessErrorErrorException;
+import br.com.eventhorizon.common.exception.BusinessErrorException;
 import br.com.eventhorizon.mywallet.common.proto.AssetsProto;
 import br.com.eventhorizon.mywallet.common.proto.ResponseProto;
 import br.com.eventhorizon.mywallet.common.proto.TransactionsProto;
@@ -75,7 +75,7 @@ public class TransactionsService {
                             .append(", message: ").append(error.getMessage())
                             .append("}")
             ));
-            throw new BusinessErrorErrorException(
+            throw new BusinessErrorException(
                     Errors.INVALID_CREATE_TRANSACTION_REQUEST.getCode(),
                     String.format(Errors.INVALID_CREATE_TRANSACTION_REQUEST.getMessageTemplate()),
                     details.toString());

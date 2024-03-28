@@ -1,6 +1,6 @@
 package br.com.eventhorizon.saga.chain.filter;
 
-import br.com.eventhorizon.common.exception.ClientErrorErrorException;
+import br.com.eventhorizon.common.exception.ClientErrorException;
 import br.com.eventhorizon.saga.SagaError;
 import br.com.eventhorizon.saga.SagaMessage;
 import br.com.eventhorizon.saga.SagaOutput;
@@ -44,7 +44,7 @@ public class SagaIdempotenceFilter<R, M> implements SagaFilter<R, M> {
                     outputBuilder.response(repository.findResponse(message.idempotenceId().toString(), serializer));
                     outputBuilder.events(repository.findEvents(message.idempotenceId().toString(), serializer));
                 } else {
-                    throw new ClientErrorErrorException(
+                    throw new ClientErrorException(
                             SagaError.IDEMPOTENCE_ID_CONFLICT.getCode(),
                             SagaError.IDEMPOTENCE_ID_CONFLICT.getMessage(message.idempotenceId()));
                 }

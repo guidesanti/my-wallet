@@ -1,7 +1,7 @@
 package br.com.eventhorizon.saga.messaging.subscriber.subscription;
 
 import br.com.eventhorizon.common.exception.BaseErrorException;
-import br.com.eventhorizon.common.exception.ClientErrorErrorException;
+import br.com.eventhorizon.common.exception.ClientErrorException;
 import br.com.eventhorizon.common.messaging.Headers;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
 import br.com.eventhorizon.saga.*;
@@ -37,13 +37,13 @@ public abstract class SubscriberMessageHandler<R, M> {
                     try {
                         return SagaIdempotenceId.of(s);
                     } catch (Exception ex) {
-                        throw new ClientErrorErrorException(
+                        throw new ClientErrorException(
                                 SagaError.IDEMPOTENCE_ID_INVALID.getCode(),
                                 SagaError.IDEMPOTENCE_ID_INVALID.getMessage(s)
                         );
                     }
                 })
-                .orElseThrow(() -> new ClientErrorErrorException(
+                .orElseThrow(() -> new ClientErrorException(
                         SagaError.IDEMPOTENCE_ID_NOT_PRESENT.getCode(),
                         SagaError.IDEMPOTENCE_ID_NOT_PRESENT.getMessage()
                 ));

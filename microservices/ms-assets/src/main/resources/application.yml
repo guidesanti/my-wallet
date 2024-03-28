@@ -1,3 +1,8 @@
+br.com.eventhorizon:
+  service:
+    name: ms-assets
+    env: ${spring.profiles.active}
+
 br.com.eventhorizon.mywallet:
   service:
     name: ms-assets

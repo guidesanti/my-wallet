@@ -1,6 +1,6 @@
 package br.com.eventhorizon.common.conversion.impl;
 
-import br.com.eventhorizon.common.Conventions;
+import br.com.eventhorizon.common.Common;
 import br.com.eventhorizon.common.conversion.AbstractConverter;
 import br.com.eventhorizon.common.conversion.Converter;
 
@@ -28,7 +28,7 @@ public class StringToOffsetDateTimeConverter extends AbstractConverter<String, O
 
     @Override
     protected OffsetDateTime doConvert(String value) {
-        return OffsetDateTime.parse(value, Conventions.DEFAULT_DATE_TIME_FORMATTER);
+        return OffsetDateTime.parse(value, Common.DEFAULT_DATE_TIME_FORMATTER);
     }
 
     @Override

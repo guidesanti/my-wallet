@@ -2,9 +2,9 @@ package br.com.eventhorizon.common.http.controller;
 
 import br.com.eventhorizon.common.http.Response;
 import br.com.eventhorizon.common.error.DefaultErrors;
-import br.com.eventhorizon.common.exception.ClientErrorErrorException;
-import br.com.eventhorizon.common.exception.BusinessErrorErrorException;
-import br.com.eventhorizon.common.exception.ServerErrorErrorException;
+import br.com.eventhorizon.common.exception.ClientErrorException;
+import br.com.eventhorizon.common.exception.BusinessErrorException;
+import br.com.eventhorizon.common.exception.ServerErrorException;
 import br.com.eventhorizon.common.error.ErrorCategory;
 import br.com.eventhorizon.common.utils.LogUtils;
 import jakarta.validation.ConstraintViolationException;
@@ -25,8 +25,8 @@ public class BaseControllerAdvice {
     // - Violated business rules
     // ============================================================================================================== //
 
-    @ExceptionHandler(BusinessErrorErrorException.class)
-    protected ResponseEntity<Response> businessError(BusinessErrorErrorException ex) {
+    @ExceptionHandler(BusinessErrorException.class)
+    protected ResponseEntity<Response> businessError(BusinessErrorException ex) {
         log.info(LogUtils.buildErrorLogMessage(ex));
         return ResponseEntity
                 .unprocessableEntity()
@@ -38,8 +38,8 @@ public class BaseControllerAdvice {
     // - Validation error like field presence, not allowed values, invalid format, etc
     // ============================================================================================================== //
 
-    @ExceptionHandler(ClientErrorErrorException.class)
-    protected ResponseEntity<Response> clientError(ClientErrorErrorException ex) {
+    @ExceptionHandler(ClientErrorException.class)
+    protected ResponseEntity<Response> clientError(ClientErrorException ex) {
         log.warn(LogUtils.buildErrorLogMessage(ex));
         return ResponseEntity
                 .badRequest()
@@ -104,8 +104,8 @@ public class BaseControllerAdvice {
     // - Other unhandled runtime exceptions
     // ============================================================================================================== //
 
-    @ExceptionHandler(ServerErrorErrorException.class)
-    protected ResponseEntity<Response> serverError(ServerErrorErrorException ex) {
+    @ExceptionHandler(ServerErrorException.class)
+    protected ResponseEntity<Response> serverError(ServerErrorException ex) {
         log.error(LogUtils.buildErrorLogMessage(ex), ex);
         return ResponseEntity
                 .internalServerError()

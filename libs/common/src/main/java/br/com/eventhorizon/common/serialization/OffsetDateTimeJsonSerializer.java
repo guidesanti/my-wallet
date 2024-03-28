@@ -1,6 +1,6 @@
 package br.com.eventhorizon.common.serialization;
 
-import br.com.eventhorizon.common.Conventions;
+import br.com.eventhorizon.common.Common;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -17,6 +17,6 @@ public class OffsetDateTimeJsonSerializer extends JsonSerializer<OffsetDateTime>
         if (value == null) {
             return;
         }
-        jsonGenerator.writeString(Conventions.DEFAULT_DATE_TIME_FORMATTER.format(value));
+        jsonGenerator.writeString(Common.DEFAULT_DATE_TIME_FORMATTER.format(value));
     }
 }

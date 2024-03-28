@@ -1,5 +1,6 @@
 package br.com.eventhorizon.common.http.filter;
 
+import br.com.eventhorizon.common.Common;
 import br.com.eventhorizon.common.http.Conventions;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,8 +27,8 @@ public class TracingFilter implements Filter {
                 request.getServletPath(),
                 idempotenceId,
                 traceId);
-        MDC.put("idempotenceId", idempotenceId);
-        MDC.put("traceId", traceId);
+        MDC.put(Common.MDCKey.IDEMPOTENCE_ID, idempotenceId);
+        MDC.put(Common.MDCKey.TRACE_ID, traceId);
         filterChain.doFilter(servletRequest, servletResponse);
     }
 }

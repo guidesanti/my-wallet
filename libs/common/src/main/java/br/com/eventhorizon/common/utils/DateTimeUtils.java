@@ -1,6 +1,6 @@
 package br.com.eventhorizon.common.utils;
 
-import br.com.eventhorizon.common.Conventions;
+import br.com.eventhorizon.common.Common;
 
 import java.time.OffsetDateTime;
 
@@ -15,7 +15,7 @@ public final class DateTimeUtils {
      */
     @Deprecated
     public static OffsetDateTime stringToOffsetDateTime(String dateTime) {
-        return dateTime == null ? null : OffsetDateTime.parse(dateTime, Conventions.DEFAULT_DATE_TIME_FORMATTER);
+        return dateTime == null ? null : OffsetDateTime.parse(dateTime, Common.DEFAULT_DATE_TIME_FORMATTER);
     }
 
     /**
@@ -27,6 +27,6 @@ public final class DateTimeUtils {
      */
     @Deprecated
     public static String offsetDateTimeToString(OffsetDateTime dateTime) {
-        return dateTime == null ? null : dateTime.format(Conventions.DEFAULT_DATE_TIME_FORMATTER);
+        return dateTime == null ? null : dateTime.format(Common.DEFAULT_DATE_TIME_FORMATTER);
     }
 }

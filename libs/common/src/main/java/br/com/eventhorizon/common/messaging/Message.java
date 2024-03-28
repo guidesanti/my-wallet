@@ -44,6 +44,16 @@ public class Message<T> {
             return self();
         }
 
+        public B headers(@NonNull Headers headers) {
+            headersBuilder.headers(headers);
+            return self();
+        }
+
+        public B headers(@NonNull Map<String, List<String>> headers) {
+            headersBuilder.headers(headers);
+            return self();
+        }
+
         public B header(@NonNull String name, @NonNull String value) {
             headersBuilder.header(name, Collections.singletonList(value));
             return self();
@@ -51,11 +61,6 @@ public class Message<T> {
 
         public B header(@NonNull String name, @NonNull List<String> values) {
             headersBuilder.header(name, values);
-            return self();
-        }
-
-        public B headers(@NonNull Headers headers) {
-            headersBuilder.headers(headers);
             return self();
         }
 

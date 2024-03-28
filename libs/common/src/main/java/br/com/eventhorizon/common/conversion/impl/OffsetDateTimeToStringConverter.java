@@ -1,6 +1,6 @@
 package br.com.eventhorizon.common.conversion.impl;
 
-import br.com.eventhorizon.common.Conventions;
+import br.com.eventhorizon.common.Common;
 import br.com.eventhorizon.common.conversion.AbstractConverter;
 import br.com.eventhorizon.common.conversion.Converter;
 import lombok.AccessLevel;
@@ -31,7 +31,7 @@ public class OffsetDateTimeToStringConverter extends AbstractConverter<OffsetDat
 
     @Override
     public String doConvert(OffsetDateTime value) {
-        return value.format(Conventions.DEFAULT_DATE_TIME_FORMATTER);
+        return value.format(Common.DEFAULT_DATE_TIME_FORMATTER);
     }
 
     @Override

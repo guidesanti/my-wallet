@@ -1,6 +1,6 @@
 package br.com.eventhorizon.saga.repository;
 
-import br.com.eventhorizon.common.Conventions;
+import br.com.eventhorizon.common.Common;
 import lombok.*;
 
 import java.time.OffsetDateTime;
@@ -19,7 +19,7 @@ public class SagaResponseEntity {
 
     @NonNull
     @Builder.Default
-    private String createdAt = OffsetDateTime.now(ZoneOffset.UTC).format(Conventions.DEFAULT_DATE_TIME_FORMATTER);
+    private String createdAt = OffsetDateTime.now(ZoneOffset.UTC).format(Common.DEFAULT_DATE_TIME_FORMATTER);
 
     private Date expireAt;
 

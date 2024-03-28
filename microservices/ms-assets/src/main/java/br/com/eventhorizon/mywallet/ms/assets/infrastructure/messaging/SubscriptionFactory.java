@@ -3,6 +3,7 @@ package br.com.eventhorizon.mywallet.ms.assets.infrastructure.messaging;
 import br.com.eventhorizon.messaging.provider.kafka.subscription.KafkaSingleSubscription;
 import br.com.eventhorizon.messaging.provider.publisher.Publisher;
 import br.com.eventhorizon.messaging.provider.subscriber.chain.filter.OnErrorPublishToDestinationMessageFilter;
+import br.com.eventhorizon.messaging.provider.subscriber.chain.filter.OnErrorPublishToSourceMessageFilter;
 import br.com.eventhorizon.mywallet.ms.assets.ApplicationProperties;
 import br.com.eventhorizon.mywallet.ms.assets.infrastructure.messaging.handler.GetAssetSingleMessageHandler;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -34,8 +35,14 @@ public class SubscriptionFactory {
         return KafkaSingleSubscription.<byte[]>builder()
                 .id("get-asset-kafka-subscription")
                 .filter(OnErrorPublishToDestinationMessageFilter.<byte[]>builder()
+                        .config(applicationProperties.getConfig())
                         .destination(applicationProperties.getGetAssetDlqKafkaTopicName())
                         .publisher(publisher)
+                        .build())
+                .filter(OnErrorPublishToSourceMessageFilter.<byte[]>builder()
+                        .config(applicationProperties.getConfig())
+                        .publisher(publisher)
+                        .maxRetries(3)
                         .build())
                 .handler(handler)
                 .source(applicationProperties.getGetAssetKafkaTopicName())
