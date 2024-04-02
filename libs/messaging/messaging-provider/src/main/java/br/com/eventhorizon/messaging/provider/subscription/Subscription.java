@@ -18,4 +18,6 @@ public interface Subscription<T> {
     String getSource();
 
     Class<T> getSourceType();
+
+    SubscriptionProperties getProperties();
 }

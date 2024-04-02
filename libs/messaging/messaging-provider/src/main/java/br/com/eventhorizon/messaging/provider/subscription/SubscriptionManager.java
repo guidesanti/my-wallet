@@ -78,9 +78,12 @@ public class SubscriptionManager implements ApplicationLifecycleListener {
             log.info("Creating and starting subscriber for subscription: {}", subscription.getId());
             var factory = factories.get(subscription.getProviderName());
             checkFactory(subscription, factory);
-            var subscriber = factory.create(subscription);
-            subscriber.start();
-            subscribers.add(subscriber);
+            int concurrency = subscription.getProperties().getPropertyValue(SubscriptionProperties.CONCURRENCY);
+            for (int i = 0; i < concurrency; i++) {
+                var subscriber = factory.create(subscription);
+                subscriber.start();
+                subscribers.add(subscriber);
+            }
         });
     }
 }

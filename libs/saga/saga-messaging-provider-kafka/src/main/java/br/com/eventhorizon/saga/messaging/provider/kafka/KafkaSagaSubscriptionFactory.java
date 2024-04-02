@@ -29,23 +29,23 @@ public class KafkaSagaSubscriptionFactory implements SagaSubscriptionFactory {
     public <R, M> Subscription<M> create(SagaTransaction<R, M> sagaTransaction) {
         if (sagaTransaction instanceof KafkaSagaTransaction<R, M> kafkaSagaTransaction) {
             if (kafkaSagaTransaction.getHandler() instanceof SagaSingleHandler<R, M>) {
-                return new KafkaSingleSubscription<>(
-                        String.format("%s-kafka-subscription", kafkaSagaTransaction.getId()),
-                        Collections.emptyList(),
-                        new SubscriberSingleMessageHandler<>(sagaTransactionExecutor, sagaTransaction),
-                        kafkaSagaTransaction.getSource(),
-                        kafkaSagaTransaction.getSourceType(),
-                        kafkaSagaTransaction.getKafkaConsumerConfig());
+                return KafkaSingleSubscription.<M>builder()
+                        .id(String.format("%s-kafka-subscription", kafkaSagaTransaction.getId()))
+                        .handler(new SubscriberSingleMessageHandler<>(sagaTransactionExecutor, sagaTransaction))
+                        .source(kafkaSagaTransaction.getSource())
+                        .sourceType(kafkaSagaTransaction.getSourceType())
+                        .configs(kafkaSagaTransaction.getKafkaConsumerConfig())
+                        .build();
             }
 
             if (kafkaSagaTransaction.getHandler() instanceof SagaBulkHandler<R, M>) {
-                return new KafkaBulkSubscription<>(
-                        String.format("%s-kafka-subscription", kafkaSagaTransaction.getId()),
-                        Collections.emptyList(),
-                        new SubscriberBulkMessageHandler<>(sagaTransactionExecutor, sagaTransaction),
-                        kafkaSagaTransaction.getSource(),
-                        kafkaSagaTransaction.getSourceType(),
-                        kafkaSagaTransaction.getKafkaConsumerConfig());
+                return KafkaBulkSubscription.<M>builder()
+                        .id(String.format("%s-kafka-subscription", kafkaSagaTransaction.getId()))
+                        .handler(new SubscriberBulkMessageHandler<>(sagaTransactionExecutor, sagaTransaction))
+                        .source(kafkaSagaTransaction.getSource())
+                        .sourceType(kafkaSagaTransaction.getSourceType())
+                        .configs(kafkaSagaTransaction.getKafkaConsumerConfig())
+                        .build();
             }
         }
 

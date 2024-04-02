@@ -11,8 +11,10 @@ import java.util.*;
 @EqualsAndHashCode
 public class Message<T> {
 
+    @NonNull
     private final Headers headers;
 
+    @NonNull
     private final T content;
 
     protected Message(Builder<?, T> builder) {
