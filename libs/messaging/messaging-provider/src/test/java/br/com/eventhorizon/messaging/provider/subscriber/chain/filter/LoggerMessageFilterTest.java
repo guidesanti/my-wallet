@@ -4,7 +4,7 @@ import br.com.eventhorizon.common.exception.ServerErrorException;
 import br.com.eventhorizon.messaging.provider.MessagingProviderError;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberPhase;
-import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageChain;
+import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageFilterChain;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class LoggerMessageFilterTest {
                 .source("source")
                 .content(content)
                 .build();
-        var chain = mock(MessageChain.class);
+        var chain = mock(MessageFilterChain.class);
         var filter = LoggerMessageFilter.builder().build();
 
         // Then
@@ -49,7 +49,7 @@ public class LoggerMessageFilterTest {
                 .source("source")
                 .content(content)
                 .build();
-        var chain = mock(MessageChain.class);
+        var chain = mock(MessageFilterChain.class);
         doThrow(new ServerErrorException(MessagingProviderError.UNEXPECTED_ERROR.getCode(), "")).when(chain).next(any());
         var filter = LoggerMessageFilter.builder().build();
 
@@ -65,7 +65,7 @@ public class LoggerMessageFilterTest {
                 .source("source")
                 .content(content)
                 .build();
-        var chain = mock(MessageChain.class);
+        var chain = mock(MessageFilterChain.class);
         doThrow(Exception.class).when(chain).next(any());
         var filter = LoggerMessageFilter.builder().build();
 

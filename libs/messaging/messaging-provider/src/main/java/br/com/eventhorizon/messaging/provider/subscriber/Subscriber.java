@@ -1,32 +1,17 @@
 package br.com.eventhorizon.messaging.provider.subscriber;
 
+import br.com.eventhorizon.common.concurrent.impl.DefaultRunner;
 import br.com.eventhorizon.messaging.provider.subscriber.processor.*;
-import br.com.eventhorizon.messaging.provider.subscription.SingleSubscription;
-import br.com.eventhorizon.messaging.provider.subscription.Subscription;
+import br.com.eventhorizon.messaging.provider.subscriber.subscription.SingleSubscription;
+import br.com.eventhorizon.messaging.provider.subscriber.subscription.Subscription;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 @Slf4j
-@RequiredArgsConstructor
-@ToString(onlyExplicitlyIncluded = true)
-public class Subscriber<T> {
-
-    @Getter
-    @ToString.Include
-    private final String name;
-
-    private final ExecutorService executorService;
-
-    private final Runnable runner = this::run;
-
-    @Getter
-    private State state = State.CREATED;
+public class Subscriber<T> extends DefaultRunner {
 
     @Getter
     private final Subscription<T> subscription;
@@ -35,64 +20,42 @@ public class Subscriber<T> {
 
     private final SubscriberMessageProcessorListener<T> listener;
 
-    public synchronized boolean start() {
-        log.info("[{}] Starting subscriber", this);
-
-        if (state == State.RUNNING) {
-            return true;
-        }
-
-        if (state == State.CREATED) {
-            state = State.STARTING;
-            executorService.execute(this.runner);
-            log.info("[{}] Subscriber started", this);
-            return true;
-        }
-
-        log.warn("[{}] Invalid subscriber state transition, cannot transition from {} to {}", this, state, State.RUNNING);
-
-        return false;
+    public Subscriber(String name, ExecutorService executorService, Subscription<T> subscription, SubscriberMessagePoller<T> poller, SubscriberMessageProcessorListener<T> listener) {
+        super(name, executorService);
+        this.subscription = subscription;
+        this.poller = poller;
+        this.listener = listener;
     }
 
-    public synchronized boolean stop() {
-        log.warn("[{}] Stopping subscriber", this);
-
-        if (state == State.STOPPED) {
-            log.warn("[{}] Subscriber already stopped", this);
-            return true;
-        }
-
+    @Override
+    public void run() {
+//        int count = 6;
         try {
-            state = State.STOPPING;
-            log.info("[{}] Waiting for subscriber to stop", this);
-            this.wait();
-        } catch (InterruptedException ex) {
-            log.error(String.format("[%s] Exception occurred while waiting for subscriber to stop", this), ex);
-        }
-
-        log.warn("[{}] Subscriber stopped", this);
-
-        return true;
-    }
-
-    private void run() {
-        try {
-            synchronized (this) {
-                state = State.RUNNING;
-            }
+            initPoller();
             while (state == State.RUNNING) {
                 var polledMessages = poll();
                 if (polledMessages != null && !polledMessages.isEmpty()) {
                     process(polledMessages);
                 }
+//                count--;
+//                if (count == 0) {
+//                    throw new RuntimeException("STOPPING");
+//                }
             }
         } catch (Exception ex) {
             log.error(String.format("[%s] Unexpected exception occurred while subscriber was running", this), ex);
+            throw ex;
         } finally {
-            synchronized (this) {
-                state = State.STOPPED;
-                this.notifyAll();
-            }
+            closePoller();
+        }
+    }
+
+    private void initPoller() {
+        try {
+            poller.init();
+        } catch (Exception ex) {
+            log.error(String.format("[%s] Failed to initialize message poller", this), ex);
+            throw ex;
         }
     }
 
@@ -100,10 +63,10 @@ public class Subscriber<T> {
         try {
             return poller.poll();
         } catch (Exception ex) {
-            log.error(String.format("[%s] Exception not handled by message poller", this), ex);
+            log.error(String.format("[%s] Exception on message poller", this), ex);
+            // We should stop polling now, since a problem occurred on polling
+            throw ex;
         }
-
-        return Collections.emptyList();
     }
 
     private void process(List<SubscriberPolledMessageBatch<T>> messages) {
@@ -116,15 +79,16 @@ public class Subscriber<T> {
                 }
             });
         } catch (Exception ex) {
-            log.error(String.format("[%s] Exception not handled by filters/handler", this), ex);
+            log.error(String.format("[%s] Exception on message processor", this), ex);
+            // If exception occurs here we won't stop polling since it was a processing issue
         }
     }
 
-    private enum State {
-        CREATED,
-        STARTING,
-        RUNNING,
-        STOPPING,
-        STOPPED
+    private void closePoller() {
+        try {
+            poller.close();
+        } catch (Exception ex) {
+            log.error(String.format("[%s] Failed to close message poller", this), ex);
+        }
     }
 }

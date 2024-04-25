@@ -9,7 +9,7 @@ import br.com.eventhorizon.messaging.provider.MessagingProviderError;
 import br.com.eventhorizon.messaging.provider.publisher.Publisher;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberPhase;
-import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageChain;
+import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageFilterChain;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -61,7 +61,7 @@ public class OnErrorPublishToDestinationMessageFilterTest {
                 .header(Header.RETRY_COUNT.getName(), retryCount)
                 .content(content)
                 .build();
-        var chain = mock(MessageChain.class);
+        var chain = mock(MessageFilterChain.class);
         doThrow(Exception.class).when(chain).next(any());
         var publisher = mock(Publisher.class);
         var filter = new OnErrorPublishToDestinationMessageFilter<>(config, publisher, "destination");
@@ -82,7 +82,7 @@ public class OnErrorPublishToDestinationMessageFilterTest {
                 .source("source")
                 .content(content)
                 .build();
-        var chain = mock(MessageChain.class);
+        var chain = mock(MessageFilterChain.class);
         doThrow(Exception.class).when(chain).next(any());
         var publisher = mock(Publisher.class);
         doThrow(ServerErrorException.class).when(publisher).publishAsync(any(String.class), any());

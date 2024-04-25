@@ -1,7 +1,7 @@
 package br.com.eventhorizon.messaging.provider.subscriber.processor;
 
-import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageChainFactory;
-import br.com.eventhorizon.messaging.provider.subscription.Subscription;
+import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageFilterChainFactory;
+import br.com.eventhorizon.messaging.provider.subscriber.subscription.Subscription;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,7 +25,7 @@ public class SubscriberSingleMessageProcessor<T> implements SubscriberMessagePro
             var message = next.get();
             log.debug("Starting processing message: {}", message);
             try {
-                var chain = MessageChainFactory.create(subscription);
+                var chain = MessageFilterChainFactory.create(subscription);
                 listener.onMessageHandlingStarted(polledMessages, List.of(message));
                 chain.next(List.of(message));
                 listener.onMessageHandlingSucceeded(polledMessages, List.of(message));

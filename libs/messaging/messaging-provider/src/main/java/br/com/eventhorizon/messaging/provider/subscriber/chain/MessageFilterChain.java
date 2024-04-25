@@ -13,7 +13,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public class MessageChain<T> {
+public class MessageFilterChain<T> {
 
     @NonNull
     private final Iterator<MessageFilter<T>> filters;

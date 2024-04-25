@@ -1,7 +1,7 @@
 package br.com.eventhorizon.saga.transaction;
 
 import br.com.eventhorizon.common.runtime.ApplicationLifecycleListener;
-import br.com.eventhorizon.messaging.provider.subscription.SubscriptionManager;
+import br.com.eventhorizon.messaging.provider.subscriber.subscription.SubscriptionManager;
 import br.com.eventhorizon.saga.messaging.subscriber.subscription.SagaSubscriptionFactory;
 import lombok.extern.slf4j.Slf4j;
 

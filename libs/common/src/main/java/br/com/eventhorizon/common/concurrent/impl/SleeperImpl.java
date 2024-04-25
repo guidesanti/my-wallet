@@ -19,16 +19,12 @@ public class SleeperImpl implements Sleeper {
     }
 
     @Override
-    public void sleep(Duration duration) {
-        try {
-            Thread.sleep(duration.toMillis());
-        } catch (InterruptedException e) {
-            // Do nothing
-        }
+    public void sleep(Duration duration) throws InterruptedException {
+        Thread.sleep(duration.toMillis());
     }
 
     @Override
-    public void sleep(Duration duration, AtomicBoolean wakeUp) {
+    public void sleep(Duration duration, AtomicBoolean wakeUp) throws InterruptedException {
         var start = System.currentTimeMillis();
         var remaining = duration.toMillis();
         while (!wakeUp.get() && remaining > 0) {

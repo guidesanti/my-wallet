@@ -1,10 +1,14 @@
 package br.com.eventhorizon.common.properties;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@ToString
+@EqualsAndHashCode
 public abstract class Properties {
 
     @Getter

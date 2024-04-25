@@ -2,11 +2,11 @@ package br.com.eventhorizon.saga.messaging.publisher;
 
 import br.com.eventhorizon.common.messaging.Headers;
 import br.com.eventhorizon.common.messaging.Message;
+import br.com.eventhorizon.messaging.provider.publisher.Publisher;
 import br.com.eventhorizon.saga.SagaConventions;
 import br.com.eventhorizon.saga.SagaEvent;
 import br.com.eventhorizon.saga.content.serialization.SagaContentSerializer;
-import br.com.eventhorizon.messaging.provider.publisher.PublisherRequest;
-import br.com.eventhorizon.messaging.provider.publisher.TransactionablePublisher;
+import br.com.eventhorizon.messaging.provider.publisher.PublishingRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -21,7 +21,7 @@ public class DefaultSagaPublisher implements SagaPublisher {
     @Value("${br.com.eventhorizon.mywallet.service.name}")
     private String source;
 
-    private final TransactionablePublisher publisher;
+    private final Publisher publisher;
 
     @Override
     public <T> void publish(SagaEvent<T> event, SagaContentSerializer serializer) {
@@ -50,7 +50,7 @@ public class DefaultSagaPublisher implements SagaPublisher {
                 .content(serializer.serialize(event.content()))
                 .build();
 
-        var request = PublisherRequest.builder()
+        var request = PublishingRequest.builder()
                 .destination(event.destination())
                 .message(message)
                 .build();
@@ -60,6 +60,6 @@ public class DefaultSagaPublisher implements SagaPublisher {
 
     @Override
     public <T> T transact(Callable<T> task) throws Exception {
-        return publisher.transact(task);
+        return publisher.executeInTransaction(task);
     }
 }

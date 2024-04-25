@@ -9,7 +9,7 @@ import br.com.eventhorizon.messaging.provider.MessagingProviderError;
 import br.com.eventhorizon.messaging.provider.publisher.Publisher;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberPhase;
-import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageChain;
+import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageFilterChain;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -59,7 +59,7 @@ public class OnErrorPublishToSourceMessageFilterTest {
                 .source("source")
                 .content(content)
                 .build();
-        var chain = mock(MessageChain.class);
+        var chain = mock(MessageFilterChain.class);
         doThrow(Exception.class).when(chain).next(any());
         var publisher = mock(Publisher.class);
         var filter = new OnErrorPublishToSourceMessageFilter<>(config, publisher, 3);
@@ -85,7 +85,7 @@ public class OnErrorPublishToSourceMessageFilterTest {
                 .header(Header.RETRY_COUNT.getName(), String.valueOf(currentRetryCount))
                 .content(content)
                 .build();
-        var chain = mock(MessageChain.class);
+        var chain = mock(MessageFilterChain.class);
         doThrow(Exception.class).when(chain).next(any());
         var publisher = mock(Publisher.class);
         var filter = new OnErrorPublishToSourceMessageFilter<>(config, publisher, maxRetries);
@@ -107,7 +107,7 @@ public class OnErrorPublishToSourceMessageFilterTest {
                 .header(Header.RETRY_COUNT.getName(), "3")
                 .content(content)
                 .build();
-        var chain = mock(MessageChain.class);
+        var chain = mock(MessageFilterChain.class);
         doThrow(Exception.class).when(chain).next(any());
         var publisher = mock(Publisher.class);
         var filter = new OnErrorPublishToSourceMessageFilter<>(config, publisher, 3);
@@ -128,7 +128,7 @@ public class OnErrorPublishToSourceMessageFilterTest {
                 .header(Header.RETRY_COUNT.getName(), "string")
                 .content(content)
                 .build();
-        var chain = mock(MessageChain.class);
+        var chain = mock(MessageFilterChain.class);
         doThrow(Exception.class).when(chain).next(any());
         var publisher = mock(Publisher.class);
         var filter = new OnErrorPublishToSourceMessageFilter<>(config, publisher, 3);
@@ -150,7 +150,7 @@ public class OnErrorPublishToSourceMessageFilterTest {
                 .header(Header.RETRY_COUNT.getName(), "0")
                 .content(content)
                 .build();
-        var chain = mock(MessageChain.class);
+        var chain = mock(MessageFilterChain.class);
         doThrow(Exception.class).when(chain).next(any());
         var publisher = mock(Publisher.class);
         doThrow(ServerErrorException.class).when(publisher).publishAsync(any(String.class), any());

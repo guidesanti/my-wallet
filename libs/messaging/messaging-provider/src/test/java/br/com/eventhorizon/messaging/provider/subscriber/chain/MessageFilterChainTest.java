@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class MessageChainTest {
+public class MessageFilterChainTest {
 
     @Mock
     private Iterator<MessageFilter<Object>> filters;
@@ -31,15 +31,15 @@ public class MessageChainTest {
 
     @Test
     public void testConstructor() {
-        assertThrows(NullPointerException.class, () -> new MessageChain<>(null, mock(MessageHandler.class)));
-        assertThrows(NullPointerException.class, () -> new MessageChain<>(filters, null));
-        assertDoesNotThrow(() -> new MessageChain<>(filters, mock(MessageHandler.class)));
+        assertThrows(NullPointerException.class, () -> new MessageFilterChain<>(null, mock(MessageHandler.class)));
+        assertThrows(NullPointerException.class, () -> new MessageFilterChain<>(filters, null));
+        assertDoesNotThrow(() -> new MessageFilterChain<>(filters, mock(MessageHandler.class)));
     }
 
     @Test
     public void testNextWithNull() throws Exception {
         // Given
-        var chain = new MessageChain<>(filters, mock(MessageHandler.class));
+        var chain = new MessageFilterChain<>(filters, mock(MessageHandler.class));
 
         // When
         chain.next(null);
@@ -51,7 +51,7 @@ public class MessageChainTest {
     @Test
     public void testNextWithEmpty() throws Exception {
         // Given
-        var chain = new MessageChain<>(filters, mock(MessageHandler.class));
+        var chain = new MessageFilterChain<>(filters, mock(MessageHandler.class));
 
         // When
         chain.next(Collections.emptyList());
@@ -67,7 +67,7 @@ public class MessageChainTest {
                 mock(SubscriberMessage.class), mock(SubscriberMessage.class), mock(SubscriberMessage.class));
         doReturn(true).when(filters).hasNext();
         doReturn(mock(MessageFilter.class)).when(filters).next();
-        var chain = new MessageChain<>(filters, bulkMessageHandler);
+        var chain = new MessageFilterChain<>(filters, bulkMessageHandler);
 
         // When
         chain.next(messages);
@@ -83,7 +83,7 @@ public class MessageChainTest {
         var messages = List.<SubscriberMessage<Object>>of(
                 mock(SubscriberMessage.class), mock(SubscriberMessage.class), mock(SubscriberMessage.class));
         doReturn(false).when(filters).hasNext();
-        var chain = new MessageChain<>(filters, bulkMessageHandler);
+        var chain = new MessageFilterChain<>(filters, bulkMessageHandler);
 
         // When
         chain.next(messages);
@@ -99,7 +99,7 @@ public class MessageChainTest {
         var messages = List.<SubscriberMessage<Object>>of(
                 mock(SubscriberMessage.class), mock(SubscriberMessage.class), mock(SubscriberMessage.class));
         doReturn(false).when(filters).hasNext();
-        var chain = new MessageChain<>(filters, singleMessageHandler);
+        var chain = new MessageFilterChain<>(filters, singleMessageHandler);
 
         // When
         chain.next(messages);

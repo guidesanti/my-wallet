@@ -1,10 +1,12 @@
 package br.com.eventhorizon.messaging.provider;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Slf4j
 public class HeaderTest {
 
     @Test

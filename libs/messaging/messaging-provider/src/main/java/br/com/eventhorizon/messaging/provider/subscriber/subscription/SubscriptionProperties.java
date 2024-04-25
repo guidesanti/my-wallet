@@ -1,4 +1,4 @@
-package br.com.eventhorizon.messaging.provider.subscription;
+package br.com.eventhorizon.messaging.provider.subscriber.subscription;
 
 import br.com.eventhorizon.common.properties.Properties;
 import br.com.eventhorizon.common.properties.PropertyDefinition;
@@ -14,8 +14,8 @@ public class SubscriptionProperties extends Properties {
     public static final String POLL_INTERVAL_MS = "poll.interval.ms";
 
     private static final PropertyDefinitions PROPERTY_DEFINITIONS = new PropertyDefinitions()
-            .add(PropertyDefinition.of(CONCURRENCY, Integer.class, 1, "Number of poll threads to be used."))
-            .add(PropertyDefinition.of(POLL_INTERVAL_MS, Integer.class, 100, "Poll interval in ms."));
+            .add(PropertyDefinition.of(CONCURRENCY, Long.class, 1L, "Number of poll threads to be used."))
+            .add(PropertyDefinition.of(POLL_INTERVAL_MS, Long.class, 100L, "Poll interval in ms."));
 
     public SubscriptionProperties() {
         super(PROPERTY_DEFINITIONS, Collections.emptyMap());

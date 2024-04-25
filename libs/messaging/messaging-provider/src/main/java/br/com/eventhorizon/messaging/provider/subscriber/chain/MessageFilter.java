@@ -8,5 +8,5 @@ public interface MessageFilter<T> {
 
     int order();
 
-    void filter(List<SubscriberMessage<T>> messages, MessageChain<T> chain) throws Exception;
+    void filter(List<SubscriberMessage<T>> messages, MessageFilterChain<T> chain) throws Exception;
 }

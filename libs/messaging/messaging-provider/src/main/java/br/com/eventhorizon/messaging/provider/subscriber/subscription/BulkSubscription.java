@@ -1,4 +1,4 @@
-package br.com.eventhorizon.messaging.provider.subscription;
+package br.com.eventhorizon.messaging.provider.subscriber.subscription;
 
 import br.com.eventhorizon.messaging.provider.subscriber.handler.BulkMessageHandler;
 

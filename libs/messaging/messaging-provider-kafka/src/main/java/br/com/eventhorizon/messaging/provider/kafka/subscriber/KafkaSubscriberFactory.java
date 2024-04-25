@@ -4,8 +4,8 @@ import br.com.eventhorizon.messaging.provider.kafka.KafkaMessagingProvider;
 import br.com.eventhorizon.messaging.provider.kafka.subscription.KafkaSubscription;
 import br.com.eventhorizon.messaging.provider.subscriber.Subscriber;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberFactory;
-import br.com.eventhorizon.messaging.provider.subscription.Subscription;
-import br.com.eventhorizon.messaging.provider.subscription.UnsupportedSubscriptionException;
+import br.com.eventhorizon.messaging.provider.subscriber.subscription.Subscription;
+import br.com.eventhorizon.messaging.provider.subscriber.subscription.UnsupportedSubscriptionException;
 import lombok.RequiredArgsConstructor;
 
 import java.util.concurrent.ExecutorService;

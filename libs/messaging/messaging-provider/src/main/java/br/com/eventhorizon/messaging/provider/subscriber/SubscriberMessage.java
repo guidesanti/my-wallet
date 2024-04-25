@@ -2,8 +2,12 @@ package br.com.eventhorizon.messaging.provider.subscriber;
 
 import br.com.eventhorizon.common.messaging.Message;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
+@Accessors(fluent = true, chain = false)
+@Getter
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class SubscriberMessage<T> extends Message<T> {
@@ -13,10 +17,6 @@ public class SubscriberMessage<T> extends Message<T> {
     protected SubscriberMessage(Builder<?, T> builder) {
         super(builder);
         this.source = builder.source;
-    }
-
-    public String source() {
-        return source;
     }
 
     public static <T> Builder<?, T> builder() {

@@ -3,25 +3,31 @@ package br.com.eventhorizon.common.error;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
-@Value
+import java.util.Optional;
+
+@Getter
 @ToString
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Error {
 
     @NonNull
-    ErrorCode code;
+    private final ErrorCode code;
 
     @NonNull
-    String message;
+    private final String message;
 
-    String extraDetails;
+    private final String additionalInformation;
 
-    public static Error of(ErrorCode code, String message) {
-        return new Error(code, message, null);
+    public Optional<String> getAdditionalInformation() {
+        return Optional.ofNullable(additionalInformation);
     }
 
-    public static Error of(ErrorCode code, String message, String extraDetails) {
-        return new Error(code, message, extraDetails);
+    public static Error of(ErrorCode code, String message) {
+        return of(code, message, null);
+    }
+
+    public static Error of(ErrorCode code, String message, String additionalInformation) {
+        return new Error(code, message, additionalInformation);
     }
 }

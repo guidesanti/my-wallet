@@ -1,7 +1,7 @@
 package br.com.eventhorizon.messaging.provider.subscriber.processor;
 
-import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageChainFactory;
-import br.com.eventhorizon.messaging.provider.subscription.Subscription;
+import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageFilterChainFactory;
+import br.com.eventhorizon.messaging.provider.subscriber.subscription.Subscription;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,7 +20,7 @@ public class SubscriberBulkMessageProcessor<T> implements SubscriberMessageProce
         listener.onProcessStarted(polledMessages);
         var messages = polledMessages.next(Integer.MAX_VALUE);
         try {
-            var chain = MessageChainFactory.create(subscription);
+            var chain = MessageFilterChainFactory.create(subscription);
             listener.onMessageHandlingStarted(polledMessages, messages);
             chain.next(messages);
             listener.onMessageHandlingSucceeded(polledMessages, messages);

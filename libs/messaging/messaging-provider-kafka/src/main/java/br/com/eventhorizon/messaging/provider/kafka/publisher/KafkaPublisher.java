@@ -1,10 +1,10 @@
 package br.com.eventhorizon.messaging.provider.kafka.publisher;
 
 import br.com.eventhorizon.common.concurrent.ExecutorServiceProvider;
+import br.com.eventhorizon.messaging.provider.publisher.Publisher;
 import br.com.eventhorizon.messaging.provider.publisher.PublisherException;
-import br.com.eventhorizon.messaging.provider.publisher.PublisherRequest;
-import br.com.eventhorizon.messaging.provider.publisher.PublisherResult;
-import br.com.eventhorizon.messaging.provider.publisher.TransactionablePublisher;
+import br.com.eventhorizon.messaging.provider.publisher.PublishingRequest;
+import br.com.eventhorizon.messaging.provider.publisher.PublishingResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 @Slf4j
-public class KafkaPublisher implements TransactionablePublisher {
+public class KafkaPublisher implements Publisher {
 
     private final Producer<Object, Object> producer;
 
@@ -36,7 +36,7 @@ public class KafkaPublisher implements TransactionablePublisher {
     }
 
     @Override
-    public <T> Future<PublisherResult> publishAsync(PublisherRequest<T> request) {
+    public <T> Future<PublishingResult> publishAsync(PublishingRequest<T> request) {
         List<Header> headers = buildHeaders(request);
         var record = new ProducerRecord<Object, Object>(request.getDestination(), null, null, null, request.getMessage().content(), headers);
         return executorService.submit(() -> {
@@ -44,7 +44,7 @@ public class KafkaPublisher implements TransactionablePublisher {
                 var future = producer.send(record);
                 var result = future.get();
                 log.info("Message sent to Kafka: {}", result);
-                return PublisherResult.builder().isOk(true).build();
+                return PublishingResult.builder().ok(true).build();
             } catch (Exception ex) {
                 log.error("Failed to send message to Kafka", ex);
                 throw new PublisherException("Failed to send message to Kafka", ex);
@@ -52,7 +52,7 @@ public class KafkaPublisher implements TransactionablePublisher {
         });
     }
 
-    private <T> List<Header> buildHeaders(PublisherRequest<T> request) {
+    private <T> List<Header> buildHeaders(PublishingRequest<T> request) {
         List<Header> kafkaHeaders = new ArrayList<>();
         var messageHeaders = request.getMessage().headers();
         messageHeaders.names().forEach((headerName) -> {
@@ -64,12 +64,24 @@ public class KafkaPublisher implements TransactionablePublisher {
     }
 
     @Override
-    public <T> T transact(Callable<T> task) throws Exception {
+    public void beginTransaction() {
         producer.beginTransaction();
-        log.info("Kafka transaction start");
-        var output = task.call();
-        log.info("Kafka transaction commit");
+        log.debug("Kafka transaction started");
+    }
+
+    @Override
+    public void commitTransaction() {
         producer.commitTransaction();
+        log.debug("Kafka transaction committed");
+    }
+
+    @Override
+    public <T> T executeInTransaction(Callable<T> task) throws Exception {
+        producer.beginTransaction();
+        log.debug("Kafka transaction started");
+        var output = task.call();
+        producer.commitTransaction();
+        log.debug("Kafka transaction committed");
         return output;
     }
 }

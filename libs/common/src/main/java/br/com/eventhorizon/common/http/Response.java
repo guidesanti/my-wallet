@@ -28,16 +28,16 @@ public class Response {
 
     public static Response error(ErrorCategory errorCategory, Error error) {
         return new Response(StatusCode.ERROR, null,
-                ResponseError.of(errorCategory.getValue(), error.getCode().toString(), error.getMessage(), error.getExtraDetails()));
+                ResponseError.of(errorCategory.name(), error.getCode().toString(), error.getMessage(), error.getAdditionalInformation().orElse(null)));
     }
 
     public static Response error(ErrorCategory errorCategory, String errorCode, String errorMessage) {
         return new Response(StatusCode.ERROR, null,
-                ResponseError.of(errorCategory.getValue(), errorCode, errorMessage, null));
+                ResponseError.of(errorCategory.name(), errorCode, errorMessage, null));
     }
 
     public static Response error(ErrorCategory errorCategory, String errorCode, String errorMessage, String extraDetails) {
         return new Response(StatusCode.ERROR, null,
-                ResponseError.of(errorCategory.getValue(), errorCode, errorMessage, extraDetails));
+                ResponseError.of(errorCategory.name(), errorCode, errorMessage, extraDetails));
     }
 }

@@ -13,18 +13,19 @@ import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class HeaderUtils {
+
+    private static final String UNKNOWN = "unknown";
 
     public static Map<String, List<String>> buildBasePlatformHeaders(Config config, Headers headers) {
         var platformHeaders = new HashMap<String, List<String>>();
         platformHeaders.put(Header.CREATED_AT.getName(), List.of(getCreatedAtHeader(headers)));
         platformHeaders.put(Header.PUBLISHED_AT.getName(), List.of(OffsetDateTime.now().format(Common.DEFAULT_DATE_TIME_FORMATTER)));
         platformHeaders.put(Header.TRACE_ID.getName(), List.of(getTraceIdHeader(headers)));
-        platformHeaders.put(Header.PUBLISHER.getName(), List.of(config.getOptionalValue(Common.Env.APPLICATION_NAME)
-                .or(() -> config.getOptionalValue(Common.SysProp.APPLICATION_NAME))
-                .orElse("unknown")));
+        platformHeaders.put(Header.PUBLISHER.getName(), List.of(getApplicationName(config)));
         return platformHeaders;
     }
 
@@ -58,8 +59,8 @@ public final class HeaderUtils {
 
     private static String getCreatedAtHeader(Headers headers) {
         return headers != null
-                ? headers.firstValue(Header.CREATED_AT.getName()).orElse(StringUtils.EMPTY)
-                : StringUtils.EMPTY;
+                ? headers.firstValue(Header.CREATED_AT.getName()).orElse(UNKNOWN)
+                : UNKNOWN;
     }
 
     private static String getTraceIdHeader(Headers headers) {
@@ -72,9 +73,18 @@ public final class HeaderUtils {
             traceId = MDC.get(Common.MDCKey.TRACE_ID);
         }
         if (traceId == null) {
-            traceId = StringUtils.EMPTY;
+            traceId = UNKNOWN;
         }
 
         return traceId;
+    }
+
+    private static String getApplicationName(Config config) {
+        if (Objects.isNull(config)) {
+            return UNKNOWN;
+        }
+        return config.getOptionalValue(Common.Env.APPLICATION_NAME)
+                .or(() -> config.getOptionalValue(Common.SysProp.APPLICATION_NAME))
+                .orElse(UNKNOWN);
     }
 }

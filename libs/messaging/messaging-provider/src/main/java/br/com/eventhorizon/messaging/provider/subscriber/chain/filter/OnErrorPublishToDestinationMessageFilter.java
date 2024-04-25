@@ -12,7 +12,7 @@ import br.com.eventhorizon.messaging.provider.MessagingProviderError;
 import br.com.eventhorizon.messaging.provider.publisher.Publisher;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberPhase;
-import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageChain;
+import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageFilterChain;
 import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageFilter;
 import br.com.eventhorizon.messaging.provider.utils.HeaderUtils;
 import lombok.Builder;
@@ -38,7 +38,7 @@ public class OnErrorPublishToDestinationMessageFilter<T> implements MessageFilte
     }
 
     @Override
-    public void filter(List<SubscriberMessage<T>> messages, MessageChain<T> chain) throws Exception {
+    public void filter(List<SubscriberMessage<T>> messages, MessageFilterChain<T> chain) throws Exception {
         try {
             log.debug("##### OnErrorPublishToDestinationMessageFilter MESSAGE FILTER START #####");
             chain.next(messages);
@@ -57,7 +57,7 @@ public class OnErrorPublishToDestinationMessageFilter<T> implements MessageFilte
                     .headers(HeaderUtils.extractCustomHeaders(message.headers()))
                     .headers(HeaderUtils.buildBasePlatformHeaders(config, message.headers()))
                     .header(Header.RETRY_COUNT.getName(), message.headers().values(Header.RETRY_COUNT.getName()))
-                    .header(Header.ERROR_CATEGORY.getName(), ErrorCategory.SERVER_ERROR.getValue())
+                    .header(Header.ERROR_CATEGORY.getName(), ErrorCategory.SERVER_ERROR.name())
                     .header(Header.ERROR_CODE.getName(), ErrorCode.lib("MESSAGING_PROVIDER", "UNEXPECTED_ERROR").toString())
                     .header(Header.ERROR_MESSAGE.getName(), "Failed to process message due to unexpected exception")
                     .header(Header.ERROR_STACK_TRACE.getName(), ExceptionUtils.getStackTraceAsString(exception))

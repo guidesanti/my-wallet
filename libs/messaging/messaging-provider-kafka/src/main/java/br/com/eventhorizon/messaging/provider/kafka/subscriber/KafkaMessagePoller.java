@@ -5,20 +5,16 @@ import br.com.eventhorizon.messaging.provider.subscriber.processor.SubscriberMes
 import br.com.eventhorizon.messaging.provider.subscriber.processor.SubscriberMessageProcessorListener;
 import br.com.eventhorizon.messaging.provider.subscriber.processor.SubscriberPolledMessageBatch;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
 
-import java.io.Closeable;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @Slf4j
-public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, SubscriberMessageProcessorListener<T>, Closeable {
+public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, SubscriberMessageProcessorListener<T> {
 
     private static final long MIN_POLL_INTERVAL_MS = 100L;
 
@@ -26,11 +22,15 @@ public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, Subscr
 
     private static final long COMMIT_INTERVAL_MS = 5_000L;
 
-    private final KafkaConsumer<byte[], T> kafkaConsumer;
+    private final String topic;
+
+    private final Map<String, Object> config;
+
+    private final ConsumerRebalanceListener consumerRebalanceListener;
 
     private final ConcurrentMap<TopicPartition, KafkaSubscriberPolledMessageBatch<T>> activeBatches;
 
-    private final String topic;
+    private KafkaConsumer<byte[], T> kafkaConsumer;
 
     private boolean subscribed;
 
@@ -40,25 +40,36 @@ public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, Subscr
 
     public KafkaMessagePoller(String topic, Map<String, Object> config) {
         checkKafkaConfig(config);
-        this.kafkaConsumer = new KafkaConsumer<>(config);
-        this.activeBatches = new ConcurrentHashMap<>();
         this.topic = topic;
+        this.config = config;
+        this.consumerRebalanceListener = new KafkaConsumerRebalanceListener();
+        this.activeBatches = new ConcurrentHashMap<>();
         this.subscribed = false;
         this.pollInterval = MIN_POLL_INTERVAL_MS;
         this.lastCommitTime = System.currentTimeMillis();
     }
 
     @Override
+    public void init() {
+        this.kafkaConsumer = new KafkaConsumer<>(config);
+        this.activeBatches.clear();
+        subscribe();
+    }
+
+    @Override
     public List<SubscriberPolledMessageBatch<T>> poll() {
         try {
             log.debug("Kafka message polling started");
-            subscribe();
-            commitOffsets();
+            commitOffsets(false);
             handleFinishedBatches();
             return doPoll();
-        } catch (Exception ex) {
-            log.error("Unexpected exception while polling from Kafka", ex);
-            return Collections.emptyList();
+        } catch (PartitionsRevokedException ex) {
+            log.error(String.format("Kafka message polling failed -> partitions revoked: %s", ex.getPartitions()), ex);
+            commitOffsets(true);
+            throw ex;
+        } catch (PartitionsLostException ex) {
+            log.error(String.format("Kafka message polling failed -> partitions lost: %s", ex.getPartitions()), ex);
+            throw ex;
         } finally {
             log.debug("Kafka message polling finished");
         }
@@ -104,11 +115,12 @@ public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, Subscr
     private void subscribe() {
         if (!subscribed) {
             try {
-                kafkaConsumer.subscribe(Collections.singletonList(topic));
+                kafkaConsumer.subscribe(Collections.singletonList(topic), consumerRebalanceListener);
                 log.info("Successfully subscribed to Kafka topics {}", topic);
                 subscribed = true;
             } catch (Exception ex) {
-                log.error("Failed to subscribe to Kafka topics", ex);
+                log.error("Failed to to subscribe to Kafka topics", ex);
+                throw ex;
             }
         }
     }
@@ -118,16 +130,17 @@ public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, Subscr
             try {
                 kafkaConsumer.unsubscribe();
                 log.info("Successfully unsubscribed to Kafka topics {}", topic);
-                subscribed = false;
             } catch (Exception ex) {
                 log.error("Failed to unsubscribe to Kafka topics", ex);
+            } finally {
+                subscribed = false;
             }
         }
     }
 
-    private void commitOffsets() {
+    private void commitOffsets(boolean immediately) {
         var now = System.currentTimeMillis();
-        if (now - lastCommitTime > COMMIT_INTERVAL_MS) {
+        if (immediately || now - lastCommitTime > COMMIT_INTERVAL_MS) {
             var offsetsToCommit = new HashMap<TopicPartition, OffsetAndMetadata>();
             activeBatches.forEach((topicPartition, batch) -> {
                 var lastProcessedOffset = batch.getStatus().getLastProcessedOffset();
@@ -201,6 +214,7 @@ public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, Subscr
             kafkaConsumer.close();
         } catch (Exception ex) {
             log.error("Failed to close Kafka consumer", ex);
+            throw ex;
         }
     }
 }

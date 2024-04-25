@@ -2,7 +2,7 @@ package br.com.eventhorizon.messaging.provider.subscriber.chain.filter;
 
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberPhase;
-import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageChain;
+import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageFilterChain;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class MetricsMessageFilterTest {
                 .source("source")
                 .content(content)
                 .build();
-        var chain = mock(MessageChain.class);
+        var chain = mock(MessageFilterChain.class);
         var filter = MetricsMessageFilter.builder().build();
 
         // Then
@@ -46,7 +46,7 @@ public class MetricsMessageFilterTest {
                 .source("source")
                 .content(content)
                 .build();
-        var chain = mock(MessageChain.class);
+        var chain = mock(MessageFilterChain.class);
         doThrow(Exception.class).when(chain).next(any());
         var filter = MetricsMessageFilter.builder().build();
 

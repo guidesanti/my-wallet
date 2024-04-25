@@ -2,7 +2,7 @@ package br.com.eventhorizon.messaging.provider.subscriber.chain.filter;
 
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberPhase;
-import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageChain;
+import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageFilterChain;
 import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageFilter;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class MetricsMessageFilter<T> implements MessageFilter<T> {
     }
 
     @Override
-    public void filter(List<SubscriberMessage<T>> messages, MessageChain<T> chain) throws Exception {
+    public void filter(List<SubscriberMessage<T>> messages, MessageFilterChain<T> chain) throws Exception {
         var ini = 0L;
         try {
             log.debug("##### MetricsMessageFilter MESSAGE FILTER START #####");

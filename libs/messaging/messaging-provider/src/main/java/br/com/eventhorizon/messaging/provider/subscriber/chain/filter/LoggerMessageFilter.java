@@ -5,7 +5,7 @@ import br.com.eventhorizon.common.exception.BaseErrorException;
 import br.com.eventhorizon.messaging.provider.MessagingProviderError;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberPhase;
-import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageChain;
+import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageFilterChain;
 import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageFilter;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class LoggerMessageFilter<T> implements MessageFilter<T> {
     }
 
     @Override
-    public void filter(List<SubscriberMessage<T>> messages, MessageChain<T> chain) throws Exception {
+    public void filter(List<SubscriberMessage<T>> messages, MessageFilterChain<T> chain) throws Exception {
         try {
             log.debug("##### LOGGER MESSAGE FILTER START #####");
             chain.next(messages);

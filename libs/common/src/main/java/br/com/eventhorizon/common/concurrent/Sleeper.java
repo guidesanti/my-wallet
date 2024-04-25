@@ -11,7 +11,7 @@ public interface Sleeper {
         return SleeperImpl.getInstance();
     }
 
-    void sleep(Duration duration);
+    void sleep(Duration duration) throws InterruptedException;
 
-    void sleep(Duration duration, AtomicBoolean wakeUp);
+    void sleep(Duration duration, AtomicBoolean wakeUp) throws InterruptedException;
 }

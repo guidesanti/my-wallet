@@ -23,7 +23,7 @@ public class SleeperImplTest {
     private final ThreadFactoryImpl threadFactory = new ThreadFactoryImpl("test");
 
     @Test
-    public void testSleep() {
+    public void testSleep() throws InterruptedException {
         var duration = Duration.ofMillis(100);
         var ini = System.currentTimeMillis();
         sleeper.sleep(duration);
@@ -55,7 +55,11 @@ public class SleeperImplTest {
         var elapsed1 = new AtomicLong();
         var thread1 = threadFactory.newThread(() -> {
             var ini1 = System.currentTimeMillis();
-            sleeper.sleep(duration, wakeup1);
+            try {
+                sleeper.sleep(duration, wakeup1);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
             var end = System.currentTimeMillis();
             elapsed1.set(end - ini1);
         });
@@ -64,7 +68,11 @@ public class SleeperImplTest {
         var elapsed2 = new AtomicLong();
         var thread2 = threadFactory.newThread(() -> {
             var ini1 = System.currentTimeMillis();
-            sleeper.sleep(duration, wakeup2);
+            try {
+                sleeper.sleep(duration, wakeup2);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
             var end = System.currentTimeMillis();
             elapsed2.set(end - ini1);
         });
