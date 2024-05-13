@@ -2,7 +2,7 @@ package br.com.eventhorizon.mywallet.ms.assets.domain.services;
 
 import br.com.eventhorizon.common.exception.BusinessErrorException;
 import br.com.eventhorizon.common.repository.DuplicateKeyException;
-import br.com.eventhorizon.mywallet.ms.assets.domain.AssetsError;
+import br.com.eventhorizon.mywallet.ms.assets.ApplicationError;
 import br.com.eventhorizon.mywallet.ms.assets.domain.entities.AssetType;
 import br.com.eventhorizon.mywallet.ms.assets.application.repository.AssetTypeRepository;
 import br.com.eventhorizon.saga.SagaIdempotenceId;
@@ -93,11 +93,7 @@ public class AssetTypesService {
                                 .build())
                         .build();
             } catch (DuplicateKeyException ex) {
-                throw new BusinessErrorException(
-                        AssetsError.ASSET_TYPE_ALREADY_EXIST.getCode(),
-                        AssetsError.ASSET_TYPE_ALREADY_EXIST.getMessage(
-                                createAssetTypeRequest.getName()),
-                        ex);
+                throw new BusinessErrorException(ApplicationError.ASSET_TYPE_ALREADY_EXIST.build(createAssetTypeRequest.getName()));
             }
         }
     }

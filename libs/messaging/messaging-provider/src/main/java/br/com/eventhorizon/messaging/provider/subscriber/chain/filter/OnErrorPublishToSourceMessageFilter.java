@@ -84,7 +84,7 @@ public class OnErrorPublishToSourceMessageFilter<T> implements MessageFilter<T> 
             var error = Error.of(MessagingProviderError.MESSAGE_PUBLISH_TO_SOURCE_FAILED.getCode(),
                     MessagingProviderError.MESSAGE_PUBLISH_TO_SOURCE_FAILED.getMessage(message.source(), maxRetries));
             log.error(error.toString(), ex);
-            throw new ServerErrorException(error.getCode(), error.getMessage());
+            throw new ServerErrorException(error);
         }
     }
 }

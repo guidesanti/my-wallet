@@ -2,7 +2,7 @@ package br.com.eventhorizon.mywallet.ms.assets.domain.services;
 
 import br.com.eventhorizon.common.exception.BusinessErrorException;
 import br.com.eventhorizon.mywallet.common.proto.AssetsProto;
-import br.com.eventhorizon.mywallet.ms.assets.domain.AssetsError;
+import br.com.eventhorizon.mywallet.ms.assets.ApplicationError;
 import br.com.eventhorizon.saga.*;
 import br.com.eventhorizon.saga.messaging.publisher.SagaPublisher;
 import br.com.eventhorizon.saga.repository.SagaRepository;
@@ -94,9 +94,7 @@ public class AssetsService {
         if (result.isPresent()) {
             return result.get();
         } else {
-            throw new BusinessErrorException(
-                    AssetsError.ASSET_NOT_FOUND.getCode(),
-                    AssetsError.ASSET_NOT_FOUND.getMessage(id));
+            throw new BusinessErrorException(ApplicationError.ASSET_NOT_FOUND.build(id));
         }
     }
 

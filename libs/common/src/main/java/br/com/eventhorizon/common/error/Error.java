@@ -7,6 +7,7 @@ import java.util.Optional;
 
 @Getter
 @ToString
+@EqualsAndHashCode
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Error {

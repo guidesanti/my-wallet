@@ -1,5 +1,6 @@
 package br.com.eventhorizon.messaging.provider.subscriber.chain.filter;
 
+import br.com.eventhorizon.common.error.Error;
 import br.com.eventhorizon.common.exception.ServerErrorException;
 import br.com.eventhorizon.messaging.provider.MessagingProviderError;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
@@ -50,7 +51,7 @@ public class LoggerMessageFilterTest {
                 .content(content)
                 .build();
         var chain = mock(MessageFilterChain.class);
-        doThrow(new ServerErrorException(MessagingProviderError.UNEXPECTED_ERROR.getCode(), "")).when(chain).next(any());
+        doThrow(new ServerErrorException(Error.of(MessagingProviderError.UNEXPECTED_ERROR.getCode(), ""))).when(chain).next(any());
         var filter = LoggerMessageFilter.builder().build();
 
         // Then

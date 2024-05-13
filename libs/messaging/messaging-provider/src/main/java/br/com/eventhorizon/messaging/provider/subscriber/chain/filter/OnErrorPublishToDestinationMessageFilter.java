@@ -67,7 +67,7 @@ public class OnErrorPublishToDestinationMessageFilter<T> implements MessageFilte
             var error = Error.of(MessagingProviderError.MESSAGE_PUBLISH_TO_DESTINATION_FAILED.getCode(),
                     MessagingProviderError.MESSAGE_PUBLISH_TO_DESTINATION_FAILED.getMessage(destination));
             log.error(error.toString(), ex);
-            throw new ServerErrorException(error.getCode(), error.getMessage());
+            throw new ServerErrorException(error);
         }
     }
 }

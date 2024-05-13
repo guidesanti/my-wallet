@@ -1,5 +1,6 @@
 package br.com.eventhorizon.saga.messaging.subscriber.subscription;
 
+import br.com.eventhorizon.common.error.Error;
 import br.com.eventhorizon.common.exception.BaseErrorException;
 import br.com.eventhorizon.common.exception.ClientErrorException;
 import br.com.eventhorizon.common.messaging.Headers;
@@ -38,14 +39,14 @@ public abstract class SubscriberMessageHandler<R, M> {
                         return SagaIdempotenceId.of(s);
                     } catch (Exception ex) {
                         throw new ClientErrorException(
-                                SagaError.IDEMPOTENCE_ID_INVALID.getCode(),
-                                SagaError.IDEMPOTENCE_ID_INVALID.getMessage(s)
+                                Error.of(SagaError.IDEMPOTENCE_ID_INVALID.getCode(),
+                                        SagaError.IDEMPOTENCE_ID_INVALID.getMessage(s))
                         );
                     }
                 })
                 .orElseThrow(() -> new ClientErrorException(
-                        SagaError.IDEMPOTENCE_ID_NOT_PRESENT.getCode(),
-                        SagaError.IDEMPOTENCE_ID_NOT_PRESENT.getMessage()
+                        Error.of(SagaError.IDEMPOTENCE_ID_NOT_PRESENT.getCode(),
+                                SagaError.IDEMPOTENCE_ID_NOT_PRESENT.getMessage())
                 ));
     }
 
@@ -55,8 +56,8 @@ public abstract class SubscriberMessageHandler<R, M> {
             try {
                 var headersBuilder = Headers.builder().headers(subscriberMessage.headers());
                 if (ex instanceof BaseErrorException baseErrorException) {
-                    headersBuilder.header(SagaConventions.HEADER_ERROR_CODE, baseErrorException.getErrorCode().toString());
-                    headersBuilder.header(SagaConventions.HEADER_ERROR_MESSAGE, baseErrorException.getErrorMessage());
+                    headersBuilder.header(SagaConventions.HEADER_ERROR_CODE, baseErrorException.getError().getCode().toString());
+                    headersBuilder.header(SagaConventions.HEADER_ERROR_MESSAGE, baseErrorException.getError().getMessage());
                 }
                 StringWriter sw = new StringWriter();
                 ex.printStackTrace(new PrintWriter(sw));

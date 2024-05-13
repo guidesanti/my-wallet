@@ -1,6 +1,7 @@
 package br.com.eventhorizon.saga.repository;
 
 import br.com.eventhorizon.common.error.DefaultErrors;
+import br.com.eventhorizon.common.error.Error;
 import br.com.eventhorizon.common.exception.ServerErrorException;
 import br.com.eventhorizon.common.messaging.Headers;
 import br.com.eventhorizon.common.utils.DateTimeUtils;
@@ -47,7 +48,7 @@ public final class SagaEventMapper {
         } catch (ClassNotFoundException e) {
             var message = "Cannot map SAGA event from repository model to business model, invalid content type " + event.getContentType();
             log.error(message, e);
-            throw new ServerErrorException(DefaultErrors.UNEXPECTED_SERVER_ERROR.getCode(), message);
+            throw new ServerErrorException(Error.of(DefaultErrors.UNEXPECTED_SERVER_ERROR.getCode(), message));
         }
     }
 }
