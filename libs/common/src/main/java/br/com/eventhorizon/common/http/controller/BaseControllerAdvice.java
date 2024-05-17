@@ -1,12 +1,9 @@
 package br.com.eventhorizon.common.http.controller;
 
 import br.com.eventhorizon.common.http.Response;
-import br.com.eventhorizon.common.error.DefaultErrors;
-import br.com.eventhorizon.common.exception.ClientErrorException;
-import br.com.eventhorizon.common.exception.BusinessErrorException;
-import br.com.eventhorizon.common.exception.ServerErrorException;
-import br.com.eventhorizon.common.error.ErrorCategory;
-import br.com.eventhorizon.common.utils.LogUtils;
+import br.com.eventhorizon.common.refusal.DefaultRefusals;
+import br.com.eventhorizon.common.exception.ClientException;
+import br.com.eventhorizon.common.exception.BusinessException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +22,12 @@ public class BaseControllerAdvice {
     // - Violated business rules
     // ============================================================================================================== //
 
-    @ExceptionHandler(BusinessErrorException.class)
-    protected ResponseEntity<Response> businessError(BusinessErrorException ex) {
-        log.info(LogUtils.buildErrorLogMessage(ex));
+    @ExceptionHandler(BusinessException.class)
+    protected ResponseEntity<Response> businessError(BusinessException ex) {
+        log.error("REFUSED: {}", ex.getRefusal());
         return ResponseEntity
                 .unprocessableEntity()
-                .body(Response.error(ErrorCategory.BUSINESS_ERROR, ex.getError()));
+                .body(Response.refused(ex.getRefusal()));
     }
 
     // ============================================================================================================== //
@@ -38,33 +35,32 @@ public class BaseControllerAdvice {
     // - Validation error like field presence, not allowed values, invalid format, etc
     // ============================================================================================================== //
 
-    @ExceptionHandler(ClientErrorException.class)
-    protected ResponseEntity<Response> clientError(ClientErrorException ex) {
-        log.warn(LogUtils.buildErrorLogMessage(ex));
+    @ExceptionHandler(ClientException.class)
+    protected ResponseEntity<Response> clientError(ClientException ex) {
+        log.error("REFUSED: {}", ex.getRefusal());
         return ResponseEntity
                 .badRequest()
-                .body(Response.error(ErrorCategory.CLIENT_ERROR, ex.getError()));
+                .body(Response.refused(ex.getRefusal()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<Response> methodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        log.warn("Client error: ", ex);
+        log.error("REFUSED: {}", ex.getMessage(), ex);
         var message = new StringBuilder();
         ex.getBindingResult().getFieldErrors().forEach(fieldError -> message
                 .append("field=").append(fieldError.getField())
                 .append(", message=").append(fieldError.getDefaultMessage())
         );
-
         return ResponseEntity
                 .badRequest()
-                .body(Response.error(ErrorCategory.CLIENT_ERROR,
-                        DefaultErrors.BAD_REQUEST.getCode().toString(),
+                .body(Response.refused(
+                        DefaultRefusals.BAD_REQUEST.getCode().toString(),
                         message.toString()));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     protected ResponseEntity<Response> constraintViolationException(ConstraintViolationException ex) {
-        log.warn("Client error: ", ex);
+        log.error("REFUSED: {}", ex.getMessage(), ex);
         var message = new StringBuilder();
         ex.getConstraintViolations().forEach(constraintViolation -> message
                 .append("property=").append(constraintViolation.getPropertyPath())
@@ -72,51 +68,41 @@ public class BaseControllerAdvice {
         );
         return ResponseEntity
                 .badRequest()
-                .body(Response.error(ErrorCategory.CLIENT_ERROR,
-                        DefaultErrors.BAD_REQUEST.getCode().toString(),
+                .body(Response.refused(
+                        DefaultRefusals.BAD_REQUEST.getCode().toString(),
                         message.toString()));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity<Response> httpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        log.warn("Client error: ", ex);
+        log.error("REFUSED: {}", ex.getMessage(), ex);
         return ResponseEntity
                 .badRequest()
-                .body(Response.error(ErrorCategory.CLIENT_ERROR,
-                        DefaultErrors.BAD_REQUEST.getCode().toString(),
+                .body(Response.refused(
+                        DefaultRefusals.BAD_REQUEST.getCode().toString(),
                         ex.getMessage()));
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
     protected ResponseEntity<Response> missingRequestHeaderException(Exception ex) {
-        log.warn("Client error: ", ex);
+        log.error("REFUSED: {}", ex.getMessage(), ex);
         return ResponseEntity
                 .badRequest()
-                .body(Response.error(ErrorCategory.CLIENT_ERROR,
-                        DefaultErrors.BAD_REQUEST.getCode().toString(),
+                .body(Response.refused(
+                        DefaultRefusals.BAD_REQUEST.getCode().toString(),
                         ex.getMessage()));
     }
 
     // ============================================================================================================== //
-    // SERVER ERRORS
-    // - Explicit server errors like IO errors (disk, network, downstream services unavailable or unhealthy, etc)
+    // SYSTEM ERRORS
+    // - System errors like IO errors (disk, network, downstream services unavailable or unhealthy, etc)
     // - Bad implementation resulting in bugs like NullPointerException
-    // - Other unhandled runtime exceptions
+    // - Any other unhandled runtime exceptions
     // ============================================================================================================== //
-
-    @ExceptionHandler(ServerErrorException.class)
-    protected ResponseEntity<Response> serverError(ServerErrorException ex) {
-        log.error(LogUtils.buildErrorLogMessage(ex), ex);
-        return ResponseEntity
-                .internalServerError()
-                .body(Response.error(ErrorCategory.SERVER_ERROR, ex.getError()));
-    }
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<Response> unexpectedException(Exception ex) {
-        log.error("Unexpected exception: " + ex.getMessage(), ex);
-        return ResponseEntity
-                .internalServerError()
-                .body(Response.error(ErrorCategory.SERVER_ERROR, DefaultErrors.UNEXPECTED_SERVER_ERROR));
+        log.error("FAILURE: {}", ex.getMessage(), ex);
+        return ResponseEntity.internalServerError().body(Response.failure());
     }
 }

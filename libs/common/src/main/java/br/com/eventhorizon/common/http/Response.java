@@ -1,8 +1,6 @@
 package br.com.eventhorizon.common.http;
 
-import br.com.eventhorizon.common.error.ErrorCategory;
-import br.com.eventhorizon.common.error.Error;
-import br.com.eventhorizon.common.error.StatusCode;
+import br.com.eventhorizon.common.refusal.Refusal;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -16,7 +14,7 @@ public class Response {
 
     Object data;
 
-    ResponseError error;
+    ResponseRefusal refusal;
 
     public static Response success() {
         return new Response(StatusCode.SUCCESS, null, null);
@@ -26,18 +24,17 @@ public class Response {
         return new Response(StatusCode.SUCCESS, data, null);
     }
 
-    public static Response error(ErrorCategory errorCategory, Error error) {
-        return new Response(StatusCode.ERROR, null,
-                ResponseError.of(errorCategory.name(), error.getCode().toString(), error.getMessage(), error.getAdditionalInformation().orElse(null)));
+    public static Response refused(Refusal refusal) {
+        return new Response(StatusCode.REFUSED, null,
+                ResponseRefusal.of(refusal.getCode().toString(), refusal.getMessage(), refusal.getAdditionalInformation().orElse(null)));
     }
 
-    public static Response error(ErrorCategory errorCategory, String errorCode, String errorMessage) {
-        return new Response(StatusCode.ERROR, null,
-                ResponseError.of(errorCategory.name(), errorCode, errorMessage, null));
+    public static Response refused(String code, String message) {
+        return new Response(StatusCode.REFUSED, null,
+                ResponseRefusal.of(code, message, null));
     }
 
-    public static Response error(ErrorCategory errorCategory, String errorCode, String errorMessage, String extraDetails) {
-        return new Response(StatusCode.ERROR, null,
-                ResponseError.of(errorCategory.name(), errorCode, errorMessage, extraDetails));
+    public static Response failure() {
+        return new Response(StatusCode.FAILURE, null, null);
     }
 }

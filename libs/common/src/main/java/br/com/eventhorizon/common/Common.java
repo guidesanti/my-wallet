@@ -4,7 +4,9 @@ import java.time.format.DateTimeFormatter;
 
 public final class Common {
 
-    public static final String PLATFORM_PREFIX = "eh";
+    public static final String PLATFORM_PREFIX_LOWER_CASE = "eh";
+
+    public static final String PLATFORM_PREFIX_UPPER_CASE = "EH";
 
     public static final String PLATFORM_DOMAIN = "br.com.eventhorizon";
 
@@ -19,9 +21,9 @@ public final class Common {
 
     public static final class Env {
 
-        public static final String APPLICATION_NAME = PLATFORM_PREFIX.toUpperCase() + "_APPLICATION_NAME";
+        public static final String APPLICATION_NAME = PLATFORM_PREFIX_UPPER_CASE + "_APPLICATION_NAME";
 
-        public static final String ENV = PLATFORM_PREFIX.toUpperCase() + "_ENV";
+        public static final String ENV = PLATFORM_PREFIX_UPPER_CASE + "_ENV";
     }
 
     public static final class SysProp {

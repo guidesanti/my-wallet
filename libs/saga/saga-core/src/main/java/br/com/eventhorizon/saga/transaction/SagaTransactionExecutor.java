@@ -1,6 +1,6 @@
 package br.com.eventhorizon.saga.transaction;
 
-import br.com.eventhorizon.common.exception.BaseErrorException;
+import br.com.eventhorizon.common.exception.RefusedException;
 import br.com.eventhorizon.saga.SagaMessage;
 import br.com.eventhorizon.saga.SagaResponse;
 import br.com.eventhorizon.saga.chain.SagaChainFactory;
@@ -17,7 +17,7 @@ public class SagaTransactionExecutor {
         try {
             var chain = SagaChainFactory.create(transaction);
             return chain.next(messages).response();
-        } catch (BaseErrorException ex) {
+        } catch (RefusedException ex) {
             throw ex;
         } catch (Exception ex) {
             throw new RuntimeException(ex);

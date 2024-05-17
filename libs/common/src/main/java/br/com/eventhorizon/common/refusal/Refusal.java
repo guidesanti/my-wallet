@@ -1,4 +1,4 @@
-package br.com.eventhorizon.common.error;
+package br.com.eventhorizon.common.refusal;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -10,10 +10,10 @@ import java.util.Optional;
 @EqualsAndHashCode
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Error {
+public class Refusal {
 
     @NonNull
-    private final ErrorCode code;
+    private final RefusalReasonCode code;
 
     @NonNull
     private final String message;
@@ -24,11 +24,11 @@ public class Error {
         return Optional.ofNullable(additionalInformation);
     }
 
-    public static Error of(ErrorCode code, String message) {
+    public static Refusal of(RefusalReasonCode code, String message) {
         return of(code, message, null);
     }
 
-    public static Error of(ErrorCode code, String message, String additionalInformation) {
-        return new Error(code, message, additionalInformation);
+    public static Refusal of(RefusalReasonCode code, String message, String additionalInformation) {
+        return new Refusal(code, message, additionalInformation);
     }
 }

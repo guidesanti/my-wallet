@@ -30,7 +30,7 @@ public class SubscriberSingleMessageProcessor<T> implements SubscriberMessagePro
                 chain.next(List.of(message));
                 listener.onMessageHandlingSucceeded(polledMessages, List.of(message));
             } catch (Exception ex) {
-                log.error("Failed processing message: " + message, ex);
+                log.error("Failed processing message: {}", message, ex);
                 listener.onMessageHandlingFailed(polledMessages, List.of(message));
                 break;
             }

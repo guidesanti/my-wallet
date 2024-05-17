@@ -20,6 +20,7 @@ public class SleeperImpl implements Sleeper {
 
     @Override
     public void sleep(Duration duration) throws InterruptedException {
+        System.out.println("Sleeping " + duration + " thread " + Thread.currentThread().getName());
         Thread.sleep(duration.toMillis());
     }
 

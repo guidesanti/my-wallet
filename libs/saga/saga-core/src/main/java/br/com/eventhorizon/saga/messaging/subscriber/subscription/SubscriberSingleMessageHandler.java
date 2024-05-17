@@ -1,7 +1,6 @@
 package br.com.eventhorizon.saga.messaging.subscriber.subscription;
 
-import br.com.eventhorizon.common.exception.BaseErrorException;
-import br.com.eventhorizon.common.utils.LogUtils;
+import br.com.eventhorizon.common.exception.RefusedException;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
 import br.com.eventhorizon.messaging.provider.subscriber.handler.SingleMessageHandler;
 import br.com.eventhorizon.saga.SagaIdempotenceId;
@@ -25,13 +24,11 @@ public class SubscriberSingleMessageHandler<R, M> extends SubscriberMessageHandl
             idempotenceId = sagaMessage.idempotenceId();
             traceId = sagaMessage.traceId();
             sagaTransactionExecutor.execute(sagaTransaction, sagaMessage);
-        } catch (BaseErrorException ex) {
-            log.error(LogUtils.buildErrorLogMessage(ex)
-                    + " sagaTransactionId='" + sagaTransaction.getId() + "'"
-                    + " messageHeaders='" + subscriberMessage.headers() + "'");
+        } catch (RefusedException ex) {
+            log.error("sagaTransactionId='{}' messageHeaders='{}'", sagaTransaction.getId(), subscriberMessage.headers(), ex);
             sendToDlq(idempotenceId, traceId, subscriberMessage, ex);
         } catch (Exception ex) {
-            log.error("Unexpected exception while while handling subscriber message: " + ex.getMessage(), ex);
+            log.error("Unexpected exception while while handling subscriber message: {}", ex.getMessage(), ex);
             sendToDlq(idempotenceId, traceId, subscriberMessage, ex);
         }
     }

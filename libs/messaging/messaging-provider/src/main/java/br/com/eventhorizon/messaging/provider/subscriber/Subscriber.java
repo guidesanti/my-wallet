@@ -29,7 +29,6 @@ public class Subscriber<T> extends DefaultRunner {
 
     @Override
     public void run() {
-//        int count = 6;
         try {
             initPoller();
             while (state == State.RUNNING) {
@@ -37,10 +36,6 @@ public class Subscriber<T> extends DefaultRunner {
                 if (polledMessages != null && !polledMessages.isEmpty()) {
                     process(polledMessages);
                 }
-//                count--;
-//                if (count == 0) {
-//                    throw new RuntimeException("STOPPING");
-//                }
             }
         } catch (Exception ex) {
             log.error(String.format("[%s] Unexpected exception occurred while subscriber was running", this), ex);

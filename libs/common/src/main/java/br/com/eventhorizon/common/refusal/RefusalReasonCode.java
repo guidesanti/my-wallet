@@ -1,11 +1,11 @@
-package br.com.eventhorizon.common.error;
+package br.com.eventhorizon.common.refusal;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
 @EqualsAndHashCode
-public class ErrorCode {
+public class RefusalReasonCode {
 
     private static final String PATTERN = "^[A-Z_]+$";
 
@@ -17,23 +17,23 @@ public class ErrorCode {
 
     private final String code;
 
-    private ErrorCode(Type type, String domain, String code) {
+    private RefusalReasonCode(Type type, String domain, String code) {
         this.type = type;
         this.domain = domain;
         this.code = code;
         validate();
     }
 
-    public static ErrorCode of(Type type, String domain, String code) {
-        return new ErrorCode(type, domain, code);
+    public static RefusalReasonCode of(Type type, String domain, String code) {
+        return new RefusalReasonCode(type, domain, code);
     }
 
-    public static ErrorCode lib(String domain, String code) {
-        return new ErrorCode(Type.LIB, domain, code);
+    public static RefusalReasonCode lib(String domain, String code) {
+        return new RefusalReasonCode(Type.LIB, domain, code);
     }
 
-    public static ErrorCode app(String domain, String code) {
-        return new ErrorCode(Type.APP, domain, code);
+    public static RefusalReasonCode app(String domain, String code) {
+        return new RefusalReasonCode(Type.APP, domain, code);
     }
 
     @Override

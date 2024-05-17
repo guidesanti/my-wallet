@@ -1,11 +1,9 @@
 package br.com.eventhorizon.messaging.provider.subscriber.chain.filter;
 
 import br.com.eventhorizon.common.config.Config;
-import br.com.eventhorizon.common.error.ErrorCode;
-import br.com.eventhorizon.common.exception.ServerErrorException;
+import br.com.eventhorizon.common.exception.FailureException;
 import br.com.eventhorizon.common.messaging.Message;
 import br.com.eventhorizon.messaging.provider.Header;
-import br.com.eventhorizon.messaging.provider.MessagingProviderError;
 import br.com.eventhorizon.messaging.provider.publisher.Publisher;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberPhase;
@@ -28,8 +26,8 @@ import static org.mockito.Mockito.times;
 public class OnErrorPublishToDestinationMessageFilterTest {
 
     private static final List<Header> EXPECTED_HEADERS = List.of(
-            Header.PUBLISHED_AT, Header.PUBLISHER, Header.RETRY_COUNT, Header.ERROR_CATEGORY,
-            Header.ERROR_CODE, Header.ERROR_MESSAGE, Header.ERROR_STACK_TRACE);
+            Header.PUBLISHED_AT, Header.PUBLISHER, Header.RETRY_COUNT,
+            Header.ERROR_MESSAGE, Header.ERROR_STACK_TRACE);
 
     @Mock
     private Config config;
@@ -85,25 +83,15 @@ public class OnErrorPublishToDestinationMessageFilterTest {
         var chain = mock(MessageFilterChain.class);
         doThrow(Exception.class).when(chain).next(any());
         var publisher = mock(Publisher.class);
-        doThrow(ServerErrorException.class).when(publisher).publishAsync(any(String.class), any());
+        doThrow(FailureException.class).when(publisher).publishAsync(any(String.class), any());
         var filter = new OnErrorPublishToDestinationMessageFilter<>(config, publisher, "destination");
 
         // When
-        Exception exception = null;
-        try {
-            filter.filter(List.of(message), chain);
-        } catch (Exception ex) {
-            exception = ex;
-        }
+        var exception = assertThrows(FailureException.class, () -> filter.filter(List.of(message), chain));
 
         // Then
-        verify(publisher, times(1)).publishAsync(any(String.class), any());
         assertNotNull(exception);
-        assertTrue(exception instanceof ServerErrorException);
-        ServerErrorException serverErrorException = (ServerErrorException) exception;
-        assertEquals(ErrorCode.Type.LIB, serverErrorException.getError().getCode().getType());
-        assertEquals(MessagingProviderError.DOMAIN, serverErrorException.getError().getCode().getDomain());
-        assertEquals(MessagingProviderError.MESSAGE_PUBLISH_TO_DESTINATION_FAILED.name(), serverErrorException.getError().getCode().getCode());
+        verify(publisher, times(1)).publishAsync(any(String.class), any());
     }
 
     private void verifyHeaders(ArgumentCaptor<Message<Object>> captor, String expectedTraceId, String expectedRetryCount, Object expectedContent) {

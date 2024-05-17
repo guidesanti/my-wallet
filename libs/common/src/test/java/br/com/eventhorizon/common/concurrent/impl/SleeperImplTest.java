@@ -86,6 +86,9 @@ public class SleeperImplTest {
         Thread.sleep(1000);
         wakeup2.set(true);
 
+        thread1.join();
+        thread2.join();
+
         log.info("Elapsed1: {}", elapsed1);
         log.info("Elapsed2: {}", elapsed2);
 

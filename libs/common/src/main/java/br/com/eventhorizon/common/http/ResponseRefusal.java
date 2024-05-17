@@ -8,10 +8,7 @@ import lombok.Value;
 @Value
 @RequiredArgsConstructor(staticName = "of")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResponseError {
-
-    @NonNull
-    String category;
+public class ResponseRefusal {
 
     @NonNull
     String code;
@@ -19,5 +16,5 @@ public class ResponseError {
     @NonNull
     String message;
     
-    String extraDetails;
+    String additionalInformation;
 }
