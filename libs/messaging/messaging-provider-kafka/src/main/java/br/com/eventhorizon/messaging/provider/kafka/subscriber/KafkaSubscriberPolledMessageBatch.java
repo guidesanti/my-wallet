@@ -2,6 +2,7 @@ package br.com.eventhorizon.messaging.provider.kafka.subscriber;
 
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
 import br.com.eventhorizon.messaging.provider.subscriber.processor.SubscriberPolledMessageBatch;
+import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -9,6 +10,7 @@ import org.apache.kafka.common.TopicPartition;
 
 import java.util.*;
 
+@Data
 @ToString(onlyExplicitlyIncluded = true)
 @RequiredArgsConstructor
 public class KafkaSubscriberPolledMessageBatch<T> implements SubscriberPolledMessageBatch<T> {
@@ -19,9 +21,7 @@ public class KafkaSubscriberPolledMessageBatch<T> implements SubscriberPolledMes
 
     private final LinkedList<KafkaSubscriberMessage<T>> list;
 
-    @Getter
-    @ToString.Include
-    private final KafkaSubscriberPolledMessageBatchStatus status = new KafkaSubscriberPolledMessageBatchStatus();
+    private ProcessingStatus processingStatus = ProcessingStatus.AWAITING_PROCESSING;
 
     @Override
     public Optional<SubscriberMessage<T>> next() {
@@ -39,5 +39,11 @@ public class KafkaSubscriberPolledMessageBatch<T> implements SubscriberPolledMes
             count--;
         }
         return subList;
+    }
+
+    public enum ProcessingStatus {
+        AWAITING_PROCESSING,
+        PROCESSING,
+        FINISHED
     }
 }

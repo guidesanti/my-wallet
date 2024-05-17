@@ -10,6 +10,7 @@ public enum Header {
 
     CREATED_AT(Header.PREFIX + "-Created-At", "The date/time at the moment when the message were created. Should be kept the original in case the message is republished or sent to DLQ."),
     PUBLISHED_AT(Header.PREFIX + "-Published-At", "The date/time at the moment when the message was published. Should be generated on every message sent, even for republished or sent to DLQ."),
+    IDEMPOTENCE_ID(Header.PREFIX + "-Idempotence-ID", "The message idempotence ID"),
     TRACE_ID(Header.PREFIX + "-Trace-ID", "The message trace ID to help debugging, troubleshooting, tracing, etc."),
     PUBLISHER(Header.PREFIX + "-Publisher", "The publisher name."),
     RETRY_COUNT(Header.PREFIX + "-Retry-Count", "The number of times the message was resent to source or to retry source."),

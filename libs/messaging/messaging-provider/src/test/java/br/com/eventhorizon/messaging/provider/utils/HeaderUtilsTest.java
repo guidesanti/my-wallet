@@ -21,6 +21,8 @@ public class HeaderUtilsTest {
 
     private static final String APPLICATION_NAME = "application-name";
 
+    private static final String IDEMPOTENCE_ID = "idempotence-id";
+
     private static final String TRACE_ID = "trace-id";
 
     @Test
@@ -38,6 +40,10 @@ public class HeaderUtilsTest {
         assertTrue(result.containsKey(Header.PUBLISHED_AT.getName()));
         assertFalse(result.get(Header.PUBLISHED_AT.getName()).isEmpty());
         assertTrue(OffsetDateTime.parse(result.get(Header.PUBLISHED_AT.getName()).get(0), Common.DEFAULT_DATE_TIME_FORMATTER).isBefore(OffsetDateTime.now()));
+
+        assertTrue(result.containsKey(Header.IDEMPOTENCE_ID.getName()));
+        assertFalse(result.get(Header.IDEMPOTENCE_ID.getName()).isEmpty());
+        assertEquals(UNKNOWN, result.get(Header.IDEMPOTENCE_ID.getName()).get(0));
 
         assertTrue(result.containsKey(Header.TRACE_ID.getName()));
         assertFalse(result.get(Header.TRACE_ID.getName()).isEmpty());
@@ -67,6 +73,10 @@ public class HeaderUtilsTest {
         assertFalse(result.get(Header.PUBLISHED_AT.getName()).isEmpty());
         assertTrue(OffsetDateTime.parse(result.get(Header.PUBLISHED_AT.getName()).get(0), Common.DEFAULT_DATE_TIME_FORMATTER).isBefore(OffsetDateTime.now()));
 
+        assertTrue(result.containsKey(Header.IDEMPOTENCE_ID.getName()));
+        assertFalse(result.get(Header.IDEMPOTENCE_ID.getName()).isEmpty());
+        assertEquals(UNKNOWN, result.get(Header.IDEMPOTENCE_ID.getName()).get(0));
+
         assertTrue(result.containsKey(Header.TRACE_ID.getName()));
         assertFalse(result.get(Header.TRACE_ID.getName()).isEmpty());
         assertEquals(UNKNOWN, result.get(Header.TRACE_ID.getName()).get(0));
@@ -82,6 +92,7 @@ public class HeaderUtilsTest {
         var createdAt = Common.DEFAULT_DATE_TIME_FORMATTER.format(OffsetDateTime.now());
         var headers = Headers.builder()
                 .header(Header.CREATED_AT.getName(), createdAt)
+                .header(Header.IDEMPOTENCE_ID.getName(), IDEMPOTENCE_ID)
                 .header(Header.TRACE_ID.getName(), TRACE_ID)
                 .build();
 
@@ -99,6 +110,10 @@ public class HeaderUtilsTest {
         assertFalse(result.get(Header.PUBLISHED_AT.getName()).isEmpty());
         assertTrue(OffsetDateTime.parse(result.get(Header.PUBLISHED_AT.getName()).get(0), Common.DEFAULT_DATE_TIME_FORMATTER).isBefore(OffsetDateTime.now()));
 
+        assertTrue(result.containsKey(Header.IDEMPOTENCE_ID.getName()));
+        assertFalse(result.get(Header.IDEMPOTENCE_ID.getName()).isEmpty());
+        assertEquals(IDEMPOTENCE_ID, result.get(Header.IDEMPOTENCE_ID.getName()).get(0));
+
         assertTrue(result.containsKey(Header.TRACE_ID.getName()));
         assertFalse(result.get(Header.TRACE_ID.getName()).isEmpty());
         assertEquals(TRACE_ID, result.get(Header.TRACE_ID.getName()).get(0));
@@ -115,6 +130,7 @@ public class HeaderUtilsTest {
         var createdAt = Common.DEFAULT_DATE_TIME_FORMATTER.format(OffsetDateTime.now());
         var headers = Headers.builder()
                 .header(Header.CREATED_AT.getName(), createdAt)
+                .header(Header.IDEMPOTENCE_ID.getName(), IDEMPOTENCE_ID)
                 .header(Header.TRACE_ID.getName(), TRACE_ID)
                 .build();
 
@@ -131,6 +147,10 @@ public class HeaderUtilsTest {
         assertTrue(result.containsKey(Header.PUBLISHED_AT.getName()));
         assertFalse(result.get(Header.PUBLISHED_AT.getName()).isEmpty());
         assertTrue(OffsetDateTime.parse(result.get(Header.PUBLISHED_AT.getName()).get(0), Common.DEFAULT_DATE_TIME_FORMATTER).isBefore(OffsetDateTime.now()));
+
+        assertTrue(result.containsKey(Header.IDEMPOTENCE_ID.getName()));
+        assertFalse(result.get(Header.IDEMPOTENCE_ID.getName()).isEmpty());
+        assertEquals(IDEMPOTENCE_ID, result.get(Header.IDEMPOTENCE_ID.getName()).get(0));
 
         assertTrue(result.containsKey(Header.TRACE_ID.getName()));
         assertFalse(result.get(Header.TRACE_ID.getName()).isEmpty());

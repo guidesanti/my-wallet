@@ -50,7 +50,7 @@ public class SubscriberMonitor {
 
     private void run() {
         try {
-            log.debug("Subscriber monitor: monitoring started");
+//            log.debug("Subscriber monitor: monitoring started");
             for (Subscriber<?> subscriber : subscribers) {
                 if (Thread.currentThread().isInterrupted()) {
                     log.warn("Subscriber monitor: interrupted");
@@ -61,7 +61,7 @@ public class SubscriberMonitor {
         } catch (Exception ex) {
             log.error("Error while monitoring subscribers", ex);
         } finally {
-            log.debug("Subscriber monitor: monitoring finished");
+//            log.debug("Subscriber monitor: monitoring finished");
         }
     }
 
@@ -71,7 +71,7 @@ public class SubscriberMonitor {
         }
         try {
             var subscriberState = subscriber.getState();
-            log.debug("Subscriber '{}' is '{}'", subscriber, subscriberState);
+//            log.debug("Subscriber '{}' is '{}'", subscriber, subscriberState);
             if (subscriberState == Runner.State.STOPPED || subscriberState == Runner.State.CRASHED) {
                 log.info("Restarting subscriber {} ...", subscriber);
                 subscriber.start();

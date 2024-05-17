@@ -24,6 +24,7 @@ public final class HeaderUtils {
         var platformHeaders = new HashMap<String, List<String>>();
         platformHeaders.put(Header.CREATED_AT.getName(), List.of(getCreatedAtHeader(headers)));
         platformHeaders.put(Header.PUBLISHED_AT.getName(), List.of(OffsetDateTime.now().format(Common.DEFAULT_DATE_TIME_FORMATTER)));
+        platformHeaders.put(Header.IDEMPOTENCE_ID.getName(), List.of(getIdempotenceIdHeader(headers)));
         platformHeaders.put(Header.TRACE_ID.getName(), List.of(getTraceIdHeader(headers)));
         platformHeaders.put(Header.PUBLISHER.getName(), List.of(getApplicationName(config)));
         return platformHeaders;
@@ -61,6 +62,22 @@ public final class HeaderUtils {
         return headers != null
                 ? headers.firstValue(Header.CREATED_AT.getName()).orElse(UNKNOWN)
                 : UNKNOWN;
+    }
+
+    private static String getIdempotenceIdHeader(Headers headers) {
+        String idempotenceId = null;
+
+        if (headers != null) {
+            idempotenceId = headers.firstValue(Header.IDEMPOTENCE_ID.getName()).orElse(null);
+        }
+        if (idempotenceId == null) {
+            idempotenceId = MDC.get(Common.MDCKey.IDEMPOTENCE_ID);
+        }
+        if (idempotenceId == null) {
+            idempotenceId = UNKNOWN;
+        }
+
+        return idempotenceId;
     }
 
     private static String getTraceIdHeader(Headers headers) {

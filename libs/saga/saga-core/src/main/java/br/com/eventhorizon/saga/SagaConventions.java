@@ -20,8 +20,6 @@ public class SagaConventions {
 
     public static final String HEADER_REPLY_NOT_OK_TO = "saga-reply-not-ok-to";
 
-    public static final String HEADER_ERROR_CODE = "saga-error-code";
-
     public static final String HEADER_ERROR_MESSAGE = "saga-error-message";
 
     public static final String HEADER_ERROR_EXCEPTION = "saga-error-exception";

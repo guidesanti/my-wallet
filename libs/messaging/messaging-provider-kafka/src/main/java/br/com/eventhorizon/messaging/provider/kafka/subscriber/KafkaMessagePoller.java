@@ -30,6 +30,10 @@ public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, Subscr
 
     private final ConcurrentMap<TopicPartition, KafkaSubscriberPolledMessageBatch<T>> activeBatches;
 
+    private final ConcurrentMap<TopicPartition, Long> lastProcessedOffsets;
+
+    private final ConcurrentMap<TopicPartition, Long> lastCommittedOffsets;
+
     private KafkaConsumer<byte[], T> kafkaConsumer;
 
     private boolean subscribed;
@@ -44,6 +48,8 @@ public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, Subscr
         this.config = config;
         this.consumerRebalanceListener = new KafkaConsumerRebalanceListener();
         this.activeBatches = new ConcurrentHashMap<>();
+        this.lastProcessedOffsets = new ConcurrentHashMap<>();
+        this.lastCommittedOffsets = new ConcurrentHashMap<>();
         this.subscribed = false;
         this.pollInterval = MIN_POLL_INTERVAL_MS;
         this.lastCommitTime = System.currentTimeMillis();
@@ -60,12 +66,12 @@ public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, Subscr
     public List<SubscriberPolledMessageBatch<T>> poll() {
         try {
             log.debug("Kafka message polling started");
-            commitOffsets(false);
+            commitOffsets();
             handleFinishedBatches();
             return doPoll();
         } catch (PartitionsRevokedException ex) {
             log.error(String.format("Kafka message polling failed -> partitions revoked: %s", ex.getPartitions()), ex);
-            commitOffsets(true);
+            commitOffsetsNow();
             throw ex;
         } catch (PartitionsLostException ex) {
             log.error(String.format("Kafka message polling failed -> partitions lost: %s", ex.getPartitions()), ex);
@@ -138,44 +144,51 @@ public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, Subscr
         }
     }
 
-    private void commitOffsets(boolean immediately) {
+    private void commitOffsets() {
         var now = System.currentTimeMillis();
-        if (immediately || now - lastCommitTime > COMMIT_INTERVAL_MS) {
-            var offsetsToCommit = new HashMap<TopicPartition, OffsetAndMetadata>();
-            activeBatches.forEach((topicPartition, batch) -> {
-                var lastProcessedOffset = batch.getStatus().getLastProcessedOffset();
-                if (lastProcessedOffset >= 0 && lastProcessedOffset >= batch.getStatus().getLastCommittedOffset()) {
-                    long offsetToCommit = lastProcessedOffset + 1;
-                    offsetsToCommit.put(topicPartition, new OffsetAndMetadata(offsetToCommit));
-                    batch.getStatus().setLastCommittedOffset(offsetToCommit);
-                    log.debug("Offset committed for batch: {}", batch);
-                }
-            });
-            kafkaConsumer.commitSync(offsetsToCommit);
-            lastCommitTime = now;
+        if (now - lastCommitTime > COMMIT_INTERVAL_MS) {
+            commitOffsetsNow();
         }
+    }
+
+    private void commitOffsetsNow() {
+        var offsetsToCommit = new HashMap<TopicPartition, OffsetAndMetadata>();
+        this.lastProcessedOffsets.forEach((topicPartition, lastProcessedOffset) -> {
+            var lastCommitedOffset = this.lastCommittedOffsets.getOrDefault(topicPartition, -1L);
+            if (lastProcessedOffset >= 0 && lastProcessedOffset >= lastCommitedOffset) {
+                long offsetToCommit = lastProcessedOffset + 1;
+                offsetsToCommit.put(topicPartition, new OffsetAndMetadata(offsetToCommit));
+                log.debug("Offset to commit: {}@{}", offsetToCommit, topicPartition);
+            }
+        });
+        kafkaConsumer.commitSync(offsetsToCommit);
+        lastCommitTime = System.currentTimeMillis();
+        offsetsToCommit.forEach((topicPartition, offset) -> {
+            this.lastCommittedOffsets.put(topicPartition, offset.offset());
+            log.debug("Offset commited {}@{}", offset.offset(), topicPartition);
+        });
     }
 
     private void handleFinishedBatches() {
         var finishedPartitions = activeBatches.values().stream()
-                .filter(batch -> batch.getStatus().isFinished())
+                .filter(batch -> batch.getProcessingStatus() == KafkaSubscriberPolledMessageBatch.ProcessingStatus.FINISHED)
                 .map(KafkaSubscriberPolledMessageBatch::getTopicPartition)
                 .toList();
-        finishedPartitions.forEach(activeBatches::remove);
         kafkaConsumer.resume(finishedPartitions);
-        log.debug("Finished processing polled batch messages and resumed partitions: {}", finishedPartitions);
+        finishedPartitions.forEach(activeBatches::remove);
+        log.debug("Resumed partitions: {}", finishedPartitions);
     }
 
     @Override
     public void onProcessStarted(SubscriberPolledMessageBatch<T> subscriberPolledMessageBatch) {
         var batch = (KafkaSubscriberPolledMessageBatch<T>) subscriberPolledMessageBatch;
-        batch.getStatus().setProcessingStatus(KafkaSubscriberPolledMessageBatchStatus.ProcessingStatus.PROCESSING);
-        log.info("Batch processing started: {}", batch);
+        batch.setProcessingStatus(KafkaSubscriberPolledMessageBatch.ProcessingStatus.PROCESSING);
+        log.debug("Batch processing started: {}", batch);
     }
 
     @Override
     public void onMessageHandlingStarted(SubscriberPolledMessageBatch<T> subscriberPolledMessageBatch, List<SubscriberMessage<T>> subscriberMessages) {
-        log.info("Message handling started for offsets: {}", subscriberMessages.stream()
+        log.debug("Message handling started for offsets: {}", subscriberMessages.stream()
                 .map(subscriberMessage -> ((KafkaSubscriberMessage<T>)subscriberMessage).offset())
                 .toList());
     }
@@ -186,16 +199,15 @@ public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, Subscr
         var messages = subscriberMessages.stream()
                 .map(subscriberMessage -> ((KafkaSubscriberMessage<T>)subscriberMessage))
                 .toList();
-        batch.getStatus().setLastProcessedOffset(messages.get(messages.size() - 1).offset());
-
-        log.info("Message handling succeeded for offsets: {}", messages.stream()
+        lastProcessedOffsets.put(batch.getTopicPartition(), messages.get(messages.size() - 1).offset());
+        log.debug("Message handling succeeded for offsets: {}", messages.stream()
                 .map(KafkaSubscriberMessage::offset)
                 .toList());
     }
 
     @Override
     public void onMessageHandlingFailed(SubscriberPolledMessageBatch<T> subscriberPolledMessageBatch, List<SubscriberMessage<T>> subscriberMessages) {
-        log.info("Message handling failed for offsets: {}", subscriberMessages.stream()
+        log.debug("Message handling failed for offsets: {}", subscriberMessages.stream()
                 .map(subscriberMessage -> ((KafkaSubscriberMessage<T>)subscriberMessage).offset())
                 .toList());
     }
@@ -203,8 +215,8 @@ public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, Subscr
     @Override
     public void onProcessFinished(SubscriberPolledMessageBatch<T> subscriberPolledMessageBatch) {
         var batch = (KafkaSubscriberPolledMessageBatch<T>) subscriberPolledMessageBatch;
-        batch.getStatus().setProcessingStatus(KafkaSubscriberPolledMessageBatchStatus.ProcessingStatus.FINISHED);
-        log.info("Batch processing finished: {}", batch);
+        batch.setProcessingStatus(KafkaSubscriberPolledMessageBatch.ProcessingStatus.FINISHED);
+        log.debug("Batch processing finished: {}", batch);
     }
 
     @Override
