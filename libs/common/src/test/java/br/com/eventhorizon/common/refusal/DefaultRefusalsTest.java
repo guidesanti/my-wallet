@@ -14,8 +14,6 @@ public class DefaultRefusalsTest {
         assertEquals(RefusalReasonCode.lib("COMMON", "FORBIDDEN"),               DefaultRefusals.FORBIDDEN.getCode());
         assertEquals(RefusalReasonCode.lib("COMMON", "NOT_FOUND"),               DefaultRefusals.NOT_FOUND.getCode());
         assertEquals(RefusalReasonCode.lib("COMMON", "CONFLICT"),                DefaultRefusals.CONFLICT.getCode());
-        assertEquals(RefusalReasonCode.lib("COMMON", "UNEXPECTED_SERVER_ERROR"), DefaultRefusals.UNEXPECTED_SERVER_ERROR.getCode());
-        assertEquals(RefusalReasonCode.lib("COMMON", "TRANSIENT_SERVER_ERROR"),  DefaultRefusals.TRANSIENT_SERVER_ERROR.getCode());
     }
 
     @Test
@@ -26,7 +24,5 @@ public class DefaultRefusalsTest {
         assertEquals("Insufficient access rights",                                                      DefaultRefusals.FORBIDDEN.getMessage());
         assertEquals("Resource not found",                                                              DefaultRefusals.NOT_FOUND.getMessage());
         assertEquals("Request conflicts with actual system state",                                      DefaultRefusals.CONFLICT.getMessage());
-        assertEquals("Unexpected internal server error (a retry will probably not solve the problem)",  DefaultRefusals.UNEXPECTED_SERVER_ERROR.getMessage());
-        assertEquals("Transient server error (a retry may solve the problem later)",                    DefaultRefusals.TRANSIENT_SERVER_ERROR.getMessage());
     }
 }

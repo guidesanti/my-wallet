@@ -42,6 +42,7 @@ public class OnErrorPublishToSourceMessageFilter<T> implements MessageFilter<T> 
             for (var message : messages) {
                 var nextRetryCount = getNextRetryCount(message);
                 if (shouldRetry(nextRetryCount)) {
+                    log.error("Message processing failed, publishing to source {} duo to", message.source(), ex);
                     publishToDestination(message, ex, nextRetryCount);
                 } else {
                     throw ex;

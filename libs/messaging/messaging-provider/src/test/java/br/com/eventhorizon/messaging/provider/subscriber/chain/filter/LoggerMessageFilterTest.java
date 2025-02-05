@@ -1,13 +1,9 @@
 package br.com.eventhorizon.messaging.provider.subscriber.chain.filter;
 
-import br.com.eventhorizon.common.Common;
-import br.com.eventhorizon.common.exception.FailureException;
-import br.com.eventhorizon.messaging.provider.Header;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberPhase;
 import br.com.eventhorizon.messaging.provider.subscriber.chain.MessageFilterChain;
 import org.junit.jupiter.api.Test;
-import org.slf4j.MDC;
 
 import java.util.List;
 

@@ -13,8 +13,4 @@ public final class DefaultRefusals {
     public static final Refusal NOT_FOUND = Refusal.of(RefusalReasonCode.lib("COMMON", "NOT_FOUND"), "Resource not found");
 
     public static final Refusal CONFLICT = Refusal.of(RefusalReasonCode.lib("COMMON", "CONFLICT"), "Request conflicts with actual system state");
-
-    public static final Refusal UNEXPECTED_SERVER_ERROR = Refusal.of(RefusalReasonCode.lib("COMMON", "UNEXPECTED_SERVER_ERROR"), "Unexpected internal server error (a retry will probably not solve the problem)");
-
-    public static final Refusal TRANSIENT_SERVER_ERROR = Refusal.of(RefusalReasonCode.lib("COMMON", "TRANSIENT_SERVER_ERROR"), "Transient server error (a retry may solve the problem later)");
 }

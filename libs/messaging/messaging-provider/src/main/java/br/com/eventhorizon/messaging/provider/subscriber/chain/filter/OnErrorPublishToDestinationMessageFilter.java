@@ -40,6 +40,7 @@ public class OnErrorPublishToDestinationMessageFilter<T> implements MessageFilte
             chain.next(messages);
         } catch (Exception ex) {
             for (var message : messages) {
+                log.error("Message processing failed, publishing to destination {} duo to", destination, ex);
                 publishToDestination(message, ex);
             }
         } finally {

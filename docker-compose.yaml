@@ -152,6 +152,23 @@ services:
     networks:
       - local-net
 
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    hostname: kafka-ui
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+    ports:
+      - "9091:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: "local-kafka-cluster"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka1:9092,kafka2:9093,kafka3:9094"
+      KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: "PLAINTEXT"
+    networks:
+      - local-net
+
 networks:
   local-net:
     driver: bridge

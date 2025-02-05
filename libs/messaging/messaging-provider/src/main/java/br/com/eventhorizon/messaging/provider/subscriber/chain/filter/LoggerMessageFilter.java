@@ -36,6 +36,7 @@ public class LoggerMessageFilter<T> implements MessageFilter<T> {
             chain.next(messages);
         } catch (Exception ex) {
             log.error("Message processing failed", ex);
+            throw ex;
         } finally {
             log.debug("##### LOGGER MESSAGE FILTER END #####");
             removeMDCKeys();
