@@ -121,6 +121,8 @@ components:
     ProducerRequestDTO:
       type: object
       properties:
+        batchName:
+          type: string
         destinationTopic:
           type: string
         numberOfMessages:
@@ -130,6 +132,8 @@ components:
     ProducerRequest2DTO:
       type: object
       properties:
+        batchName:
+          type: string
         destinationTopic:
           type: string
         period:

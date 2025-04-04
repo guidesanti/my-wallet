@@ -32,14 +32,14 @@ public class ProduceMessages2 implements UseCase<BatchParamsInput, Void> {
     @Override
     public Future<Void> call(BatchParamsInput input) {
         return executorService.submit(() -> {
-            var productionTask = ProductionTask2.create("some-name", input.topic(), input.period(), input.messageSize());
+            var productionTask = ProductionTask2.create(input.batchName(), input.topic(), input.period(), input.messageSize());
             var scrapeTimeNs = 1_000_000_000; // Scrape time in nanoseconds
             var startTime = System.currentTimeMillis();
             var sequence = 0;
             var measureStartTime = System.nanoTime();
             var measureMessages = 0L;
             var measureBytes = 0L;
-            var stats = new BatchStats(productionTask.getId(), input.name(), scrapeTimeNs);
+            var stats = new BatchStats(productionTask.getId(), input.batchName(), scrapeTimeNs);
             log.info("Starting production task: {}", productionTask);
             productionTask.start();
             stats.start();
@@ -87,7 +87,7 @@ public class ProduceMessages2 implements UseCase<BatchParamsInput, Void> {
         System.out.println();
         System.out.println("====================================== Batch Stats ======================================");
         System.out.println("Batch ID: " + stats.getId());
-        System.out.println("Batch name: " + stats.getName());
+        System.out.println("Batch batchName: " + stats.getName());
         System.out.println("Scrape time (ms): " + stats.getScrapeTimeNs() / 1_000_000);
         System.out.println("Started at: " + stats.getStartInstant());
         System.out.println("Stopped at: " + stats.getStopInstant());
@@ -130,9 +130,16 @@ public class ProduceMessages2 implements UseCase<BatchParamsInput, Void> {
 
         // Save batch overall results
         var producerResultsFilePath = resultsDirPath.resolve("producer-results" + ".csv");
-        System.out.println(producerResultsFilePath);
+        if (!Files.exists(producerResultsFilePath)) {
+            Files.createFile(producerResultsFilePath);
+            try (var fw = new FileWriter(new File(producerResultsFilePath.toUri()), true)) {
+                fw.append("batchId,batchName,startedAt,stoppedAt,durationMs,totalMessages,totalBytes,measures," +
+                        "producerAvgMessagesThroughput,producerAvgBytesThroughput," +
+                        "producerMinMessagesThroughput,producerMinBytesThroughput," +
+                        "producerMaxMessagesThroughput,producerMaxBytesThroughput");
+            }
+        }
         var producerResultsFile = new File(producerResultsFilePath.toUri());
-        System.out.println(producerResultsFile.getAbsolutePath());
         try (var fw = new FileWriter(producerResultsFile, true)) {
             System.out.println(producerResultsFile.getAbsolutePath());
             var string = "\n" + stats.getId() + ","

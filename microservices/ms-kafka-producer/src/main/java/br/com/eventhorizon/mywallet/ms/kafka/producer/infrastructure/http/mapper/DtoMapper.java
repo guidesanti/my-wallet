@@ -16,11 +16,13 @@ public interface DtoMapper {
 
     DtoMapper INSTANCE = Mappers.getMapper(DtoMapper.class);
 
+    @Mapping(target = "batchName", source = "batchName")
     @Mapping(target = "topic", source = "destinationTopic")
     @Mapping(target = "numberOfMessages", source = "numberOfMessages")
     @Mapping(target = "messageSize", source = "messageSize")
     ProduceMessagesInput mapToInput(ProducerRequestDTO dto);
 
+    @Mapping(target = "batchName", source = "batchName")
     @Mapping(target = "topic", source = "destinationTopic")
     @Mapping(target = "period", source = "period")
     @Mapping(target = "messageSize", source = "messageSize")

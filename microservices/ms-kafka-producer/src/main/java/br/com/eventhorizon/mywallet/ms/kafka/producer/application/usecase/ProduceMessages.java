@@ -28,7 +28,7 @@ public class ProduceMessages implements UseCase<ProduceMessagesInput, Void> {
     @Override
     public Future<Void> call(ProduceMessagesInput input) {
         return executorService.submit(() -> {
-            var productionTask = ProductionTask.create("some-name", input.topic(), input.numberOfMessages(), input.messageSize());
+            var productionTask = ProductionTask.create("some-batchName", input.topic(), input.numberOfMessages(), input.messageSize());
             var sequence = 0;
             log.info("Starting production task: {}", productionTask);
             productionTask.start();
@@ -54,7 +54,7 @@ public class ProduceMessages implements UseCase<ProduceMessagesInput, Void> {
     private void logProductionStats(BatchStats stats) {
         log.info("Batch stats:");
         System.out.println("Batch ID: " + stats.getId());
-        System.out.println("Batch name: " + stats.getName());
+        System.out.println("Batch batchName: " + stats.getName());
         System.out.println("Scrape time (ms): " + 1000 * stats.getScrapeTimeNs());
         System.out.println("Started at: " + stats.getStartInstant());
         System.out.println("Stopped at: " + stats.getStopInstant());
