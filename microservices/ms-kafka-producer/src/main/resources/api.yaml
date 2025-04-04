@@ -1,0 +1,187 @@
+openapi: 3.0.0
+
+info:
+  title: Kafka Producer API
+  description: Kafka Producer API
+  version: 1.0.0
+  contact:
+    email: guidesanti@yahoo.com.br
+  license:
+    name: The MIT License
+    url: https://opensource.org/license/mit/
+
+servers:
+  - url: 'https://localhost:8080/ms-kafka-producer/v1'
+    description: Local environment
+
+tags:
+  - name: producer
+    description: Produce and manage messages on Kafka topics
+
+paths:
+  /producer:
+    post:
+      tags:
+        - producer
+      summary: Produce messages on Kafka topic
+      operationId: produceMessages
+      description: Produce messages
+      parameters:
+        - $ref: '#/components/parameters/XIdempotenceIdHeader'
+        - $ref: '#/components/parameters/XTraceIdHeader'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProducerRequestDTO'
+        description: Asset type to create
+      responses:
+        '200':
+          $ref: '#/components/responses/ProducerSuccessResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '422':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+  /producer2:
+    post:
+      tags:
+        - producer
+      summary: Produce messages on Kafka topic
+      operationId: produceMessagesByTime
+      description: Produce messages 2
+      parameters:
+        - $ref: '#/components/parameters/XIdempotenceIdHeader'
+        - $ref: '#/components/parameters/XTraceIdHeader'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProducerRequest2DTO'
+      responses:
+        '200':
+          $ref: '#/components/responses/ProducerSuccessResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '422':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+
+components:
+  # -------------------------------------------------------- #
+  # Parameters                                               #
+  # -------------------------------------------------------- #
+  parameters:
+    XTraceIdHeader:
+      in: header
+      name: X-Trace-Id
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+        pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+    XIdempotenceIdHeader:
+      in: header
+      name: X-Idempotence-Id
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+        pattern: '(\d{4})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[01])([0-9A-Za-z]{10}?)([0-9]{18}?)([0-9]{3}?)'
+
+  # -------------------------------------------------------- #
+  # Schemas                                                  #
+  # -------------------------------------------------------- #
+  schemas:
+    ResponseStatus:
+      type: string
+      enum:
+        - SUCCESS
+        - ERROR
+    ResponseEnvelope:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/ResponseStatus'
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    ProducerRequestDTO:
+      type: object
+      properties:
+        destinationTopic:
+          type: string
+        numberOfMessages:
+          type: integer
+        messageSize:
+          type: integer
+    ProducerRequest2DTO:
+      type: object
+      properties:
+        destinationTopic:
+          type: string
+        period:
+          type: integer
+        messageSize:
+          type: integer
+    ProducerResponseDTO:
+      type: object
+      properties:
+        taskId:
+          type: string
+
+
+  # -------------------------------------------------------- #
+  # Request Bodies                                           #
+  # -------------------------------------------------------- #
+  requestBodies:
+    ProducerRequestBody:
+      description: Parameters to producer
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProducerRequestDTO'
+
+  # -------------------------------------------------------- #
+  # Responses                                                #
+  # -------------------------------------------------------- #
+  responses:
+    ProducerSuccessResponse:
+      description: Producer success
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ResponseEnvelope'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProducerResponseDTO'
+    ErrorResponse:
+      description: Error response
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ResponseEnvelope'
+              - type: object
+                properties:
+                  error:
+                    $ref: '#/components/schemas/Error'
+            example:
+              status: ERROR
+              error:
+                code: ERROR_CODE
+                message: Error message

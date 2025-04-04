@@ -1,0 +1,13 @@
+br.com.eventhorizon.mywallet:
+  kafka:
+    bootstrap-servers: kafka1:9092,kafka2:9093,kafka3:9094
+
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  data:
+    mongodb:
+      uri: mongodb://admin:admin@mongo1:27017,mongo2:27017,mongo3:27017/${br.com.eventhorizon.mywallet.mongo.db-name}?replicaSet=rs0&authSource=admin
+      database: mywallet-${br.com.eventhorizon.mywallet.service.env}-${br.com.eventhorizon.mywallet.service.name}

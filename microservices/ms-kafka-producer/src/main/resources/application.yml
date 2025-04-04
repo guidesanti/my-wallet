@@ -1,0 +1,59 @@
+br.com.eventhorizon:
+  service:
+    name: ms-kafka-producer
+    env: ${spring.profiles.active}
+
+br.com.eventhorizon.mywallet:
+  service:
+    name: ms-kafka-producer
+    env: ${spring.profiles.active}
+  kafka:
+    topics:
+      topic1: ${br.com.eventhorizon.mywallet.service.env}-topic1
+      topic1-dlq: ${br.com.eventhorizon.mywallet.service.env}-topic1-dlq
+
+spring:
+  application:
+    name: ${br.com.eventhorizon.mywallet.service.name}
+  profiles:
+    active: local
+  cloud:
+    config:
+      enabled: false
+
+mongock:
+  driver: mongodb-springdata-v3-driver
+  migration-scan-package:
+    - br.com.eventhorizon.mywallet.ms.kafka.producer.infrastructure.persistence.migration
+  migrationRepositoryName: migrations
+  lockRepositoryName: migration-locks
+  transactionEnabled: false
+  runner-type: initializingbean
+  enabled: true
+  mongo-db:
+    write-concern:
+      w: majority
+      wTimeoutMs: 1000
+      journal: true
+    read-concern: majority
+    read-preference: primary
+
+logging:
+  config: classpath:log4j2.xml
+  level:
+    root: TRACE
+    org: INFO
+    br.com.eventhorizon: WARN
+    br.com.eventhorizon.mywallet: DEBUG
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web.exposure.include: info,health,refresh
+  endpoint:
+    info.enabled: true
+    health:
+      enabled: true
+      show-details: always
+      show-components: always
+    refresh.enabled: true
