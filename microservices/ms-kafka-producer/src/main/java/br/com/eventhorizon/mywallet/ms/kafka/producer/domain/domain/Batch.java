@@ -4,10 +4,13 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 @ToString
-public class ProductionTask {
+public class Batch {
 
     @Getter
     private final UUID id;
@@ -19,7 +22,7 @@ public class ProductionTask {
     private final String topic;
 
     @Getter
-    private final long numberOfMessages;
+    private final long period;
 
     @Getter
     private final long messageSize;
@@ -29,11 +32,11 @@ public class ProductionTask {
 
     private final List<Status> statusHistory = new ArrayList<>();
 
-    private ProductionTask(UUID id, String name, String topic, int numberOfMessages, int messageSize) {
+    private Batch(UUID id, String name, String topic, int period, int messageSize) {
         this.id = id;
         this.name = name;
         this.topic = topic;
-        this.numberOfMessages = numberOfMessages;
+        this.period = period;
         this.messageSize = messageSize;
         setStatus(StatusCode.CREATED, Instant.now());
     }
@@ -42,12 +45,12 @@ public class ProductionTask {
         return Collections.unmodifiableList(this.statusHistory);
     }
 
-    public static ProductionTask create(String name, String topic, int numberOfMessages, int messageSize) {
-        return new ProductionTask(UUID.randomUUID(), name, topic, numberOfMessages, messageSize);
+    public static Batch create(String name, String topic, int numberOfMessages, int messageSize) {
+        return new Batch(UUID.randomUUID(), name, topic, numberOfMessages, messageSize);
     }
 
-    public static ProductionTask create(UUID id, String name, String topic, int numberOfMessages, int messageSize) {
-        return new ProductionTask(id, name, topic, numberOfMessages, messageSize);
+    public static Batch create(UUID id, String name, String topic, int numberOfMessages, int messageSize) {
+        return new Batch(id, name, topic, numberOfMessages, messageSize);
     }
 
     public void start() {

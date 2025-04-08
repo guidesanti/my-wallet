@@ -1,7 +1,7 @@
 package br.com.eventhorizon.mywallet.ms.kafka.consumer.init;
 
 import br.com.eventhorizon.common.repository.BaseRepositoryImpl;
-import br.com.eventhorizon.mywallet.ms.kafka.producer.ApplicationProperties;
+import br.com.eventhorizon.mywallet.ms.kafka.consumer.ApplicationProperties;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
 import com.mongodb.TransactionOptions;

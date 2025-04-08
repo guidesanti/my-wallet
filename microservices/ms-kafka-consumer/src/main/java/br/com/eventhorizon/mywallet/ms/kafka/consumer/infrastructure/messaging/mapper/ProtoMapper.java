@@ -1,7 +1,8 @@
 package br.com.eventhorizon.mywallet.ms.kafka.consumer.infrastructure.messaging.mapper;
 
-import br.com.eventhorizon.mywallet.ms.kafka.producer.domain.domain.Message;
+import br.com.eventhorizon.mywallet.ms.kafka.consumer.domain.domain.Message;
 import br.com.eventhorizon.mywallet.proto.TestMessageProto;
+import com.google.protobuf.ByteString;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValueCheckStrategy;
@@ -14,13 +15,14 @@ public interface ProtoMapper {
 
     ProtoMapper INSTANCE = Mappers.getMapper(ProtoMapper.class);
 
-    default String mapByteArrayToString(byte[] bytes) {
-        return new String(bytes);
+    default byte[] mapStringToByteArray(String string) {
+        return string.getBytes();
     }
 
-    @Mapping(target = "batchId", source = "batchId")
-    @Mapping(target = "createdAt", source = "createdAt")
-    @Mapping(target = "sequence", source = "sequence")
-    @Mapping(target = "content", source = "content")
-    TestMessageProto mapToProto(Message message);
+    @Mapping(target = "content",    source = "content")
+    Message map(TestMessageProto proto);
+
+    default byte[] map(ByteString byteString) {
+        return byteString.toByteArray();
+    }
 }

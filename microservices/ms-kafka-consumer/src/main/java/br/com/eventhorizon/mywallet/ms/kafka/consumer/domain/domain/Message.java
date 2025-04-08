@@ -1,10 +1,12 @@
 package br.com.eventhorizon.mywallet.ms.kafka.consumer.domain.domain;
 
 import lombok.Builder;
+import lombok.Data;
 
-import java.time.Instant;
-import java.util.UUID;
 
+@Data
 @Builder
-public record Message(UUID batchId, Instant createdAt, long sequence, byte[] content) {
+public class Message {
+
+    private byte[] content;
 }

@@ -23,7 +23,7 @@ public class ExecutorServiceFactoryImpl implements ExecutorServiceFactory {
                                                            int maximumPoolSize,
                                                            long keepAliveTime,
                                                            TimeUnit unit) {
-        return new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit,
+        return ContextAwareThreadPoolExecutor.newWithInheritedMdc(corePoolSize, maximumPoolSize, keepAliveTime, unit,
                 new SynchronousQueue<>(), new ThreadFactoryImpl(threadNamePrefix));
     }
 

@@ -24,6 +24,6 @@ class ProtoMapperTest {
         var proto = ProtoMapper.INSTANCE.mapToProto(message);
 
         // Then
-        assertEquals(10, proto.getSequence());
+        assertEquals("test", proto.getContent());
     }
 }

@@ -18,6 +18,8 @@
     <modules>
         <module>ms-assets</module>
         <module>ms-transactions</module>
+        <module>ms-kafka-producer</module>
+        <module>ms-kafka-consumer</module>
     </modules>
 
     <dependencyManagement>
@@ -171,13 +173,6 @@
             <artifactId>log4j-slf4j2-impl</artifactId>
         </dependency>
 
-        <!-- Kafka -->
-        <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-        </dependency>
-
         <!-- MongoDB -->
         <!-- https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-sync -->
         <dependency>
@@ -192,13 +187,6 @@
             <artifactId>mapstruct</artifactId>
         </dependency>
 
-        <!-- Protocol Buffers -->
-        <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/org.openapitools/jackson-databind-nullable -->
         <dependency>
             <groupId>org.openapitools</groupId>
@@ -211,6 +199,7 @@
             <artifactId>swagger-annotations</artifactId>
         </dependency>
 
+        <!-- Mongock -->
         <dependency>
             <groupId>io.mongock</groupId>
             <artifactId>mongock-springboot-v3</artifactId>

@@ -1,0 +1,10 @@
+kafka:
+  clusters:
+    - name: "local-kafka-cluster"
+      bootstrapServers: "kafka1:9092,kafka2:9093,kafka3:9094"
+      serde:
+        - name: HexWithEditedDelimiter
+          className: com.provectus.kafka.ui.serdes.builtin.HexSerde
+          properties:
+            uppercase: "false"
+            delimiter:

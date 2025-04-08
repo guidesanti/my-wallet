@@ -163,9 +163,39 @@ services:
     ports:
       - "9091:8080"
     environment:
-      KAFKA_CLUSTERS_0_NAME: "local-kafka-cluster"
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka1:9092,kafka2:9093,kafka3:9094"
-      KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: "PLAINTEXT"
+      SPRING_CONFIG_ADDITIONAL-LOCATION: /config.yaml
+    volumes:
+      - ./docker/kafka-ui/config.yaml:/config.yaml
+    networks:
+      - local-net
+
+  kafka-exporter:
+    image: danielqsj/kafka-exporter
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+    command: [ "--kafka.server=kafka1:9092", "--kafka.server=kafka1:9093", "--kafka.server=kafka1:9094" ]
+    ports:
+      - "9308:9308"
+    networks:
+      - local-net
+
+  prometheus:
+    image: prom/prometheus
+    depends_on:
+      - kafka-exporter
+    ports:
+      - "9090:9090"
+    volumes:
+      - "./docker/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml"
+    networks:
+      - local-net
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
     networks:
       - local-net
 

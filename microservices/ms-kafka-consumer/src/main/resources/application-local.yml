@@ -10,4 +10,4 @@ spring:
   data:
     mongodb:
       uri: mongodb://admin:admin@mongo1:27017,mongo2:27017,mongo3:27017/${br.com.eventhorizon.mongo.db-name}?replicaSet=rs0&authSource=admin
-      database: mywallet-${br.com.eventhorizon.service.env}-${br.com.eventhorizon.service.name}
+      database: ${br.com.eventhorizon.mongo.db-name}

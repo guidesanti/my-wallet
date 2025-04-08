@@ -10,6 +10,10 @@
     </parent>
 
     <artifactId>ms-kafka-consumer</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>ms-kafka-consumer</name>
+    <description>Kafka consumer</description>
 
     <properties>
         <maven.compiler.source>22</maven.compiler.source>
@@ -17,4 +21,34 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>br.com.eventhorizon</groupId>
+            <artifactId>messaging-provider-kafka</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>br.com.eventhorizon</groupId>
+            <artifactId>proto</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

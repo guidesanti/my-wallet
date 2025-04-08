@@ -4,6 +4,7 @@ import br.com.eventhorizon.common.config.Config;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
+@ToString
 @Component
 public final class ApplicationProperties {
 
@@ -39,13 +41,16 @@ public final class ApplicationProperties {
     }
 
     private <T> T getPropertyValue(String name, Class<T> type) {
+        System.out.println(name);
         return config.getValue(PROPERTIES_PREFIX + "." + name, type);
     }
 
     private void loadKafkaTopicsProperties() {
-        kafkaTopics.replaceAll((t, v) -> KafkaTopicProperties.builder()
-                .name(getPropertyValue(t.getPropName(), String.class))
-                .build());
+        for (KafkaTopic kafkaTopic : KafkaTopic.values()) {
+            kafkaTopics.put(kafkaTopic, KafkaTopicProperties.builder()
+                    .name(getPropertyValue(kafkaTopic.getPropName(), String.class))
+                    .build());
+        }
     }
 
     @Builder
@@ -56,10 +61,10 @@ public final class ApplicationProperties {
     @RequiredArgsConstructor
     public enum KafkaTopic {
 
-        TEST("test"),
-        TEST_DLQ("test-dlq");
+        TEST(KafkaTopic.PROP_PREFIX + "test"),
+        TEST_DLQ(KafkaTopic.PROP_PREFIX + "test-dlq");
 
-        private static final String PROP_PREFIX = "kafka.topics";
+        private static final String PROP_PREFIX = "kafka.topics.";
 
         private final String propName;
     }

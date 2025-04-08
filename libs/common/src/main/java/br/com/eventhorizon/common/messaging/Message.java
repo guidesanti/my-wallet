@@ -12,12 +12,16 @@ import java.util.*;
 public class Message<T> {
 
     @NonNull
+    private final Attributes attributes;
+
+    @NonNull
     private final Headers headers;
 
     @NonNull
     private final T content;
 
     protected Message(Builder<?, T> builder) {
+        this.attributes = builder.attributesBuilder.build();
         this.headers = builder.headersBuilder.build();
         this.content = builder.content;
     }
@@ -28,6 +32,8 @@ public class Message<T> {
 
     public static class Builder<B extends Builder<B, T>, T> {
 
+        private final Attributes.Builder attributesBuilder = Attributes.builder();
+
         private final Headers.Builder headersBuilder = Headers.builder();
 
         private T content;
@@ -37,12 +43,30 @@ public class Message<T> {
         }
 
         public B copy(@NonNull Message<T> message) {
+            if (message.attributes != null) {
+                attributesBuilder.attributes(message.attributes);
+            }
             if (message.headers != null) {
                 headersBuilder.headers(message.headers);
             }
             if (message.content != null) {
                 content = message.content;
             }
+            return self();
+        }
+
+        public B attributes(@NonNull Attributes attributes) {
+            attributesBuilder.attributes(attributes);
+            return self();
+        }
+
+        public B attributes(@NonNull Map<String, String> attributes) {
+            attributesBuilder.attributes(attributes);
+            return self();
+        }
+
+        public B attribute(@NonNull String name, @NonNull String value) {
+            attributesBuilder.attribute(name, value);
             return self();
         }
 

@@ -1,6 +1,7 @@
-package br.com.eventhorizon.mywallet.ms.kafka.producer.domain.domain;
+package br.com.eventhorizon.mywallet.ms.kafka.consumer.domain.domain;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -25,6 +26,10 @@ public class BatchStats {
 
     private final List<Measure> measures = new ArrayList<>();
 
+    private double minLatency = Double.MAX_VALUE;
+
+    private double maxLatency = Double.MIN_VALUE;
+
     private double minMessagesThroughput = Double.MAX_VALUE;
 
     private double minBytesThroughput = Double.MAX_VALUE;
@@ -47,6 +52,10 @@ public class BatchStats {
         return measures.stream().map(Measure::bytes).reduce(0L, Long::sum);
     }
 
+    public double getAvgLatency() {
+        return measures.stream().map(Measure::latency).reduce(0.0, Double::sum) / measures.size();
+    }
+
     public double getAvgMessagesThroughput() {
         return measures.stream().map(Measure::getMessagesThroughput).reduce(0.0, Double::sum) / measures.size();
     }
@@ -57,6 +66,8 @@ public class BatchStats {
 
     public void addMeasure(Measure measure) {
         measures.add(measure);
+        minLatency = Math.min(minLatency, measure.latency());
+        maxLatency = Math.max(maxLatency, measure.latency());
         minMessagesThroughput = Math.min(minMessagesThroughput, measure.getMessagesThroughput());
         minBytesThroughput = Math.min(minBytesThroughput, measure.getBytesThroughput());
         maxMessagesThroughput = Math.max(maxMessagesThroughput, measure.getMessagesThroughput());

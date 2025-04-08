@@ -1,5 +1,6 @@
 package br.com.eventhorizon.messaging.provider.kafka.subscriber;
 
+import br.com.eventhorizon.messaging.provider.Attribute;
 import br.com.eventhorizon.messaging.provider.subscriber.SubscriberMessage;
 import br.com.eventhorizon.messaging.provider.subscriber.processor.SubscriberMessagePoller;
 import br.com.eventhorizon.messaging.provider.subscriber.processor.SubscriberMessageProcessorListener;
@@ -87,13 +88,16 @@ public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, Subscr
     }
 
     private List<SubscriberPolledMessageBatch<T>> doPoll() {
+        double startPollTime = System.nanoTime();
         ConsumerRecords<byte[], T> records = kafkaConsumer.poll(Duration.ofMillis(pollInterval));
+        final Double latency = (System.nanoTime() - startPollTime) / 1_000_000.0;
         List<SubscriberPolledMessageBatch<T>> polledBatches = new ArrayList<>();
         var partitions = records.partitions();
         partitions.forEach(topicPartition -> {
             var list = new LinkedList<KafkaSubscriberMessage<T>>();
             records.records(topicPartition).forEach(record -> {
                 var messageBuilder = KafkaSubscriberMessage.<T>builder();
+                messageBuilder.attribute(Attribute.LATENCY.getName(), String.valueOf(latency));
                 record.headers().forEach(header -> messageBuilder.header(header.key(), new String(header.value())));
                 messageBuilder
                         .source(topic)

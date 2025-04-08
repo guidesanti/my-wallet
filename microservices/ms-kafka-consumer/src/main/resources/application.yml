@@ -4,8 +4,10 @@ br.com.eventhorizon:
     env: ${spring.profiles.active}
   kafka:
     topics:
-      topic1: ${br.com.eventhorizon.service.env}-test
-      topic1-dlq: ${br.com.eventhorizon.service.env}-test-dlq
+      test: ${br.com.eventhorizon.service.env}-test
+      test-dlq: ${br.com.eventhorizon.service.env}-test-dlq
+  mongo:
+    db-name: mywallet-${br.com.eventhorizon.service.env}-${br.com.eventhorizon.service.name}
 
 spring:
   application:
@@ -39,7 +41,7 @@ logging:
     root: TRACE
     org: INFO
     br.com.eventhorizon: WARN
-    br.com.eventhorizon.mywallet: DEBUG
+    br.com.eventhorizon.mywallet.ms.kafka.consumer: INFO
 
 management:
   endpoints:

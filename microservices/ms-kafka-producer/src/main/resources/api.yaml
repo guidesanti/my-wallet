@@ -19,32 +19,7 @@ tags:
     description: Produce and manage messages on Kafka topics
 
 paths:
-  /producer:
-    post:
-      tags:
-        - producer
-      summary: Produce messages on Kafka topic
-      operationId: produceMessages
-      description: Produce messages
-      parameters:
-        - $ref: '#/components/parameters/XIdempotenceIdHeader'
-        - $ref: '#/components/parameters/XTraceIdHeader'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ProducerRequestDTO'
-        description: Asset type to create
-      responses:
-        '200':
-          $ref: '#/components/responses/ProducerSuccessResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '422':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
-  /producer2:
+  /batches:
     post:
       tags:
         - producer
@@ -58,7 +33,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProducerRequest2DTO'
+              $ref: '#/components/schemas/ProducerRequestDTO'
       responses:
         '200':
           $ref: '#/components/responses/ProducerSuccessResponse'
@@ -125,17 +100,6 @@ components:
           type: string
         destinationTopic:
           type: string
-        numberOfMessages:
-          type: integer
-        messageSize:
-          type: integer
-    ProducerRequest2DTO:
-      type: object
-      properties:
-        batchName:
-          type: string
-        destinationTopic:
-          type: string
         period:
           type: integer
         messageSize:
@@ -145,18 +109,6 @@ components:
       properties:
         taskId:
           type: string
-
-
-  # -------------------------------------------------------- #
-  # Request Bodies                                           #
-  # -------------------------------------------------------- #
-  requestBodies:
-    ProducerRequestBody:
-      description: Parameters to producer
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ProducerRequestDTO'
 
   # -------------------------------------------------------- #
   # Responses                                                #

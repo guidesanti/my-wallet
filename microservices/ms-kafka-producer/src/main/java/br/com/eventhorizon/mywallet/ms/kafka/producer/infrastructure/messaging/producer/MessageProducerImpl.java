@@ -31,8 +31,9 @@ public class MessageProducerImpl implements MessageProducer {
                             Headers.builder()
                                     .header(Header.CREATED_AT.getName(), DateTimeFormatter.ISO_INSTANT.format(message.createdAt()))
                                     .build()))
-                    .header("sequence", String.valueOf(message.sequence()))
+                    .header("batch-id", message.batchId().toString())
                     .header("batch-marker", batchMarker.name())
+                    .header("sequence", String.valueOf(message.sequence()))
                     .content(ProtoMapper.INSTANCE.mapToProto(message).toByteArray())
                     .build()).get();
         } catch (Exception ex) {
@@ -48,6 +49,7 @@ public class MessageProducerImpl implements MessageProducer {
                             Headers.builder()
                                     .header(Header.CREATED_AT.getName(), DateTimeFormatter.ISO_INSTANT.format(message.createdAt()))
                                     .build()))
+                    .header("batch-id", message.batchId().toString())
                     .header("sequence", String.valueOf(message.sequence()))
                     .content(ProtoMapper.INSTANCE.mapToProto(message).toByteArray())
                     .build()).get();

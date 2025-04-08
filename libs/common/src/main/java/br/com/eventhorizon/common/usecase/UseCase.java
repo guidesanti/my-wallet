@@ -1,4 +1,8 @@
 package br.com.eventhorizon.common.usecase;
 
-public interface UseCase {
+import java.util.concurrent.Future;
+
+public interface UseCase<INPUT, OUTPUT> {
+
+    Future<OUTPUT> call(INPUT input);
 }

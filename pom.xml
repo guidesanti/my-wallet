@@ -32,7 +32,7 @@
 		<io.openliberty.tools.liberty-maven-plugin.version>3.10</io.openliberty.tools.liberty-maven-plugin.version>
 
 		<!-- Dependency Versions -->
-		<lombok.version>1.18.28</lombok.version>
+		<lombok.version>1.18.30</lombok.version>
 		<lombok.mapstruct.version>0.2.0</lombok.mapstruct.version>
 		<jakarta.jakartaee-api.version>10.0.0</jakarta.jakartaee-api.version>
 		<org.eclipse.microprofile.version>6.1</org.eclipse.microprofile.version>
@@ -49,9 +49,9 @@
 		<org.apache.logging.log4j.log4j-core.version>2.20.0</org.apache.logging.log4j.log4j-core.version>
 		<org.apache.logging.log4j.log4j-slf4j2-impl.version>2.20.0</org.apache.logging.log4j.log4j-slf4j2-impl.version>
 		<org.apache.kafka.kafka-clients.version>3.6.1</org.apache.kafka.kafka-clients.version>
-		<org.mongodb.mongodb-driver-sync.version>4.9.1</org.mongodb.mongodb-driver-sync.version>
+		<org.mongodb.mongodb-driver-sync.version>4.11.1</org.mongodb.mongodb-driver-sync.version>
 		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
-		<com.google.protobuf.protobuf-java.version>3.23.3</com.google.protobuf.protobuf-java.version>
+		<com.google.protobuf.protobuf-java.version>4.27.2</com.google.protobuf.protobuf-java.version>
 		<org.openapitools.jackson-databind-nullable.version>0.2.6</org.openapitools.jackson-databind-nullable.version>
 		<io.swagger.core.v3.swagger-annotations.version>2.2.15</io.swagger.core.v3.swagger-annotations.version>
 		<mongock.mongock-springboot-v3.version>5.3.3</mongock.mongock-springboot-v3.version>
@@ -364,9 +364,9 @@
 					<groupId>org.xolstice.maven.plugins</groupId>
 					<artifactId>protobuf-maven-plugin</artifactId>
 					<version>${org.xolstice.maven.plugins.protobuf-maven-plugin.version}</version>
-					<configuration>
-						<protocExecutable>/usr/local/bin/protoc</protocExecutable>
-					</configuration>
+<!--					<configuration>-->
+<!--						<protocExecutable>/usr/local/bin/protoc</protocExecutable>-->
+<!--					</configuration>-->
 					<executions>
 						<execution>
 							<goals>
