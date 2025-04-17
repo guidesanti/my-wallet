@@ -19,19 +19,11 @@ public class KafkaConsumerRebalanceListener implements ConsumerRebalanceListener
     @Override
     public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
         log.warn("onPartitionsRevoked: {}", partitions);
-        throwIfNotEmpty(partitions, new PartitionsRevokedException("Partitions lost", partitions));
     }
 
     @SneakyThrows
     @Override
     public void onPartitionsLost(Collection<TopicPartition> partitions) {
         log.warn("onPartitionsLost: {}", partitions);
-        throwIfNotEmpty(partitions, new PartitionsLostException("Partitions lost", partitions));
-    }
-
-    private void throwIfNotEmpty(Collection<?> collection, Throwable throwable) throws Throwable {
-        if (collection != null && !collection.isEmpty()) {
-            throw throwable;
-        }
     }
 }

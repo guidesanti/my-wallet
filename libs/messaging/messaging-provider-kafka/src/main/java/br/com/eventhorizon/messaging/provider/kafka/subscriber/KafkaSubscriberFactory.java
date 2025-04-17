@@ -26,9 +26,13 @@ public class KafkaSubscriberFactory implements SubscriberFactory {
     @Override
     public <T> Subscriber<T> create(Subscription<T> subscription) {
         if (subscription instanceof KafkaSubscription<T> kafkaSubscription) {
-            var name = KafkaMessagingProvider.PROVIDER_NAME + "-subscriber-" + count.getAndIncrement();
-            var poller = new KafkaMessagePoller<T>(kafkaSubscription.getSource(), kafkaSubscription.getConfigs());
-            return new Subscriber<>(name, executorService, subscription, poller, poller);
+            var id = count.getAndIncrement();
+            var poller = new KafkaMessagePoller<T>(
+                    KafkaMessagingProvider.PROVIDER_NAME + "-poller-" + id,
+                    kafkaSubscription.getSource(), kafkaSubscription.getConfigs());
+            return new Subscriber<>(
+                    KafkaMessagingProvider.PROVIDER_NAME + "-subscriber-" + id,
+                    executorService, subscription, poller, poller);
         }
 
         throw new UnsupportedSubscriptionException(subscription, this);

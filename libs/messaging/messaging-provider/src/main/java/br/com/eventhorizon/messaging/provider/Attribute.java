@@ -8,7 +8,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Attribute {
 
-    LATENCY(Attribute.PREFIX + "-Latency", "Message latency");
+    FETCH_TIME_MS(Attribute.PREFIX + "-Fetch-Time", "Message fetch time in milliseconds"),
+    MESSAGE_POLLER_ID(Attribute.PREFIX + "-Mesage-Poller-Id", "Message poller ID"),
+    KAFKA_TIMESTAMP(Attribute.PREFIX + "-Kafka-Timestamp", "Kafka timestamp"),
+    KAFKA_TIMESTAMP_TYPE(Attribute.PREFIX + "-Kafka-Timestamp-Type", "Kafka timestamp type");
 
     public static final String PREFIX = Common.PLATFORM_PREFIX_UPPER_CASE;
 

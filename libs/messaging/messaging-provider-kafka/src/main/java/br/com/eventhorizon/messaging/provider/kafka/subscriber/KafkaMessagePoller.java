@@ -10,6 +10,8 @@ import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -22,6 +24,8 @@ public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, Subscr
     private static final long MAX_POLL_INTERVAL_MS = 300_000L;
 
     private static final long COMMIT_INTERVAL_MS = 5_000L;
+
+    private final String pollerId;
 
     private final String topic;
 
@@ -43,8 +47,9 @@ public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, Subscr
 
     private long lastCommitTime;
 
-    public KafkaMessagePoller(String topic, Map<String, Object> config) {
+    public KafkaMessagePoller(String pollerId, String topic, Map<String, Object> config) {
         checkKafkaConfig(config);
+        this.pollerId = pollerId;
         this.topic = topic;
         this.config = config;
         this.consumerRebalanceListener = new KafkaConsumerRebalanceListener();
@@ -70,13 +75,6 @@ public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, Subscr
             commitOffsets();
             handleFinishedBatches();
             return doPoll();
-        } catch (PartitionsRevokedException ex) {
-            log.error(String.format("Kafka message polling failed -> partitions revoked: %s", ex.getPartitions()), ex);
-            commitOffsetsNow();
-            throw ex;
-        } catch (PartitionsLostException ex) {
-            log.error(String.format("Kafka message polling failed -> partitions lost: %s", ex.getPartitions()), ex);
-            throw ex;
         } finally {
             log.debug("Kafka message polling finished");
         }
@@ -90,14 +88,17 @@ public class KafkaMessagePoller<T> implements SubscriberMessagePoller<T>, Subscr
     private List<SubscriberPolledMessageBatch<T>> doPoll() {
         double startPollTime = System.nanoTime();
         ConsumerRecords<byte[], T> records = kafkaConsumer.poll(Duration.ofMillis(pollInterval));
-        final Double latency = (System.nanoTime() - startPollTime) / 1_000_000.0;
+        final Double fetchTimeMs = (System.nanoTime() - startPollTime) / 1_000_000.0;
         List<SubscriberPolledMessageBatch<T>> polledBatches = new ArrayList<>();
         var partitions = records.partitions();
         partitions.forEach(topicPartition -> {
             var list = new LinkedList<KafkaSubscriberMessage<T>>();
             records.records(topicPartition).forEach(record -> {
                 var messageBuilder = KafkaSubscriberMessage.<T>builder();
-                messageBuilder.attribute(Attribute.LATENCY.getName(), String.valueOf(latency));
+                messageBuilder.attribute(Attribute.FETCH_TIME_MS.getName(), String.valueOf(fetchTimeMs));
+                messageBuilder.attribute(Attribute.MESSAGE_POLLER_ID.getName(), this.pollerId);
+                messageBuilder.attribute(Attribute.KAFKA_TIMESTAMP.getName(), DateTimeFormatter.ISO_INSTANT.format(Instant.ofEpochMilli(record.timestamp())));
+                messageBuilder.attribute(Attribute.KAFKA_TIMESTAMP_TYPE.getName(), record.timestampType().name);
                 record.headers().forEach(header -> messageBuilder.header(header.key(), new String(header.value())));
                 messageBuilder
                         .source(topic)
